@@ -51,14 +51,15 @@ class PlaybackActivity : FragmentActivity() {
         ){
             direction = "LEFT"
         }else if(
-            event.keyCode == KeyEvent.KEYCODE_DPAD_RIGHT
+            event.keyCode == KeyEvent.KEYCODE_DPAD_RIGHT ||
+            (event.keyCode == KeyEvent.KEYCODE_BACK && event.isLongPress)
         ){
             direction = "RIGHT"
         }else{
             return super.dispatchKeyEvent(event)
         }
 
-        if(event.action == KeyEvent.ACTION_UP){
+        if(event.action == KeyEvent.ACTION_DOWN){
             PlaybackVideoFragment().channelSwitch(direction, true)
         }
 

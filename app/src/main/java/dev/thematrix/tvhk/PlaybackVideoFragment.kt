@@ -30,6 +30,11 @@ class PlaybackVideoFragment : VideoSupportFragment() {
         mTransportControlGlue.pause()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        playerAdapter.release()
+    }
+
     private fun setUpPlayer(){
         playerAdapter = MediaPlayerAdapter(activity)
         playerAdapter.setRepeatAction(PlaybackControlsRow.RepeatAction.INDEX_NONE)
@@ -109,6 +114,7 @@ class PlaybackVideoFragment : VideoSupportFragment() {
     }
 
     fun playVideo(title: String, videoUrl: String) {
+        playerAdapter.reset()
         mTransportControlGlue.title = title
         playerAdapter.setDataSource(Uri.parse(handleUrl(videoUrl)))
         mTransportControlGlue.playWhenPrepared()
