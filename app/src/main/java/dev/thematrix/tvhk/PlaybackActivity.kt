@@ -16,6 +16,8 @@ class PlaybackActivity : FragmentActivity() {
                 .commit()
         }
 
+
+        window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
     }
 
@@ -25,7 +27,6 @@ class PlaybackActivity : FragmentActivity() {
         if(
             event.keyCode == KeyEvent.KEYCODE_CHANNEL_UP ||
             event.keyCode == KeyEvent.KEYCODE_DPAD_UP ||
-            event.keyCode == KeyEvent.KEYCODE_DPAD_LEFT ||
             event.keyCode == KeyEvent.KEYCODE_MEDIA_PREVIOUS ||
             event.keyCode == KeyEvent.KEYCODE_MEDIA_REWIND ||
             event.keyCode == KeyEvent.KEYCODE_MEDIA_SKIP_BACKWARD ||
@@ -37,7 +38,6 @@ class PlaybackActivity : FragmentActivity() {
         }else if(
             event.keyCode == KeyEvent.KEYCODE_CHANNEL_DOWN ||
             event.keyCode == KeyEvent.KEYCODE_DPAD_DOWN ||
-            event.keyCode == KeyEvent.KEYCODE_DPAD_RIGHT ||
             event.keyCode == KeyEvent.KEYCODE_MEDIA_NEXT ||
             event.keyCode == KeyEvent.KEYCODE_MEDIA_FAST_FORWARD ||
             event.keyCode == KeyEvent.KEYCODE_MEDIA_SKIP_FORWARD ||
@@ -46,6 +46,14 @@ class PlaybackActivity : FragmentActivity() {
             event.keyCode == KeyEvent.KEYCODE_SYSTEM_NAVIGATION_RIGHT
         ){
             direction = "NEXT"
+        }else if(
+            event.keyCode == KeyEvent.KEYCODE_DPAD_LEFT
+        ){
+            direction = "LEFT"
+        }else if(
+            event.keyCode == KeyEvent.KEYCODE_DPAD_RIGHT
+        ){
+            direction = "RIGHT"
         }else{
             return super.dispatchKeyEvent(event)
         }
@@ -53,6 +61,7 @@ class PlaybackActivity : FragmentActivity() {
         if(event.action == KeyEvent.ACTION_UP){
             PlaybackVideoFragment().channelSwitch(direction, true)
         }
+
 
         return true
     }

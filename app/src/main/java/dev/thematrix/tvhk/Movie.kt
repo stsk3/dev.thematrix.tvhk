@@ -6,7 +6,7 @@ data class Movie(
     var id: Int = 0,
     var title: String = "",
     var description: String = "",
-    var cardImageUrl: String = "",
+    var cardImageUrl: Int = 0,
     var videoUrl: String = "",
     var func: String = ""
 ) : Serializable {

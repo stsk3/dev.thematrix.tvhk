@@ -52,16 +52,24 @@ class PlaybackVideoFragment : VideoSupportFragment() {
     }
 
     fun channelSwitch(direction: String, showMessage: Boolean){
-        lastDirection = direction
-
         val list = MovieList.list
 
         var videoId = currentVideoID
 
         if(direction.equals("PREVIOUS")){
             videoId--
+            if (list[videoId].title == "SKIP")
+            {
+                videoId--
+            }
+            currentSourceIndex = 0
         }else if(direction.equals("NEXT")) {
             videoId++
+            if (list[videoId].title == "SKIP")
+            {
+                videoId++
+            }
+            currentSourceIndex = 0
         }
 
         val channelCount = list.count()
@@ -73,8 +81,17 @@ class PlaybackVideoFragment : VideoSupportFragment() {
 
         val item = list[videoId]
 
+        if (item.videoUrl != "") {
+            var sourceCount = item.videoUrl.split("#").size
+            if (direction.equals("LEFT")) {
+                currentSourceIndex = (currentSourceIndex - 1) % sourceCount
+            } else if (direction.equals("RIGHT") || direction.equals("RETRY")) {
+                currentSourceIndex = (currentSourceIndex + 1) % sourceCount
+            }
+        }
+
         if(showMessage){
-            toast.setText("正在轉台到 " + item.title)
+            toast.setText("正在轉台到 " + item.title + "[" + currentSourceIndex + "]")
             toast.show()
         }
 
@@ -87,7 +104,7 @@ class PlaybackVideoFragment : VideoSupportFragment() {
         if(videoUrl.equals("")){
             getVideoUrl(title, func)
         }else{
-            playVideo(title, videoUrl)
+            playVideo(title, videoUrl.split("#")[currentSourceIndex])
         }
     }
 
@@ -135,78 +152,6 @@ class PlaybackVideoFragment : VideoSupportFragment() {
                 Response.Listener { response ->
                     try {
                         var mediaUrl: String = JSONArray(JSONObject(JSONObject(response.get("asset").toString()).get("hls").toString()).get("adaptive").toString()).get(0).toString()
-
-                        // Enable token
-
-                        val stringRequest = object: StringRequest(
-                            Method.GET,
-                            mediaUrl,
-                            Response.Listener { response ->
-                                // Remove param
-                                mediaUrl = mediaUrl.split("?")[0]
-                            },
-                            Response.ErrorListener{ error ->
-                            }
-                        ){}
-
-                        requestQueue.add(stringRequest)
-
-
-//                        val stringRequest = object: StringRequest(
-//                            Method.GET,
-//                            mediaUrl,
-//                            Response.Listener { response ->
-//                                var urlParts: MutableList<String> = mutableListOf()
-//                                var s = mediaUrl.split("/")
-//                                for (i in 0 until s.count() - 1) {
-//                                    urlParts.add(s[i])
-//                                }
-//                                mediaUrl = urlParts.joinToString("/")
-//
-//                                val res = response.toString().split("\n")
-//
-//                                var u: MutableList<String> = mutableListOf()
-//                                var highestDefinitionBandwidth: Int = 0
-//                                var highestDefinitionStreamMeta: String = ""
-//                                var highestDefinitionStreamUrl: String = ""
-//
-//                                for (i in 0 until res.count()) {
-//                                    var strlen = res[i].length
-//                                    if (strlen > 13 && res[i].substring(0, 13) == "#EXT-X-MEDIA:") {
-//                                        if (res[i].indexOf("DEFAULT=YES", ignoreCase = true) > -1) {
-//                                            u.add(res[i].replace("URI=\"", "URI=\"" + mediaUrl + "/"))
-//                                        }
-//                                    } else if (strlen > 18 && res[i].substring(0, 18) == "#EXT-X-STREAM-INF:") {
-//                                        var params = res[i].substring(18).split(",")
-//
-//                                        params.forEach{
-//                                            var param = it.split("=")
-//                                            if (param[0] == "BANDWIDTH") {
-//                                                val bandwidth = param[1].toInt()
-//                                                if (bandwidth > highestDefinitionBandwidth) {
-//                                                    highestDefinitionBandwidth = bandwidth
-//                                                    highestDefinitionStreamMeta = res[i]
-//                                                    highestDefinitionStreamUrl = mediaUrl + "/" + res[i + 1]
-//                                                }
-//
-//                                                return@forEach
-//                                            }
-//                                        }
-//                                    }else if (strlen > 1 && res[i].substring(0, 1) == "#") {
-//                                        u.add(res[i])
-//                                    }
-//                                }
-//
-//                                u.add(highestDefinitionStreamMeta)
-//                                u.add(highestDefinitionStreamUrl)
-//
-//                                val m3u8 = u.joinToString("\n")
-//                            },
-//                            Response.ErrorListener{ error ->
-//                            }
-//                        ){}
-//
-//                        requestQueue.add(stringRequest)
 
                         playVideo(title, mediaUrl)
                     }catch (exception: Exception){
@@ -297,12 +242,13 @@ class PlaybackVideoFragment : VideoSupportFragment() {
     private fun showPlaybackErrorMessage(title: String){
         toast.setText(title + " 暫時未能播放，請稍候再試。")
         toast.show()
-        channelSwitch(lastDirection, false)
+        channelSwitch("RETRY", true)
     }
 
     companion object {
         private val SDK_VER = android.os.Build.VERSION.SDK_INT
         private var currentVideoID = -1
+        private var currentSourceIndex = 0
         private lateinit var mTransportControlGlue: PlaybackTransportControlGlue<MediaPlayerAdapter>
         private lateinit var playerAdapter: MediaPlayerAdapter
         private lateinit var requestQueue: RequestQueue

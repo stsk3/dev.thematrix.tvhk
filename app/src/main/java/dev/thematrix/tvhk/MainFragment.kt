@@ -7,6 +7,9 @@ import androidx.leanback.app.BrowseFragment
 import androidx.leanback.widget.*
 
 class MainFragment : BrowseFragment() {
+
+    private val default = 1
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
@@ -15,6 +18,14 @@ class MainFragment : BrowseFragment() {
         loadRows()
 
         setupEventListeners()
+
+        defaultPlay()
+    }
+
+    private fun defaultPlay() {
+        val intent = Intent(activity, PlaybackActivity::class.java)
+        intent.putExtra(DetailsActivity.MOVIE, MovieList.list[default])
+        startActivity(intent)
     }
 
     private fun setupUIElements() {
@@ -30,17 +41,20 @@ class MainFragment : BrowseFragment() {
 
         lateinit var header: HeaderItem
         var listRowAdapter = ArrayObjectAdapter(cardPresenter)
+        var headerCount = 0
         for (i in 0 until MovieList.list.count()) {
-            if (i % 3 == 0) {
+            if (MovieList.list[i].title == "SKIP") {
+                header = HeaderItem(i.toLong(), MovieList.CATEGORY[headerCount++])
                 if(listRowAdapter.size() > 0){
                     rowsAdapter.add(ListRow(header, listRowAdapter))
                 }
 
-                header = HeaderItem(i.toLong(), MovieList.CATEGORY[i / 3])
                 listRowAdapter = ArrayObjectAdapter(cardPresenter)
             }
-
-            listRowAdapter.add(MovieList.list[i])
+            else
+            {
+                listRowAdapter.add(MovieList.list[i])
+            }
         }
 
         if(listRowAdapter.size() > 0){
