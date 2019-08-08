@@ -2,58 +2,82 @@ package dev.thematrix.tvhk
 
 import android.net.Uri
 import android.os.Bundle
-import android.widget.Toast
-import androidx.leanback.app.VideoSupportFragment
-import androidx.leanback.app.VideoSupportFragmentGlueHost
-import androidx.leanback.media.MediaPlayerAdapter
-import androidx.leanback.media.PlaybackTransportControlGlue
-import androidx.leanback.widget.PlaybackControlsRow
-import com.android.volley.*
-import com.android.volley.toolbox.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import com.android.volley.DefaultRetryPolicy
+import com.android.volley.Request
+import com.android.volley.Response
+import com.android.volley.RetryPolicy
+import com.android.volley.toolbox.JsonObjectRequest
+import com.android.volley.toolbox.StringRequest
+import com.google.android.exoplayer2.ExoPlayerFactory
+import com.google.android.exoplayer2.SimpleExoPlayer
+import com.google.android.exoplayer2.source.hls.HlsMediaSource
+import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
+import com.google.android.exoplayer2.ui.SimpleExoPlayerView
+import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
+import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import dev.thematrix.tvhk.PlaybackActivity.Companion.currentSourceIndex
 import dev.thematrix.tvhk.PlaybackActivity.Companion.currentVideoID
 import dev.thematrix.tvhk.PlaybackActivity.Companion.requestQueue
 import dev.thematrix.tvhk.PlaybackActivity.Companion.toast
+import kotlinx.android.synthetic.main.activity_simple.view.*
 import org.json.JSONArray
 import org.json.JSONObject
 
-class PlaybackVideoFragment : VideoSupportFragment() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+
+class PlaybackVideoExoFragment : Fragment() {
+
+    override fun onCreateView(inflater: LayoutInflater,
+                              container: ViewGroup?,
+                              savedInstanceState: Bundle?): View? {
+        val view: View = inflater.inflate(R.layout.activity_simple, container,
+            false)
 
         val (id, title, _, _, videoUrl, func) = activity?.intent?.getSerializableExtra(DetailsActivity.MOVIE) as Movie
 
-        PlaybackActivity.isCurrentExo = false
+        PlaybackActivity.isCurrentExo = true
 
-        setUpPlayer()
+        setupExoPlayer(view)
 
         prepareVideo(id, title, videoUrl, func)
+
+        return view
     }
 
-    override fun onPause() {
-        super.onPause()
-        mTransportControlGlue.pause()
+    private fun setupExoPlayer(view: View) {
+        // setup track selector
+        val bandwithMeter = DefaultBandwidthMeter()
+        val videoTrackSelectionFactory = AdaptiveTrackSelection.Factory(bandwithMeter)
+        val trackSelector = DefaultTrackSelector(videoTrackSelectionFactory)
+
+        // create player
+        player = ExoPlayerFactory.newSimpleInstance(activity, trackSelector)
+        player.playWhenReady = true
+        playerView = view.player_view
+        playerView.useController = true
+        playerView.requestFocus()
+        playerView.player = player
+        playerView.hideController()
+
+        dataSourceFactory = DefaultDataSourceFactory(activity, "exoplayer", bandwithMeter)
+        hlsMediaSourceFactory = HlsMediaSource.Factory(dataSourceFactory)
     }
+
+    override fun onStop() {
+        super.onStop()
+        player.release()
+    }
+
 
     override fun onDestroy() {
         super.onDestroy()
-        playerAdapter.release()
+        player.release()
     }
 
-    private fun setUpPlayer(){
-        playerAdapter = MediaPlayerAdapter(activity)
-        playerAdapter.setRepeatAction(PlaybackControlsRow.RepeatAction.INDEX_NONE)
-        mTransportControlGlue = PlaybackTransportControlGlue(activity, playerAdapter)
-
-        val glueHost = VideoSupportFragmentGlueHost(this@PlaybackVideoFragment)
-        mTransportControlGlue.host = glueHost
-
-        mTransportControlGlue.isControlsOverlayAutoHideEnabled = true
-        hideControlsOverlay(false)
-        mTransportControlGlue.isSeekEnabled = false
-
-        toast = Toast.makeText(context, "", Toast.LENGTH_LONG)
-    }
 
     internal fun prepareVideo(id: Int, title: String, videoUrl: String, func: String){
         currentVideoID = id
@@ -61,15 +85,15 @@ class PlaybackVideoFragment : VideoSupportFragment() {
         if(videoUrl.equals("")){
             getVideoUrl(title, func)
         }else{
-            playVideo(title, videoUrl.split("#")[currentSourceIndex])
+            playVideo(videoUrl.split("#")[currentSourceIndex])
         }
     }
 
-    fun playVideo(title: String, videoUrl: String) {
-        playerAdapter.reset()
-        mTransportControlGlue.title = title
-        playerAdapter.setDataSource(Uri.parse(handleUrl(videoUrl)))
-        mTransportControlGlue.playWhenPrepared()
+    fun playVideo(mediaUrl: String) {
+        val videoUri = Uri.parse(mediaUrl)
+        val mediaSource = hlsMediaSourceFactory.createMediaSource(videoUri)
+
+        player.prepare(mediaSource)
     }
 
     private fun getVideoUrl(title: String, ch: String) {
@@ -111,7 +135,7 @@ class PlaybackVideoFragment : VideoSupportFragment() {
                     try {
                         var mediaUrl: String = JSONArray(JSONObject(JSONObject(response.get("asset").toString()).get("hls").toString()).get("adaptive").toString()).get(0).toString()
 
-                        playVideo(title, mediaUrl)
+                        playVideo(mediaUrl)
                     }catch (exception: Exception){
                         showPlaybackErrorMessage(title)
                     }
@@ -132,7 +156,7 @@ class PlaybackVideoFragment : VideoSupportFragment() {
                 url,
                 Response.Listener { response ->
                     try {
-                        playVideo(title, JSONObject(JSONObject(response).get("result").toString()).get("stream").toString())
+                        playVideo(JSONObject(JSONObject(response).get("result").toString()).get("stream").toString())
                     }catch (exception: Exception){
                         showPlaybackErrorMessage(title)
                     }
@@ -189,22 +213,17 @@ class PlaybackVideoFragment : VideoSupportFragment() {
         }
     }
 
-    private fun handleUrl(url: String): String{
-        if(SDK_VER < 21){
-            return url.replace("https://", "http://")
-        }else{
-            return url
-        }
-    }
-
     private fun showPlaybackErrorMessage(title: String){
         toast.setText(title + " 暫時未能播放，請稍候再試。")
         toast.show()
     }
 
+
+
     companion object {
-        private val SDK_VER = android.os.Build.VERSION.SDK_INT
-        private lateinit var mTransportControlGlue: PlaybackTransportControlGlue<MediaPlayerAdapter>
-        private lateinit var playerAdapter: MediaPlayerAdapter
+        private lateinit var player: SimpleExoPlayer
+        private lateinit var playerView: SimpleExoPlayerView
+        private lateinit var dataSourceFactory: DefaultDataSourceFactory
+        private lateinit var hlsMediaSourceFactory: HlsMediaSource.Factory
     }
 }

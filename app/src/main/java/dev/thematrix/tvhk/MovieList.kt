@@ -3,8 +3,8 @@ package dev.thematrix.tvhk
 object MovieList {
     val CATEGORY = arrayOf(
         "CableTV",
-        "RTHK TV",
         "Now TV",
+        "RTHK TV",
         "TDM"/*,
         "FOXSports"*/
     )
@@ -21,12 +21,12 @@ object MovieList {
             "有線新聞台",
             "有線直播台",
             "SKIP",
-            "港台電視31",
-            "港台電視32",
-            "SKIP",
             "ViuTV",
             "now新聞台",
             "now直播台",
+            "SKIP",
+            "港台電視31",
+            "港台電視32",
             "SKIP",
             "澳視體育",
             "澳視澳門",
@@ -48,8 +48,8 @@ object MovieList {
             "SKIP",
             "",
             "",
-            "SKIP",
             "",
+            "SKIP",
             "",
             "",
             "SKIP",
@@ -71,12 +71,12 @@ object MovieList {
             R.drawable.cablenews,
             R.drawable.cablelivenews,
             0,
-            R.drawable.rthktv31,
-            R.drawable.rthktv32,
-            0,
             R.drawable.viutv,
             R.drawable.nowtv332,
             R.drawable.nowtv331,
+            0,
+            R.drawable.rthktv31,
+            R.drawable.rthktv32,
             0,
             R.drawable.tdmsport,
             R.drawable.tdmmacau,
@@ -96,12 +96,12 @@ object MovieList {
             "",
             "",
             "SKIP",
-            "http://rthklive1-lh.akamaihd.net/i/rthk31_1@167495/index_2052_av-p.m3u8#http://rthklive1-lh.akamaihd.net/i/rthk31_1@167495/index_1296_av-p.m3u8#http://rthklive1-lh.akamaihd.net/i/rthk31_1@167495/index_810_av-p.m3u8#http://rthklive1-lh.akamaihd.net/i/rthk31_1@167495/index_432_av-p.m3u8",
-            "http://rthklive2-lh.akamaihd.net/i/rthk32_1@168450/index_2052_av-p.m3u8#http://rthklive2-lh.akamaihd.net/i/rthk32_1@168450/index_1296_av-p.m3u8#http://rthklive2-lh.akamaihd.net/i/rthk32_1@168450/index_810_av-p.m3u8#http://rthklive2-lh.akamaihd.net/i/rthk32_1@168450/index_432_av-p.m3u8",
+            "",
+            "",
+            "",
             "SKIP",
-            "",
-            "",
-            "",
+            "https://www.rthk.hk/feeds/dtt/rthktv31_https.m3u8",
+            "https://www.rthk.hk/feeds/dtt/rthktv32_https.m3u8",
             "SKIP",
             "http://live1.tdm.com.mo:1935/ch4/sport_ch4.live/playlist.m3u8#http://live2.tdm.com.mo:1935/ch4/sport_ch4.live/playlist.m3u8#http://live3.tdm.com.mo:1935/ch4/sport_ch4.live/playlist.m3u8#http://live4.tdm.com.mo:1935/ch4/sport_ch4.live/playlist.m3u8",
             "http://live1.tdm.com.mo:1935/ch1/ch1.live/playlist.m3u8#http://live2.tdm.com.mo:1935/ch1/ch1.live/playlist.m3u8#http://live3.tdm.com.mo:1935/ch1/ch1.live/playlist.m3u8#http://live4.tdm.com.mo:1935/ch1/ch1.live/playlist.m3u8",
@@ -117,16 +117,16 @@ object MovieList {
         )
 
         val func = arrayOf(
-            "",
+            "fantv",
             "cabletv109",
             "cabletv110",
-            "SKIP",
-            "",
-            "",
             "SKIP",
             "viutv99",
             "nowtv332",
             "nowtv331",
+            "SKIP",
+            "rthk31",
+            "rthk32",
             "SKIP",
             "",
             "",
@@ -168,6 +168,8 @@ object MovieList {
         movie.cardImageUrl = cardImageUrl
         movie.videoUrl = videoUrl
         movie.func = func
+        movie.exo = func in arrayOf("viutv99", "nowtv332", "nowtv331", "fantv", "rthk31", "rthk32")
+
 
         return movie
     }

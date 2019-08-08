@@ -40,6 +40,11 @@
             android:name=".PlaybackActivity"
             android:screenOrientation="landscape">
         </activity>
+
+        <activity
+            android:name=".PlaybackExoActivity"
+            android:screenOrientation="landscape">
+        </activity>
     </application>
 
 </manifest>

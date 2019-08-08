@@ -8,20 +8,17 @@ data class Movie(
     var description: String = "",
     var cardImageUrl: Int = 0,
     var videoUrl: String = "",
-    var func: String = ""
+    var func: String = "",
+    var exo: Boolean = false
 ) : Serializable {
 
-    override fun toString(): String {
-        return "Movie{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", description='" + description + '\'' +
-                ", cardImageUrl='" + cardImageUrl + '\'' +
-                ", videoUrl='" + videoUrl + '\'' +
-                '}'
-    }
+
 
     companion object {
         internal const val serialVersionUID = 727566175075960653L
+    }
+
+    override fun toString(): String {
+        return "Movie(id=$id, title='$title', description='$description', cardImageUrl=$cardImageUrl, videoUrl='$videoUrl', func='$func', exo=$exo)"
     }
 }
