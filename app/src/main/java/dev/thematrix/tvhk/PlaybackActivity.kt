@@ -110,7 +110,7 @@ class PlaybackActivity : FragmentActivity() {
                 videoId++
 
                 //Fix Overflow
-                if(videoId >= channelCount){
+                if(videoId >= (channelCount - 1)){ //Skipping SKIP
                     videoId = 0
                 }
                 else if (list[videoId].title == "SKIP")

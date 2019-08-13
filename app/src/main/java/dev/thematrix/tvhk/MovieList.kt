@@ -5,8 +5,8 @@ object MovieList {
         "CableTV",
         "Now TV",
         "RTHK TV",
-        "TDM"/*,
-        "FOXSports"*/
+        "TDM",
+        "FOXSports"
     )
 
     val list: List<Movie> by lazy {
@@ -18,12 +18,12 @@ object MovieList {
     private fun setupMovies(): List<Movie> {
         val title = arrayOf(
             "香港開電視",
-            "有線新聞台",
             "有線直播台",
+            "有線新聞台",
             "SKIP",
-            "ViuTV",
             "now新聞台",
             "now直播台",
+            "ViuTV",
             "SKIP",
             "港台電視31",
             "港台電視32",
@@ -34,46 +34,46 @@ object MovieList {
             "澳視高清",
             "澳視衛星",
             "澳視葡文",
-            "SKIP"/*,
+            "SKIP",
             "FS1",
             "FS2",
             "FS3",
-            "SKIP"*/
+            "SKIP"
         )
 
         val description = arrayOf(
             "",
-            "",
             "畫面比例可能不符合你的電視",
-            "SKIP",
-            "",
-            "",
-            "",
-            "SKIP",
-            "",
             "",
             "SKIP",
             "",
             "",
             "",
+            "SKIP",
+            "",
+            "",
+            "SKIP",
             "",
             "",
             "",
-            "SKIP"/*,
             "",
             "",
             "",
-            "SKIP"*/
+            "SKIP",
+            "",
+            "",
+            "",
+            "SKIP"
         )
 
         val cardImageUrl = arrayOf(
             R.drawable.opentv,
-            R.drawable.cablenews,
             R.drawable.cablelivenews,
+            R.drawable.cablenews,
             0,
-            R.drawable.viutv,
             R.drawable.nowtv332,
             R.drawable.nowtv331,
+            R.drawable.viutv,
             0,
             R.drawable.rthktv31,
             R.drawable.rthktv32,
@@ -84,11 +84,11 @@ object MovieList {
             R.drawable.tdmhd,
             R.drawable.tdmsat,
             R.drawable.tdmportugal,
-            0/*,
+            0,
             R.drawable.foxsports,
             R.drawable.foxsports,
             R.drawable.foxsports,
-            0*/
+            0
         )
 
         val videoUrl = arrayOf(
@@ -109,21 +109,21 @@ object MovieList {
             "http://live1.tdm.com.mo:1935/ch6/hd_ch6.live/playlist.m3u8#http://live2.tdm.com.mo:1935/ch6/hd_ch6.live/playlist.m3u8#http://live3.tdm.com.mo:1935/ch6/hd_ch6.live/playlist.m3u8#http://live4.tdm.com.mo:1935/ch6/hd_ch6.live/playlist.m3u8",
             "http://live1.tdm.com.mo:1935/ch3/ch3.live/playlist.m3u8#http://live2.tdm.com.mo:1935/ch3/ch3.live/playlist.m3u8#http://live3.tdm.com.mo:1935/ch3/ch3.live/playlist.m3u8#http://live4.tdm.com.mo:1935/ch3/ch3.live/playlist.m3u8",
             "http://live1.tdm.com.mo:1935/ch2/ch2.live/playlist.m3u8#http://live2.tdm.com.mo:1935/ch2/ch2.live/playlist.m3u8#http://live3.tdm.com.mo:1935/ch2/ch2.live/playlist.m3u8#http://live4.tdm.com.mo:1935/ch2/ch2.live/playlist.m3u8",
-            "SKIP"/*,
+            "SKIP",
             "http://foxsportstw-lh.akamaihd.net/i/live01_0@38035/index_4700_av-p.m3u8#http://foxsportstw-lh.akamaihd.net/i/live01_0@38035/index_2700_av-p.m3u8#http://foxsportstw-lh.akamaihd.net/i/live01_0@38035/index_1500_av-p.m3u8",
             "http://foxsports07-i.akamaihd.net/hls/live/716920/live04/index.m3u8",
             "http://foxsports07-i.akamaihd.net/hls/live/716919/live03/index.m3u8",
-            "SKIP"*/
+            "SKIP"
         )
 
         val func = arrayOf(
             "fantv",
-            "cabletv109",
             "cabletv110",
+            "cabletv109",
             "SKIP",
-            "viutv99",
             "nowtv332",
             "nowtv331",
+            "viutv99",
             "SKIP",
             "rthk31",
             "rthk32",
@@ -134,11 +134,11 @@ object MovieList {
             "",
             "",
             "",
-            "SKIP"/*,
-            "",
-            "",
-            "",
-            "SKIP"*/
+            "SKIP",
+            "fox",
+            "fox",
+            "fox",
+            "SKIP"
         )
 
         val list = title.indices.map {
@@ -168,7 +168,7 @@ object MovieList {
         movie.cardImageUrl = cardImageUrl
         movie.videoUrl = videoUrl
         movie.func = func
-        movie.exo = func in arrayOf("viutv99", "nowtv332", "nowtv331", "fantv", "rthk31", "rthk32")
+        movie.exo = func in arrayOf("viutv99", "nowtv332", "nowtv331", "fantv", "rthk31", "rthk32", "fox")
 
 
         return movie

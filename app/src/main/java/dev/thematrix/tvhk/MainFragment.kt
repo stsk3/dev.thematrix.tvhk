@@ -8,7 +8,7 @@ import androidx.leanback.widget.*
 
 class MainFragment : BrowseFragment() {
 
-    private val default = 1
+    private val default = 2
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
