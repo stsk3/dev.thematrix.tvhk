@@ -9,6 +9,9 @@ import com.android.volley.*
 import com.android.volley.toolbox.*
 import org.json.JSONArray
 import org.json.JSONObject
+import org.xml.sax.InputSource
+import java.io.StringReader
+import javax.xml.parsers.DocumentBuilderFactory
 
 class PlaybackActivity : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -207,6 +210,61 @@ class PlaybackActivity : FragmentActivity() {
             jsonObjectRequest.retryPolicy = DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 5, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
 
             requestQueue.add(jsonObjectRequest)
+        }else if(ch.equals("nowtv630")){
+            url = "https://sports.now.com/VideoCheckOut?pid=webch630_4&service=NOW360&type=channel"
+
+            val stringRequest = object: StringRequest(
+                Method.GET,
+                url,
+                Response.Listener { response ->
+                    try {
+                        var url = ""
+
+                        val factory = DocumentBuilderFactory.newInstance()
+                        val builder = factory.newDocumentBuilder()
+                        val source = InputSource(StringReader(response))
+                        val document = builder.parse(source)
+                        val nodes = document.getElementsByTagName("RESULT").item(0).childNodes
+
+                        for (i in 0 until nodes.length) {
+                            if (nodes.item(i).nodeName == "html5streamurlhq") {
+                                url = nodes.item(i).textContent
+                                break
+                            }
+                        }
+
+                        if (url != "") {
+                            if (play)
+                                playByPlayer(url)
+                            else {
+                                changePlayer(url, exo)
+                            }
+                        } else {
+                            showPlaybackErrorMessage(title, url)
+                        }
+                    }catch (exception: Exception){
+                        showPlaybackErrorMessage(title, url)
+                    }
+                },
+                Response.ErrorListener{ error ->
+                    showPlaybackErrorMessage(title, url)
+                }
+            ){
+                override fun getRetryPolicy(): RetryPolicy {
+                    return DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 5, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
+                }
+
+                override fun getHeaders(): MutableMap<String, String> {
+                    val params =  mutableMapOf<String, String>()
+
+//                    params.put("Referer", "https://sports.now.com/home/630")
+                    params.put("User-Agent", "Dalvik/2.1.0 (Linux; U; Android 6.0.1; TVHK Build/35.0.A.1.282)")
+
+                    return params
+                }
+            }
+            requestQueue.add(stringRequest)
+
         }else if(ch.equals("cabletv109") || ch.equals("cabletv110")){
             url = "https://mobileapp.i-cable.com/iCableMobile/API/api.php"
 

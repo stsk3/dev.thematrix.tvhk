@@ -2,6 +2,7 @@ package dev.thematrix.tvhk
 
 object MovieList {
     val CATEGORY = arrayOf(
+        "News",
         "CableTV",
         "Now TV",
         "RTHK TV",
@@ -17,16 +18,18 @@ object MovieList {
 
     private fun setupMovies(): List<Movie> {
         val title = arrayOf(
-            "香港開電視",
             "有線直播台",
             "有線新聞台",
-            "SKIP",
             "now新聞台",
             "now直播台",
+            "港台電視32",
+            "SKIP",
+            "香港開電視",
+            "SKIP",
+            "now630",
             "ViuTV",
             "SKIP",
             "港台電視31",
-            "港台電視32",
             "SKIP",
             "澳視體育",
             "澳視澳門",
@@ -42,15 +45,17 @@ object MovieList {
         )
 
         val description = arrayOf(
-            "",
             "畫面比例可能不符合你的電視",
             "",
-            "SKIP",
             "",
             "",
             "",
             "SKIP",
             "",
+            "SKIP",
+            "",
+            "",
+            "SKIP",
             "",
             "SKIP",
             "",
@@ -67,16 +72,18 @@ object MovieList {
         )
 
         val cardImageUrl = arrayOf(
-            R.drawable.opentv,
             R.drawable.cablelivenews,
             R.drawable.cablenews,
-            0,
             R.drawable.nowtv332,
             R.drawable.nowtv331,
+            R.drawable.rthktv32,
+            0,
+            R.drawable.opentv,
+            0,
+            R.drawable.nowtv630,
             R.drawable.viutv,
             0,
             R.drawable.rthktv31,
-            R.drawable.rthktv32,
             0,
             R.drawable.tdmsport,
             R.drawable.tdmmacau,
@@ -92,16 +99,18 @@ object MovieList {
         )
 
         val videoUrl = arrayOf(
-            "http://media.fantv.hk/m3u8/archive/channel2_stream1.m3u8",
             "",
             "",
+            "",
+            "",
+            "https://www.rthk.hk/feeds/dtt/rthktv32_https.m3u8",
             "SKIP",
-            "",
+            "http://media.fantv.hk/m3u8/archive/channel2_stream1.m3u8",
+            "SKIP",
             "",
             "",
             "SKIP",
             "https://www.rthk.hk/feeds/dtt/rthktv31_https.m3u8",
-            "https://www.rthk.hk/feeds/dtt/rthktv32_https.m3u8",
             "SKIP",
             "http://live1.tdm.com.mo:1935/ch4/sport_ch4.live/playlist.m3u8#http://live2.tdm.com.mo:1935/ch4/sport_ch4.live/playlist.m3u8#http://live3.tdm.com.mo:1935/ch4/sport_ch4.live/playlist.m3u8#http://live4.tdm.com.mo:1935/ch4/sport_ch4.live/playlist.m3u8",
             "http://live1.tdm.com.mo:1935/ch1/ch1.live/playlist.m3u8#http://live2.tdm.com.mo:1935/ch1/ch1.live/playlist.m3u8#http://live3.tdm.com.mo:1935/ch1/ch1.live/playlist.m3u8#http://live4.tdm.com.mo:1935/ch1/ch1.live/playlist.m3u8",
@@ -117,16 +126,18 @@ object MovieList {
         )
 
         val func = arrayOf(
-            "fantv",
             "cabletv110",
             "cabletv109",
-            "SKIP",
             "nowtv332",
             "nowtv331",
+            "rthk32",
+            "SKIP",
+            "fantv",
+            "SKIP",
+            "nowtv630",
             "viutv99",
             "SKIP",
             "rthk31",
-            "rthk32",
             "SKIP",
             "",
             "",
@@ -168,7 +179,7 @@ object MovieList {
         movie.cardImageUrl = cardImageUrl
         movie.videoUrl = videoUrl
         movie.func = func
-        movie.exo = func in arrayOf("viutv99", "nowtv332", "nowtv331", "fantv", "rthk31", "rthk32", "fox")
+        movie.exo = func in arrayOf("viutv99", "nowtv332", "nowtv331", "nowtv630", "fantv", "rthk31", "rthk32", "fox")
 
 
         return movie
