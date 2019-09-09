@@ -78,10 +78,10 @@ class PlaybackVideoExoFragment : Fragment() {
         else
             hlsMediaSourceFactory.createMediaSource(videoUri)
 
-        playerView.resizeMode = if (mediaUrl.contains(".mpd"))
-            AspectRatioFrameLayout.RESIZE_MODE_FIT
-        else
+        playerView.resizeMode = if (mediaUrl.contains("webch630"))
             AspectRatioFrameLayout.RESIZE_MODE_FILL
+        else
+            AspectRatioFrameLayout.RESIZE_MODE_FIT
 
         player.prepare(mediaSource)
     }

@@ -22,7 +22,12 @@ class MainFragment : BrowseFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
+
         setupUIElements()
+
+        loadRows()
+        setupEventListeners()
+        defaultPlay()
 
         addFbLive()
     }
@@ -44,18 +49,24 @@ class MainFragment : BrowseFragment() {
 
 
             //Add to movie list
-            MovieList.TITLE.addAll(MovieList.FB_INDEX, titleList)
-            MovieList.DESCRIPTION.addAll(MovieList.FB_INDEX, descriptionList)
-            MovieList.CARD_IMAGE_URL.addAll(MovieList.FB_INDEX, cardImageUrlList)
-            MovieList.VIDEO_URL.addAll(MovieList.FB_INDEX, videoUrlList)
-            MovieList.FUNC.addAll(MovieList.FB_INDEX, funcList)
+            if (titleList.count() > 0) {
+                titleList.add("SKIP")
+                descriptionList.add("SKIP")
+                cardImageUrlList.add(0)
+                videoUrlList.add("SKIP")
+                funcList.add("SKIP")
 
+                MovieList.TITLE.addAll(MovieList.FB_INDEX, titleList)
+                MovieList.DESCRIPTION.addAll(MovieList.FB_INDEX, descriptionList)
+                MovieList.CARD_IMAGE_URL.addAll(MovieList.FB_INDEX, cardImageUrlList)
+                MovieList.VIDEO_URL.addAll(MovieList.FB_INDEX, videoUrlList)
+                MovieList.FUNC.addAll(MovieList.FB_INDEX, funcList)
 
-            // Update UI
-            this.activity.runOnUiThread {
-                loadRows()
-                setupEventListeners()
-                defaultPlay()
+                // Update UI
+                this.activity.runOnUiThread {
+                    MovieList.updateList()
+                    addFbRows()
+                }
             }
         }).start()
     }
@@ -156,6 +167,26 @@ class MainFragment : BrowseFragment() {
         }
 
         adapter = rowsAdapter
+    }
+
+
+
+    private fun addFbRows() {
+        val rowsAdapter : ArrayObjectAdapter = adapter as ArrayObjectAdapter
+        val cardPresenter = CardPresenter()
+
+        var listRowAdapter = ArrayObjectAdapter(cardPresenter)
+        var i = MovieList.FB_INDEX
+        while (MovieList.list[i].title != "SKIP")
+        {
+            listRowAdapter.add(MovieList.list[i])
+            i++
+        }
+
+        if(listRowAdapter.size() > 0){
+            val header = HeaderItem(MovieList.FB_INDEX.toLong(), "Facebook")
+            rowsAdapter.add(MovieList.FB_CATEGORY_INDEX, ListRow(header, listRowAdapter))
+        }
     }
 
     private fun setupEventListeners() {

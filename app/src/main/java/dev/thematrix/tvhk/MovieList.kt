@@ -1,11 +1,11 @@
 package dev.thematrix.tvhk
 
 object MovieList {
-    val FB_INDEX = 7
+    const val FB_INDEX = 7
+    const val FB_CATEGORY_INDEX = 1
 
     val CATEGORY = arrayOf(
         "News",
-        "Facebook",
         "CableTV",
         "Now TV",
         "RTHK TV",
@@ -20,7 +20,6 @@ object MovieList {
         "now直播台",
         "港台電視32",
         "HK01",
-        "SKIP",
         "SKIP",
         "香港開電視",
         "SKIP",
@@ -50,7 +49,6 @@ object MovieList {
         "",
         "",
         "SKIP",
-        "SKIP",
         "",
         "SKIP",
         "",
@@ -78,7 +76,6 @@ object MovieList {
         R.drawable.nowtv331,
         R.drawable.rthktv32,
         R.drawable.fb_hk01wemedia,
-        0,
         0,
         R.drawable.opentv,
         0,
@@ -108,7 +105,6 @@ object MovieList {
         "https://www.rthk.hk/feeds/dtt/rthktv32_https.m3u8",
         "http://live.cdn.hk01.com/origin/smil:01news.smil/playlist.m3u8",
         "SKIP",
-        "SKIP",
         "http://media.fantv.hk/m3u8/archive/channel2_stream1.m3u8",
         "SKIP",
         "",
@@ -137,7 +133,6 @@ object MovieList {
         "rthk32",
         "",
         "SKIP",
-        "SKIP",
         "fantv",
         "SKIP",
         "nowtv630",
@@ -158,13 +153,40 @@ object MovieList {
         "SKIP"
     )
 
-    val list: List<Movie> by lazy {
+    val list: MutableList<Movie> by lazy {
         setupMovies()
+    }
+
+    fun updateList() {
+        count = FB_INDEX
+
+        val newMovieCount = TITLE.count() - list.count()
+
+        //Fix index
+        list.forEachIndexed { index, movie ->
+            if (index >= FB_INDEX)
+            {
+                movie.id += newMovieCount
+            }
+        }
+
+        //ADD new
+        for (i in 0 until newMovieCount)
+        {
+            val movie = buildMovieInfo(
+                TITLE[count],
+                DESCRIPTION[count],
+                CARD_IMAGE_URL[count],
+                VIDEO_URL[count],
+                FUNC[count]
+            )
+            list.add(count - 1, movie)
+        }
     }
 
     private var count: Int = 0
 
-    private fun setupMovies(): List<Movie> {
+    private fun setupMovies(): MutableList<Movie> {
 
 
         val list = TITLE.indices.map {
@@ -177,7 +199,7 @@ object MovieList {
             )
         }
 
-        return list
+        return list.toMutableList()
     }
 
     private fun buildMovieInfo(
