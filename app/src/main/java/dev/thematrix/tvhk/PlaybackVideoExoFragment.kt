@@ -6,11 +6,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.google.android.exoplayer2.C
 import com.google.android.exoplayer2.ExoPlayerFactory
 import com.google.android.exoplayer2.SimpleExoPlayer
+import com.google.android.exoplayer2.source.BaseMediaSource
+import com.google.android.exoplayer2.source.MediaSource
+import com.google.android.exoplayer2.source.dash.DashMediaSource
 import com.google.android.exoplayer2.source.hls.HlsMediaSource
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
+import com.google.android.exoplayer2.ui.AspectRatioFrameLayout
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
@@ -52,6 +57,7 @@ class PlaybackVideoExoFragment : Fragment() {
 
         dataSourceFactory = DefaultDataSourceFactory(activity, "exoplayer", bandwithMeter)
         hlsMediaSourceFactory = HlsMediaSource.Factory(dataSourceFactory)
+        dashMediaSourceFactory = DashMediaSource.Factory(dataSourceFactory)
     }
 
     override fun onStop() {
@@ -67,7 +73,15 @@ class PlaybackVideoExoFragment : Fragment() {
 
     fun playVideo(mediaUrl: String) {
         val videoUri = Uri.parse(mediaUrl)
-        val mediaSource = hlsMediaSourceFactory.createMediaSource(videoUri)
+        val mediaSource = if (mediaUrl.contains(".mpd"))
+            dashMediaSourceFactory.createMediaSource(videoUri)
+        else
+            hlsMediaSourceFactory.createMediaSource(videoUri)
+
+        playerView.resizeMode = if (mediaUrl.contains(".mpd"))
+            AspectRatioFrameLayout.RESIZE_MODE_FIT
+        else
+            AspectRatioFrameLayout.RESIZE_MODE_FILL
 
         player.prepare(mediaSource)
     }
@@ -79,5 +93,6 @@ class PlaybackVideoExoFragment : Fragment() {
         private lateinit var playerView: SimpleExoPlayerView
         private lateinit var dataSourceFactory: DefaultDataSourceFactory
         private lateinit var hlsMediaSourceFactory: HlsMediaSource.Factory
+        private lateinit var dashMediaSourceFactory: DashMediaSource.Factory
     }
 }
