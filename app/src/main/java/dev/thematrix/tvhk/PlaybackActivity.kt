@@ -27,6 +27,7 @@ class PlaybackActivity : FragmentActivity() {
         if (savedInstanceState == null) {
             val (id, title, _, _, videoUrl, func, exo) = this?.intent?.getSerializableExtra(DetailsActivity.MOVIE) as Movie
             currentVideoID = id
+            currentSourceIndex = 0
 
             prepareAndChangePlayer(videoUrl, title, func, exo, false)
         }
