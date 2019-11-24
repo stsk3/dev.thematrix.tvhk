@@ -122,6 +122,8 @@ class MainFragment : BrowseFragment() {
             getFbLiveVideo("atvhongkong", "ATV亞視數碼媒體", R.drawable.fb_hkatv)
             getFbLiveVideo("cuspcusp", "中大學生報", R.drawable.fb_cuhk)
             getFbLiveVideo("socrec", "SocREC 社會記錄頻道", R.drawable.fb_socrec)
+            getFbLiveVideo("fans.hkgolden", "HKGolden", R.drawable.fb_fans_hkgolden)
+            getFbLiveVideo("CupidProducer", "丘品創作", R.drawable.fb_cupidproducer)
             getFbLiveVideo("onccsport", "東網體育", R.drawable.fb_onccsport)
 
 

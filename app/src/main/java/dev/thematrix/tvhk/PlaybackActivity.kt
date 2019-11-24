@@ -268,7 +268,8 @@ class PlaybackActivity : FragmentActivity() {
             }
             requestQueue.add(stringRequest)
 
-        }else if(ch.equals("cabletv109") || ch.equals("cabletv110")){
+        //}else if(ch.equals("cabletv109") || ch.equals("cabletv110")){
+        }else if(ch.equals("cabletv110")){
             url = "https://mobileapp.i-cable.com/iCableMobile/API/api.php"
 
             val stringRequest = object: StringRequest(
