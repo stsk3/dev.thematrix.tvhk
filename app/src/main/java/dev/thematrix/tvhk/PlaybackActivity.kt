@@ -133,6 +133,8 @@ class PlaybackActivity : FragmentActivity() {
                 var sourceCount = item.videoUrl.split("#").size
                 if (direction.equals("LEFT")) {
                     currentSourceIndex = (currentSourceIndex - 1) % sourceCount
+                    if (currentSourceIndex < 0)
+                        currentSourceIndex = sourceCount - 1
                 } else if (direction.equals("RIGHT")) {
                     currentSourceIndex = (currentSourceIndex + 1) % sourceCount
                 }
