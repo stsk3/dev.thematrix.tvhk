@@ -166,7 +166,7 @@ object MovieList {
         "http://111.40.205.87/PLTV/88888888/224/3221225689/index.m3u8",
         "http://116.199.5.51:8114/hls/Fsv_chan_hls_se_idx=020&FvSeid=1&Fsv_ctype=LIVES&Fsv_otype=1&Provider_id=0&Pcontent_id=8114.m3u8",
         "http://rmtv24hweblive-lh.akamaihd.net/i/rmtv24hwebes_1@300661/master.m3u8#http://rmtv24hweblive-lh.akamaihd.net/i/rmtv24hweben_1@300662/master.m3u8",
-        "http://sinren.tv/sports2world_api.php",
+        "",
         "SKIP",
         "http://foxsportstw-lh.akamaihd.net/i/live01_0@38035/index_4700_av-p.m3u8#http://foxsportstw-lh.akamaihd.net/i/live01_0@38035/index_2700_av-p.m3u8#http://foxsportstw-lh.akamaihd.net/i/live01_0@38035/index_1500_av-p.m3u8",
         "http://foxsports07-i.akamaihd.net/hls/live/716920/live04/index.m3u8",

@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.google.android.exoplayer2.C
 import com.google.android.exoplayer2.ExoPlayerFactory
+import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.source.BaseMediaSource
 import com.google.android.exoplayer2.source.MediaSource
@@ -49,6 +50,7 @@ class PlaybackVideoExoFragment : Fragment() {
         // create player
         player = ExoPlayerFactory.newSimpleInstance(activity, trackSelector)
         player.playWhenReady = true
+        player.repeatMode = Player.REPEAT_MODE_ONE
         playerView = view.player_view
         playerView.useController = true
         playerView.requestFocus()

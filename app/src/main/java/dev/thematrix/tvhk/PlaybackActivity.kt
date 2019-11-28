@@ -11,6 +11,8 @@ import org.json.JSONArray
 import org.json.JSONObject
 import org.xml.sax.InputSource
 import java.io.StringReader
+import java.net.HttpURLConnection
+import java.net.URL
 import javax.xml.parsers.DocumentBuilderFactory
 
 class PlaybackActivity : FragmentActivity() {
@@ -336,6 +338,31 @@ class PlaybackActivity : FragmentActivity() {
             }
 
             requestQueue.add(stringRequest)
+        } else if(ch.equals("nbatv")){
+            Thread(Runnable {
+                val url = URL("http://sinren.tv/sports2world_api.php")
+                var streamUrl: String
+
+                with(url.openConnection() as HttpURLConnection) {
+                    requestMethod = "GET"
+                    instanceFollowRedirects = false
+                    setRequestProperty(
+                        "User-Agent",
+                        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3977.4 Safari/537.36"
+                    )
+                    streamUrl = getHeaderField("Location")
+                }
+
+                if (streamUrl != "") {
+                    if (play)
+                        playByPlayer(streamUrl)
+                    else {
+                        changePlayer(streamUrl, exo)
+                    }
+                } else {
+                    showPlaybackErrorMessage(title, streamUrl)
+                }
+            }).start()
         }
     }
 
