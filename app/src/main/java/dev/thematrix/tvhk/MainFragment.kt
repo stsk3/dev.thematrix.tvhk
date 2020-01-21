@@ -14,7 +14,7 @@ import java.net.URL
 
 class MainFragment : BrowseFragment() {
 
-    private val default = 1
+    private val default = 2
     private val titleList = mutableListOf<String>()
     private val descriptionList = mutableListOf<String>()
     private val cardImageUrlList = mutableListOf<Int>()

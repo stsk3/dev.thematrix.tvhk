@@ -338,9 +338,22 @@ class PlaybackActivity : FragmentActivity() {
             }
 
             requestQueue.add(stringRequest)
-        } else if(ch.equals("nbatv")){
+        } else if(ch.startsWith("wowgua")){
             Thread(Runnable {
-                val url = URL("http://sinren.tv/sports2world_api.php")
+
+                var m3u8 = ""
+                if (ch.equals("wowgua_nbatv"))
+                    m3u8 = "http://wowgua.com/sports2world_api.php"
+                else if (ch.equals("wowgua_ch301"))
+                    m3u8 = "http://wowgua.com/live/channel_301.m3u8"
+                else if (ch.equals("wowgua_ch108"))
+                    m3u8 = "http://wowgua.com/live/channel_108.m3u8"
+                else if (ch.equals("wowgua_utv_c_plus"))
+                    m3u8 = "http://wowgua.com/live/channel_utv_c_plus.m3u8"
+                else if (ch.equals("wowgua_utv_racing"))
+                    m3u8 = "http://wowgua.com/live/channel_utv_racing.m3u8"
+
+                var url = URL(m3u8)
                 var streamUrl: String
 
                 with(url.openConnection() as HttpURLConnection) {
