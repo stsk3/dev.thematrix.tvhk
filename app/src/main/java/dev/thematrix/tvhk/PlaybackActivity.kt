@@ -10,6 +10,7 @@ import com.android.volley.toolbox.*
 import org.json.JSONArray
 import org.json.JSONObject
 import org.xml.sax.InputSource
+import java.io.IOException
 import java.io.StringReader
 import java.net.HttpURLConnection
 import java.net.URL
@@ -35,7 +36,15 @@ class PlaybackActivity : FragmentActivity() {
         }
     }
     private fun setUpNetwork(){
-        requestQueue = RequestQueue(NoCache(), BasicNetwork(HurlStack())).apply {
+        val hurlStack = object : HurlStack() {
+            @Throws(IOException::class) override fun createConnection(url: URL): HttpURLConnection {
+                val connection = super.createConnection(url)
+                connection.instanceFollowRedirects = false
+                return connection
+            }
+        }
+
+        requestQueue = RequestQueue(NoCache(), BasicNetwork(hurlStack)).apply {
             start()
         }
     }
@@ -339,43 +348,59 @@ class PlaybackActivity : FragmentActivity() {
 
             requestQueue.add(stringRequest)
         } else if(ch.startsWith("wowgua")){
-            Thread(Runnable {
 
-                var m3u8 = ""
-                if (ch.equals("wowgua_nbatv"))
-                    m3u8 = "http://wowgua.com/sports2world_api.php"
-                else if (ch.equals("wowgua_ch301"))
-                    m3u8 = "http://wowgua.com/live/channel_301.m3u8"
-                else if (ch.equals("wowgua_ch108"))
-                    m3u8 = "http://wowgua.com/live/channel_108.m3u8"
-                else if (ch.equals("wowgua_utv_c_plus"))
-                    m3u8 = "http://wowgua.com/live/channel_utv_c_plus.m3u8"
-                else if (ch.equals("wowgua_utv_racing"))
-                    m3u8 = "http://wowgua.com/live/channel_utv_racing.m3u8"
+            var url = ""
+            if (ch.equals("wowgua_nbatv"))
+                url = "http://wowgua.com/sports2world_api.php"
+            else if (ch.equals("wowgua_ch301"))
+                url = "http://wowgua.com/live/channel_301.m3u8"
+            else if (ch.equals("wowgua_ch108"))
+                url = "http://wowgua.com/live/channel_108.m3u8"
+            else if (ch.equals("wowgua_utv_c_plus"))
+                url = "http://wowgua.com/live/channel_utv_c_plus.m3u8"
+            else if (ch.equals("wowgua_utv_racing"))
+                url = "http://wowgua.com/live/channel_utv_racing.m3u8"
 
-                var url = URL(m3u8)
-                var streamUrl: String
-
-                with(url.openConnection() as HttpURLConnection) {
-                    requestMethod = "GET"
-                    instanceFollowRedirects = false
-                    setRequestProperty(
-                        "User-Agent",
-                        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3977.4 Safari/537.36"
-                    )
-                    streamUrl = getHeaderField("Location")
-                }
-
-                if (streamUrl != "") {
-                    if (play)
-                        playByPlayer(streamUrl)
-                    else {
-                        changePlayer(streamUrl, exo)
+            val stringRequest = object: StringRequest(
+                Method.GET,
+                url,
+                Response.Listener { },
+                Response.ErrorListener { error ->
+                    if (error.networkResponse.statusCode == 302) {
+                        val url = error.networkResponse.headers["Location"].toString()
+                        try {
+                            if (url != "") {
+                                if (play)
+                                    playByPlayer(url)
+                                else {
+                                    changePlayer(url, exo)
+                                }
+                            } else {
+                                showPlaybackErrorMessage(title, url)
+                            }
+                        } catch (exception: Exception) {
+                            showPlaybackErrorMessage(title, url)
+                        }
                     }
-                } else {
-                    showPlaybackErrorMessage(title, streamUrl)
+                    else
+                    {
+                        showPlaybackErrorMessage(title, url)
+                    }
                 }
-            }).start()
+            ){
+                override fun getRetryPolicy(): RetryPolicy {
+                    return DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 5, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
+                }
+
+                override fun getHeaders(): MutableMap<String, String> {
+                    val params =  mutableMapOf<String, String>()
+                    params.put("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3977.4 Safari/537.36")
+
+                    return params
+                }
+            }
+            requestQueue.add(stringRequest)
+
         }
     }
 
