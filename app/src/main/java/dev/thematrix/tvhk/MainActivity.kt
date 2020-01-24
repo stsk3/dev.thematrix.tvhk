@@ -8,7 +8,15 @@ import com.google.android.gms.common.GooglePlayServicesRepairableException
 import com.google.android.gms.security.ProviderInstaller
 import java.security.KeyManagementException
 import java.security.NoSuchAlgorithmException
+import java.security.SecureRandom
+import java.security.cert.CertificateException
+import java.security.cert.X509Certificate
+import javax.net.ssl.HostnameVerifier
+import javax.net.ssl.HttpsURLConnection.setDefaultHostnameVerifier
+import javax.net.ssl.HttpsURLConnection.setDefaultSSLSocketFactory
 import javax.net.ssl.SSLContext
+import javax.net.ssl.TrustManager
+import javax.net.ssl.X509TrustManager
 
 class MainActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -21,12 +29,30 @@ class MainActivity : Activity() {
     private fun setUpSSL() {
         try {
             ProviderInstaller.installIfNeeded(applicationContext)
-            var sslContext: SSLContext? = null
-            sslContext = SSLContext.getInstance("TLSv1.2")
+            var sslContext: SSLContext? = SSLContext.getInstance("TLSv1.2")
             try {
-                sslContext!!.init(null, null, null)
+                val trustAllCerts: Array<TrustManager> = arrayOf(object : X509TrustManager {
+                    @Throws(CertificateException::class)
+                    override fun checkClientTrusted(
+                        chain: Array<java.security.cert.X509Certificate>, authType: String) {
+                    }
+
+                    @Throws(CertificateException::class)
+                    override fun checkServerTrusted(chain: Array<java.security.cert.X509Certificate>, authType: String) {
+                    }
+
+                    override fun getAcceptedIssuers(): Array<X509Certificate?> {
+                        return arrayOfNulls(0)
+                    }
+                })
+
+                sslContext!!.init(null, trustAllCerts, SecureRandom())
                 val engine = sslContext.createSSLEngine()
                 engine.enabledCipherSuites
+
+                val allHostsValid = HostnameVerifier { _, _ -> true }
+                setDefaultSSLSocketFactory(sslContext.socketFactory)
+                setDefaultHostnameVerifier(allHostsValid)
 
                 Toast.makeText(this, "強制使用 TLSv1.2", Toast.LENGTH_SHORT).show()
             } catch (e: KeyManagementException) {

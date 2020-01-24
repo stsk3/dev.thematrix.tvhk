@@ -17,8 +17,8 @@ object MovieList {
     )
 
     val TITLE = mutableListOf(
-        "有線直播台",
         "有線財經資訊台",
+        "有線直播台",
         "有線新聞台",
         "now新聞台",
         "now直播台",
@@ -69,8 +69,8 @@ object MovieList {
     )
 
     val DESCRIPTION = mutableListOf(
-        "畫面比例可能不符合你的電視",
         "",
+        "畫面比例可能不符合你的電視",
         "",
         "",
         "",
@@ -121,8 +121,8 @@ object MovieList {
     )
 
     val CARD_IMAGE_URL = mutableListOf(
-        R.drawable.cablelivenews,
         R.drawable.cablefinance,
+        R.drawable.cablelivenews,
         R.drawable.cablenews,
         R.drawable.nowtv332,
         R.drawable.nowtv331,
@@ -225,8 +225,8 @@ object MovieList {
     )
 
     val FUNC = mutableListOf(
-        "cabletv110",
         "wowgua_ch108",
+        "cabletv110",
         "cabletv109",
         "nowtv332",
         "nowtv331",

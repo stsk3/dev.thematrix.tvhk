@@ -26,7 +26,7 @@ class PlaybackActivity : FragmentActivity() {
         window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
-        //First time channel (on click
+        //First time channel (on click)
         if (savedInstanceState == null) {
             val (id, title, _, _, videoUrl, func, exo) = this?.intent?.getSerializableExtra(DetailsActivity.MOVIE) as Movie
             currentVideoID = id
