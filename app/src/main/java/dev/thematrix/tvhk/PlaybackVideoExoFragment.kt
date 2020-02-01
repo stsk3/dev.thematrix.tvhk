@@ -1,5 +1,6 @@
 package dev.thematrix.tvhk
 
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -32,6 +33,7 @@ class PlaybackVideoExoFragment : Fragment() {
             false)
 
         val videoUrl = activity?.intent?.getStringExtra("videoUrl") as String
+        view.setBackgroundColor(Color.BLACK)
 
         PlaybackActivity.isCurrentExo = true
         setupExoPlayer(view)

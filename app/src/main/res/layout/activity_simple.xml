@@ -10,6 +10,7 @@
         android:id="@+id/player_view"
         android:layout_width="1920px"
         android:layout_height="1080px"
+        android:background="#000000"
         android:focusable="true"/>
 
 </RelativeLayout>

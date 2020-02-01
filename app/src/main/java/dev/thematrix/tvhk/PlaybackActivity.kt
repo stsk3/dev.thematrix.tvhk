@@ -12,9 +12,9 @@ import org.json.JSONObject
 import org.xml.sax.InputSource
 import java.io.IOException
 import java.io.StringReader
-import java.net.HttpURLConnection
-import java.net.URL
 import javax.xml.parsers.DocumentBuilderFactory
+import java.net.*
+
 
 class PlaybackActivity : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,6 +36,7 @@ class PlaybackActivity : FragmentActivity() {
         }
     }
     private fun setUpNetwork(){
+        //Header redirect
         val hurlStack = object : HurlStack() {
             @Throws(IOException::class) override fun createConnection(url: URL): HttpURLConnection {
                 val connection = super.createConnection(url)
@@ -44,6 +45,7 @@ class PlaybackActivity : FragmentActivity() {
             }
         }
 
+        //Volley
         requestQueue = RequestQueue(NoCache(), BasicNetwork(hurlStack)).apply {
             start()
         }
@@ -395,6 +397,43 @@ class PlaybackActivity : FragmentActivity() {
                 override fun getHeaders(): MutableMap<String, String> {
                     val params =  mutableMapOf<String, String>()
                     params.put("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3977.4 Safari/537.36")
+
+                    return params
+                }
+            }
+            requestQueue.add(stringRequest)
+
+        } else if(ch.startsWith("gdtv")){
+
+            var url = "http://www.gdtv.cn/m2o/channel/channel_info.php?id=" + ch.substring(5)
+            val stringRequest = object: StringRequest(
+                Method.GET,
+                url,
+                Response.Listener { response ->
+                    var mediaUrl: String = JSONArray(response).getJSONObject(0).get("m3u8").toString()
+                    try {
+                        if (play)
+                            playByPlayer(mediaUrl)
+                        else {
+                            changePlayer(mediaUrl, exo)
+                        }
+
+                    }catch (exception: Exception){
+                        showPlaybackErrorMessage(title, mediaUrl)
+                    }
+                },
+                Response.ErrorListener{ error ->
+                    showPlaybackErrorMessage(title, "")
+                }
+            ){
+                override fun getRetryPolicy(): RetryPolicy {
+                    return DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 5, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
+                }
+
+                override fun getHeaders(): MutableMap<String, String> {
+                    val params =  mutableMapOf<String, String>()
+                    params.put("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4043.2 Safari/537.36")
+                    params.put("Cookie", "WEB=20111112; UM_distinctid=170004ad7b8181-0e74af8ca05e59-6952732d-1fa400-170004ad7b94dc")
 
                     return params
                 }
