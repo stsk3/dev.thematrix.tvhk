@@ -3,7 +3,9 @@ package dev.thematrix.tvhk
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
+import android.view.View
 import androidx.leanback.app.VideoSupportFragment
 import androidx.leanback.app.VideoSupportFragmentGlueHost
 import androidx.leanback.media.MediaPlayerAdapter
@@ -24,7 +26,19 @@ class PlaybackVideoFragment : VideoSupportFragment() {
 
     override fun onStart() {
         super.onStart()
-        this.view!!.setBackgroundColor(Color.BLACK)
+        val view = this.view!!
+        view.setBackgroundColor(Color.BLACK)
+        view.systemUiVisibility = SYSTEM_UI_FLAG
+        view.setOnSystemUiVisibilityChangeListener {
+            if (view.systemUiVisibility != SYSTEM_UI_FLAG) {
+                showControlsOverlay(true)
+                Handler().postDelayed({
+                    view.systemUiVisibility = SYSTEM_UI_FLAG
+                    hideControlsOverlay(true)
+                }, 3000)
+            }
+        }
+
     }
 
     override fun onPause() {
@@ -73,7 +87,7 @@ class PlaybackVideoFragment : VideoSupportFragment() {
         mTransportControlGlue.host = glueHost
 
         mTransportControlGlue.isControlsOverlayAutoHideEnabled = true
-        hideControlsOverlay(false)
+        hideControlsOverlay(true)
         mTransportControlGlue.isSeekEnabled = true
     }
 
@@ -97,5 +111,6 @@ class PlaybackVideoFragment : VideoSupportFragment() {
         private lateinit var mTransportControlGlue: PlaybackTransportControlGlue<MediaPlayerAdapter>
         private lateinit var playerAdapter: MediaPlayerAdapter
         private lateinit var mediaUrl: String
+        private const val SYSTEM_UI_FLAG = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
     }
 }

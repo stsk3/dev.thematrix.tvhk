@@ -7,10 +7,11 @@
     tools:context="dev.thematrix.tvhk.PlaybackVideoExoFragment">
 
     <com.google.android.exoplayer2.ui.SimpleExoPlayerView
-        android:id="@+id/player_view"
-        android:layout_width="1920px"
-        android:layout_height="1080px"
-        android:background="#000000"
-        android:focusable="true"/>
+            android:id="@+id/player_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#000000"
+            android:focusable="true"
+            android:layout_centerInParent="true"/>
 
 </RelativeLayout>
