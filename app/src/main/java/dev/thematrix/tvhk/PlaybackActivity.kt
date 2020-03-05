@@ -358,6 +358,8 @@ class PlaybackActivity : FragmentActivity() {
                 url = "http://teslagram.com/live/channel_301.m3u8"
             else if (ch.equals("wowgua_ch108"))
                 url = "http://teslagram.com/live/channel_108.m3u8"
+            else if (ch.equals("wowgua_ch109"))
+                url = "http://teslagram.com/live/channel_109.m3u8"
             else if (ch.equals("wowgua_utv_c_plus"))
                 url = "http://teslagram.com/live/channel_utv_c_plus.m3u8"
             else if (ch.equals("wowgua_utv_racing"))

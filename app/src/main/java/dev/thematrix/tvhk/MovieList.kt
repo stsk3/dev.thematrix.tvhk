@@ -287,7 +287,7 @@ object MovieList {
     val VIDEO_URL = mutableListOf(
         "",
         "",
-        "https://ottproxy2.mott.tv/livehls/MOB-SCC/index.m3u8",
+        "",
         "",
         "",
         "https://www.rthk.hk/feeds/dtt/rthktv32_https.m3u8",
@@ -345,9 +345,9 @@ object MovieList {
         "http://45.126.83.51/uq2663/h/h23/index.m3u8#http://210.210.155.35/uq2663/h/h23/index.m3u8",
         "http://45.126.83.51/uq2663/h/h29/index.m3u8#http://210.210.155.35/uq2663/h/h29/index.m3u8",
         "http://45.126.83.51/qwr9ew/s/s17/index.m3u8#http://210.210.155.35/qwr9ew/s/s17/index.m3u8",
-        "http://45.126.83.51/uq2663/h/h04/index.m3u8#http://210.210.155.35/uq2663/h/h04/index.m3u8",
+        "http://45.126.83.51/uq2663/h/h04/index2.m3u8#http://210.210.155.35/uq2663/h/h04/index2.m3u8",
         "http://45.126.83.51/uq2663/h/h19/index.m3u8#http://210.210.155.35/uq2663/h/h19/index.m3u8",
-        "http://45.126.83.51/uq2663/h/h11/index.m3u8#http://210.210.155.35/uq2663/h/h11/index.m3u8",
+        "http://45.126.83.51/uq2663/h/h37/index.m3u8#http://210.210.155.35/uq2663/h/h37/index.m3u8",
         "SKIP",
         "",
         "",
@@ -375,7 +375,7 @@ object MovieList {
     val FUNC = mutableListOf(
         "wowgua_ch108",
         "cabletv110",
-        "cabletv109",
+        "wowgua_ch109",
         "nowtv332",
         "nowtv331",
         "rthk32",
@@ -523,7 +523,7 @@ object MovieList {
         movie.cardImageUrl = cardImageUrl
         movie.videoUrl = videoUrl
         movie.func = func
-        movie.exo = func in arrayOf("cabletv109", "viutv99", "nowtv332", "nowtv331", "nowtv630", "fantv", "rthk31", "rthk32", "fox", "fb", "hkatv", "wowgua_nbatv", "wowgua_ch301", "wowgua_utv_racing", "wowgua_utv_c_plus", "wowgua_ch108")
+        movie.exo = func in arrayOf("viutv99", "nowtv332", "nowtv331", "nowtv630", "fantv", "rthk31", "rthk32", "fox", "fb", "hkatv", "wowgua_nbatv", "wowgua_utv_c_plus")
 
 
         return movie
