@@ -353,15 +353,15 @@ class PlaybackActivity : FragmentActivity() {
 
             var url = ""
             if (ch.equals("wowgua_nbatv"))
-                url = "http://wowgua.com/sports2world_api.php"
+                url = "http://teslagram.com/sports2world_api.php"
             else if (ch.equals("wowgua_ch301"))
-                url = "http://wowgua.com/live/channel_301.m3u8"
+                url = "http://teslagram.com/live/channel_301.m3u8"
             else if (ch.equals("wowgua_ch108"))
-                url = "http://wowgua.com/live/channel_108.m3u8"
+                url = "http://teslagram.com/live/channel_108.m3u8"
             else if (ch.equals("wowgua_utv_c_plus"))
-                url = "http://wowgua.com/live/channel_utv_c_plus.m3u8"
+                url = "http://teslagram.com/live/channel_utv_c_plus.m3u8"
             else if (ch.equals("wowgua_utv_racing"))
-                url = "http://wowgua.com/live/channel_utv_racing.m3u8"
+                url = "http://teslagram.com/live/channel_utv_racing.m3u8"
 
             val stringRequest = object: StringRequest(
                 Method.GET,

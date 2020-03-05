@@ -112,7 +112,7 @@ class MainFragment : BrowseFragment() {
             //Get live link
             getFbLiveVideo("standnewshk", "立場直播", R.drawable.fb_standnewshk)
             getFbLiveVideo("hk.nextmedia", "蘋果日報", R.drawable.fb_hk_nextmedia)
-            getFbLiveVideo("inmediahk", "香港獨立媒體網", R.drawable.fb_inmediahk)
+            getFbLiveVideo("inmediahknet", "香港獨立媒體網", R.drawable.fb_inmediahk)
             getFbLiveVideo("hk01wemedia", "HK01", R.drawable.fb_hk01wemedia)
             getFbLiveVideo("TMHK.ORG", "TMHK", R.drawable.fb_tmhk_org)
             getFbLiveVideo("onccnews", "東網", R.drawable.fb_onccnews)
@@ -124,6 +124,7 @@ class MainFragment : BrowseFragment() {
             getFbLiveVideo("socrec", "SocREC 社會記錄頻道", R.drawable.fb_socrec)
             getFbLiveVideo("fans.hkgolden", "HKGolden", R.drawable.fb_fans_hkgolden)
             getFbLiveVideo("CupidProducer", "丘品創作", R.drawable.fb_cupidproducer)
+            getFbLiveVideo("cvrhk", "全民記者", R.drawable.fb_cvrhk)
             getFbLiveVideo("onccsport", "東網體育", R.drawable.fb_onccsport)
 
 
