@@ -59,15 +59,12 @@ object MovieList {
         "Hollywood頻道",
         "八大綜合",
         "民視新聞",
-        "年代新聞",
         "三立新聞",
-        "東森新聞",
-        "中天新聞",
         "SKIP",
         "國家地理頻道",
         "國家地理野生頻道",
         "國家地理歷險頻道",
-        "歷史頻道",
+        "H2 HD",
         "RT Doc",
         "Star Movies",
         "Star World",
@@ -144,9 +141,6 @@ object MovieList {
         "",
         "",
         "SKIP",
-        "",
-        "",
-        "",
         "",
         "",
         "",
@@ -235,15 +229,12 @@ object MovieList {
         R.drawable.tw_hollywood,
         R.drawable.tw_gtv,
         R.drawable.tw_ftvn,
-        R.drawable.tw_eratv,
         R.drawable.tw_setn,
-        R.drawable.tw_tbc,
-        R.drawable.tw_cti,
         0,
         R.drawable.uae_natgeo,
         R.drawable.uae_natgeowild,
         R.drawable.uae_natgeopeople,
-        R.drawable.uae_history,
+        R.drawable.uae_history2,
         R.drawable.uae_rtdoc,
         R.drawable.uae_starmovies,
         R.drawable.uae_starworld,
@@ -323,10 +314,7 @@ object MovieList {
         "http://192.200.120.82:8080/ZZ_haolaiwu/ZZ_haolaiwu.m3u8",
         "http://192.200.120.82:8080/ZZ_zhongtianyazhou/ZZ_zhongtianyazhou.m3u8",
         "http://210.61.56.23/hls/ftvtv/index.m3u8#http://6.mms.vlog.xuite.net/hls/ftvtv/index.m3u8#http://1.mms.vlog.xuite.net/hls/ftvtv/index.m3u8",
-        "http://104.250.154.42:8080/ZZ_niandaixinwen/ZZ_niandianxinwen.m3u8",
         "http://60.199.188.65/HLS/WG_ETTV-N/index.m3u8",
-        "http://192.200.120.82:8080/ZZ_dongsenxinwen/ZZ_dongsenxinwen.m3u8",
-        "http://104.250.154.42:8080/ZZ_zhongtiannews/ZZ_zhongtiannews.m3u8",
         "SKIP",
         "http://livecdnh1.tvanywhere.ae:80/hls/nat_geo/index.m3u8",
         "http://livecdnh1.tvanywhere.ae:80/hls/nat_geo_wild/index.m3u8",
@@ -412,14 +400,11 @@ object MovieList {
         "",
         "",
         "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
         "SKIP",
+        "",
+        "",
+        "",
+        "",
         "",
         "",
         "",
@@ -523,7 +508,10 @@ object MovieList {
         movie.cardImageUrl = cardImageUrl
         movie.videoUrl = videoUrl
         movie.func = func
-        movie.exo = func in arrayOf("viutv99", "nowtv332", "nowtv331", "nowtv630", "fantv", "rthk31", "rthk32", "fox", "fb", "hkatv", "wowgua_nbatv", "wowgua_utv_c_plus")
+        movie.exo = if (android.os.Build.VERSION.SDK_INT < 21)
+            func in arrayOf("viutv99", "nowtv332", "nowtv331", "nowtv630", "fantv", "rthk31", "rthk32", "fox", "fb", "hkatv", "wowgua_nbatv", "wowgua_utv_c_plus")
+        else
+            true
 
 
         return movie

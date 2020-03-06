@@ -99,10 +99,10 @@ class PlaybackVideoFragment : VideoSupportFragment() {
     }
 
     private fun handleUrl(url: String): String{
-        if(SDK_VER < 21){
-            return url.replace("https://", "http://")
+        return if(SDK_VER < 21){
+            url.replace("https://", "http://")
         }else{
-            return url
+            url
         }
     }
 
