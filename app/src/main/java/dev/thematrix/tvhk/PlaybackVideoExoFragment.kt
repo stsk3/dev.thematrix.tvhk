@@ -12,8 +12,11 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.google.android.exoplayer2.C
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
+import com.google.android.exoplayer2.analytics.AnalyticsListener
+import com.google.android.exoplayer2.source.ConcatenatingMediaSource
 import com.google.android.exoplayer2.source.dash.DashMediaSource
 import com.google.android.exoplayer2.source.hls.HlsMediaSource
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection
@@ -23,6 +26,7 @@ import com.google.android.exoplayer2.ui.TrackSelectionDialogBuilder
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.video.VideoListener
+import dev.thematrix.tvhk.PlaybackActivity.Companion.toast
 import kotlinx.android.synthetic.main.activity_simple.view.*
 
 
@@ -74,7 +78,7 @@ class PlaybackVideoExoFragment : Fragment() {
             .setTrackSelector(trackSelector)
             .setBandwidthMeter(bandwidthMeter).build()
         player.playWhenReady = true
-        player.repeatMode = Player.REPEAT_MODE_ONE
+        player.repeatMode = Player.REPEAT_MODE_ALL
         val playerView = view.player_view
         playerView.useController = true
         playerView.requestFocus()
@@ -85,6 +89,13 @@ class PlaybackVideoExoFragment : Fragment() {
         val dataSourceFactory = DefaultDataSourceFactory(activity, "exoplayer")
         hlsMediaSourceFactory = HlsMediaSource.Factory(dataSourceFactory)
         dashMediaSourceFactory = DashMediaSource.Factory(dataSourceFactory)
+
+        player.addAnalyticsListener(object : AnalyticsListener {
+            override fun onSeekProcessed(eventTime: AnalyticsListener.EventTime) {
+                toast.setText("正在轉到Source ${eventTime.windowIndex}")
+                toast.show()
+            }
+        })
 
         player.addVideoListener(object : VideoListener {
             override fun onVideoSizeChanged(
@@ -146,6 +157,10 @@ class PlaybackVideoExoFragment : Fragment() {
         }
     }
 
+    fun videoSeek(index: Int) {
+        player.seekTo(index, C.TIME_UNSET)
+    }
+
     override fun onStop() {
         super.onStop()
         player.release()
@@ -157,15 +172,21 @@ class PlaybackVideoExoFragment : Fragment() {
     }
 
     fun playVideo(videoUrl: String) {
-        val videoUri = Uri.parse(videoUrl)
+        val concatenatingMediaSource = ConcatenatingMediaSource()
         mediaUrl = videoUrl
 
-        val mediaSource = if (videoUrl.contains(".mpd"))
-            dashMediaSourceFactory.createMediaSource(videoUri)
-        else
-            hlsMediaSourceFactory.createMediaSource(videoUri)
+        videoUrl.split("#").forEach {
+            val videoUri = Uri.parse(it)
 
-        player.prepare(mediaSource)
+            val mediaSource = if (videoUrl.contains(".mpd"))
+                dashMediaSourceFactory.createMediaSource(videoUri)
+            else
+                hlsMediaSourceFactory.createMediaSource(videoUri)
+
+            concatenatingMediaSource.addMediaSource(mediaSource)
+        }
+
+        player.prepare(concatenatingMediaSource)
     }
 
 

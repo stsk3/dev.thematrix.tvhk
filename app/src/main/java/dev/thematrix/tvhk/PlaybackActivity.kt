@@ -55,11 +55,13 @@ class PlaybackActivity : FragmentActivity() {
     {
         when {
             videoUrl == "" -> getVideoUrl(title, func, exo, playDirectly)
-            playDirectly -> playByPlayer(videoUrl.split("#")[currentSourceIndex])
-            else -> changePlayer(videoUrl.split("#")[currentSourceIndex], exo)
+            playDirectly -> playByPlayer(videoUrl)
+            else -> changePlayer(videoUrl, exo)
         }
 
-        toast.setText("正在轉台到 " + title + "[" + currentSourceIndex + "]")
+        val sourceText = if (videoUrl.split("#").size > 1) ", Source $currentSourceIndex" else ""
+
+        toast.setText("正在轉台到 $title$sourceText")
         toast.show()
     }
 
@@ -94,8 +96,7 @@ class PlaybackActivity : FragmentActivity() {
         ){
             direction = "LEFT"
         }else if(
-            event.keyCode == KeyEvent.KEYCODE_DPAD_RIGHT ||
-            (event.keyCode == KeyEvent.KEYCODE_BACK && event.isLongPress)
+            event.keyCode == KeyEvent.KEYCODE_DPAD_RIGHT
         ){
             direction = "RIGHT"
         }else if(
@@ -117,51 +118,61 @@ class PlaybackActivity : FragmentActivity() {
             val channelCount = list.count()
 
             // Change channel
-            if(direction.equals("PREVIOUS")){
-                videoId--
-
-                //Fix Underflow
-                if(videoId < 0) {
-                    videoId = channelCount - 2 //Skipping SKIP
-                }
-                else if (list[videoId].title == "SKIP")
-                {
+            if(direction == "PREVIOUS" || direction == "NEXT") {
+                if (direction == "PREVIOUS") {
                     videoId--
-                }
-                currentSourceIndex = 0
-            }else if(direction.equals("NEXT")) {
-                videoId++
 
-                //Fix Overflow
-                if(videoId >= (channelCount - 1)){ //Skipping SKIP
-                    videoId = 0
-                }
-                else if (list[videoId].title == "SKIP")
-                {
+                    //Fix Underflow
+                    if (videoId < 0) {
+                        videoId = channelCount - 2 //Skipping SKIP
+                    } else if (list[videoId].title == "SKIP") {
+                        videoId--
+                    }
+                    currentSourceIndex = 0
+                } else if (direction == "NEXT") {
                     videoId++
-                }
-                currentSourceIndex = 0
-            }
 
-            // New Channel
-            val item = list[videoId]
-            currentVideoID = videoId
+                    //Fix Overflow
+                    if (videoId >= (channelCount - 1)) { //Skipping SKIP
+                        videoId = 0
+                    } else if (list[videoId].title == "SKIP") {
+                        videoId++
+                    }
+                    currentSourceIndex = 0
+                }
+
+                // New Channel
+                val item = list[videoId]
+                currentVideoID = videoId
+
+                // Play
+                prepareAndChangePlayer(item.videoUrl, item.title, item.func, item.exo, item.exo == isCurrentExo)
+            }
 
             //Change Source
-            if (item.videoUrl != "") {
-                var sourceCount = item.videoUrl.split("#").size
-                if (direction.equals("LEFT")) {
-                    currentSourceIndex = (currentSourceIndex - 1) % sourceCount
-                    if (currentSourceIndex < 0)
-                        currentSourceIndex = sourceCount - 1
-                } else if (direction.equals("RIGHT")) {
-                    currentSourceIndex = (currentSourceIndex + 1) % sourceCount
+            else if (direction == "LEFT" || direction == "RIGHT")
+            {
+                val item = list[videoId]
+                val sourceCount = item.videoUrl.split("#").size
+                if (item.videoUrl != "" && sourceCount > 1) {
+                    if (direction == "LEFT") {
+                        currentSourceIndex = (currentSourceIndex - 1) % sourceCount
+                        if (currentSourceIndex < 0)
+                            currentSourceIndex = sourceCount - 1
+                    } else if (direction == "RIGHT") {
+                        currentSourceIndex = (currentSourceIndex + 1) % sourceCount
+                    }
+
+                    if (isCurrentExo)
+                        PlaybackVideoExoFragment().videoSeek(currentSourceIndex)
+                    else
+                        prepareAndChangePlayer(item.videoUrl, item.title, item.func, item.exo, item.exo == isCurrentExo)
+
+                } else {
+                    toast.setText("只有一個Source")
+                    toast.show()
                 }
             }
-
-
-            // Play
-            prepareAndChangePlayer(item.videoUrl, item.title, item.func, item.exo, item.exo == isCurrentExo)
         }
 
         return true
@@ -172,7 +183,7 @@ class PlaybackActivity : FragmentActivity() {
         if (isCurrentExo)
             PlaybackVideoExoFragment().playVideo(videoUrl)
         else
-            PlaybackVideoFragment().playVideo(videoUrl)
+            PlaybackVideoFragment().playVideo(videoUrl.split("#")[currentSourceIndex])
     }
 
 

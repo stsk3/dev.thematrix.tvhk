@@ -31,10 +31,8 @@ class PlaybackVideoFragment : VideoSupportFragment() {
         view.systemUiVisibility = SYSTEM_UI_FLAG
         view.setOnSystemUiVisibilityChangeListener {
             if (view.systemUiVisibility != SYSTEM_UI_FLAG) {
-                showControlsOverlay(true)
                 Handler().postDelayed({
                     view.systemUiVisibility = SYSTEM_UI_FLAG
-                    hideControlsOverlay(true)
                 }, 3000)
             }
         }
@@ -87,8 +85,9 @@ class PlaybackVideoFragment : VideoSupportFragment() {
         mTransportControlGlue.host = glueHost
 
         mTransportControlGlue.isControlsOverlayAutoHideEnabled = true
-        hideControlsOverlay(true)
+        hideControlsOverlay(false)
         mTransportControlGlue.isSeekEnabled = false
+
     }
 
     fun playVideo(videoUrl: String) {
