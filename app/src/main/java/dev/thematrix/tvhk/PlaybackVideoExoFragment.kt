@@ -105,7 +105,7 @@ class PlaybackVideoExoFragment : Fragment() {
                 pixelWidthHeightRatio: Float
             ) {
 
-                if (mediaUrl.contains("webch630")) {
+                if (mediaUrl.contains("webch630") || mediaUrl.contains("grtn")) {
                     val playerView = view.player_view
                     val screenWidth = playerView.width
                     val screenHeight = playerView.height
@@ -142,6 +142,13 @@ class PlaybackVideoExoFragment : Fragment() {
         val trackSelectionButton = view.exo_track_selection_button
         trackSelectionButton.setOnClickListener {
             trackSelectionDialog(context)
+        }
+        // Resize Mode Button
+        val resizeModeButton = view.exo_resize_button
+        resizeModeButton.setOnClickListener {
+            val playerView = view.player_view
+            playerView.resizeMode = if (playerView.resizeMode == AspectRatioFrameLayout.RESIZE_MODE_FIT)
+                AspectRatioFrameLayout.RESIZE_MODE_FILL else AspectRatioFrameLayout.RESIZE_MODE_FIT
         }
     }
 
