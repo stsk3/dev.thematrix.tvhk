@@ -9,7 +9,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.google.android.exoplayer2.ExoPlayerFactory
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.source.dash.DashMediaSource
@@ -17,7 +16,7 @@ import com.google.android.exoplayer2.source.hls.HlsMediaSource
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout
-import com.google.android.exoplayer2.ui.SimpleExoPlayerView
+import com.google.android.exoplayer2.ui.TrackSelectionDialogBuilder
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.video.VideoListener
@@ -44,29 +43,52 @@ class PlaybackVideoExoFragment : Fragment() {
         setupExoPlayer(view)
 
         playVideo(videoUrl)
-
         return view
     }
 
     private fun setupExoPlayer(view: View) {
+        val context = this.context!!
+
         // setup track selector
-        val bandwithMeter = DefaultBandwidthMeter()
-        val videoTrackSelectionFactory = AdaptiveTrackSelection.Factory(bandwithMeter)
-        val trackSelector = DefaultTrackSelector(videoTrackSelectionFactory)
+        val bandwidthMeter = DefaultBandwidthMeter.Builder(context).build()
+        val videoTrackSelectionFactory = AdaptiveTrackSelection.Factory()
+        val trackSelectorParameters = DefaultTrackSelector.ParametersBuilder(context).build()
+        trackSelector = DefaultTrackSelector(context, videoTrackSelectionFactory)
+        trackSelector.parameters = trackSelectorParameters
+
+
+
+
 
         // create player
-        player = ExoPlayerFactory.newSimpleInstance(activity, trackSelector)
+        player = SimpleExoPlayer.Builder(context)
+            .setTrackSelector(trackSelector)
+            .setBandwidthMeter(bandwidthMeter).build()
         player.playWhenReady = true
         player.repeatMode = Player.REPEAT_MODE_ONE
-        playerView = view.player_view
+        val playerView = view.player_view
         playerView.useController = true
         playerView.requestFocus()
         playerView.player = player
         playerView.hideController()
 
-        dataSourceFactory = DefaultDataSourceFactory(activity, "exoplayer", bandwithMeter)
+
+        val dataSourceFactory = DefaultDataSourceFactory(activity, "exoplayer")
         hlsMediaSourceFactory = HlsMediaSource.Factory(dataSourceFactory)
         dashMediaSourceFactory = DashMediaSource.Factory(dataSourceFactory)
+
+
+        playerView.setOnClickListener {
+            val mappedTrackInfo = trackSelector.currentMappedTrackInfo
+            if (mappedTrackInfo != null) {
+                val dialogPair = TrackSelectionDialogBuilder(context, "選擇品質", trackSelector, 0)
+                    .setShowDisableOption(false)
+                    .setAllowAdaptiveSelections(true)
+                    .build()
+
+                dialogPair.show()
+            }
+        }
 
         player.addVideoListener(object : VideoListener {
             override fun onVideoSizeChanged(
@@ -77,6 +99,7 @@ class PlaybackVideoExoFragment : Fragment() {
             ) {
 
                 if (mediaUrl.contains("webch630")) {
+                    val playerView = view.player_view
                     val screenWidth = playerView.width
                     val screenHeight = playerView.height
                     val p = playerView.layoutParams
@@ -99,6 +122,11 @@ class PlaybackVideoExoFragment : Fragment() {
                     // Redraw myView
                     playerView.requestLayout()
                 }
+                else
+                {
+                    playerView.resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FIT
+                }
+
             }
         })
     }
@@ -122,8 +150,6 @@ class PlaybackVideoExoFragment : Fragment() {
         else
             hlsMediaSourceFactory.createMediaSource(videoUri)
 
-        playerView.resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FIT
-
         player.prepare(mediaSource)
     }
 
@@ -131,8 +157,7 @@ class PlaybackVideoExoFragment : Fragment() {
 
     companion object {
         private lateinit var player: SimpleExoPlayer
-        private lateinit var playerView: SimpleExoPlayerView
-        private lateinit var dataSourceFactory: DefaultDataSourceFactory
+        private lateinit var trackSelector: DefaultTrackSelector
         private lateinit var hlsMediaSourceFactory: HlsMediaSource.Factory
         private lateinit var dashMediaSourceFactory: DashMediaSource.Factory
         private lateinit var mediaUrl: String
