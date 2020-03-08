@@ -14,4 +14,13 @@
             android:focusable="true"
             android:layout_centerInParent="true"/>
 
+    <ImageView
+            android:id="@+id/exo_track_selection_button"
+            android:src="@android:drawable/ic_menu_view"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:tint="#377c3c"
+            android:visibility="gone"/>
+
+
 </RelativeLayout>

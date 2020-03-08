@@ -98,6 +98,12 @@ class PlaybackActivity : FragmentActivity() {
             (event.keyCode == KeyEvent.KEYCODE_BACK && event.isLongPress)
         ){
             direction = "RIGHT"
+        }else if(
+            event.keyCode == KeyEvent.KEYCODE_MENU
+        ){
+            if (isCurrentExo)
+                PlaybackVideoExoFragment().trackSelectionDialog(this)
+            return true
         }else{
             return super.dispatchKeyEvent(event)
         }

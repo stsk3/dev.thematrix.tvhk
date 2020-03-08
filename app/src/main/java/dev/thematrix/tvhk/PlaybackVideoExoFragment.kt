@@ -1,5 +1,6 @@
 package dev.thematrix.tvhk
 
+import android.content.Context
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
@@ -7,6 +8,8 @@ import android.os.Handler
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.google.android.exoplayer2.Player
@@ -35,8 +38,14 @@ class PlaybackVideoExoFragment : Fragment() {
         view.setBackgroundColor(Color.BLACK)
         view.systemUiVisibility = SYSTEM_UI_FLAG
         view.setOnSystemUiVisibilityChangeListener {
-            if (view.systemUiVisibility != SYSTEM_UI_FLAG)
-                Handler().postDelayed({ view.systemUiVisibility = SYSTEM_UI_FLAG } , 3000)
+            if (view.systemUiVisibility != SYSTEM_UI_FLAG) {
+                val trackSelectionButton = view.exo_track_selection_button
+                trackSelectionButton.visibility = VISIBLE
+                Handler().postDelayed({
+                    view.systemUiVisibility = SYSTEM_UI_FLAG
+                    trackSelectionButton.visibility = GONE
+                }, 3000)
+            }
         }
 
         PlaybackActivity.isCurrentExo = true
@@ -77,19 +86,6 @@ class PlaybackVideoExoFragment : Fragment() {
         hlsMediaSourceFactory = HlsMediaSource.Factory(dataSourceFactory)
         dashMediaSourceFactory = DashMediaSource.Factory(dataSourceFactory)
 
-
-        playerView.setOnClickListener {
-            val mappedTrackInfo = trackSelector.currentMappedTrackInfo
-            if (mappedTrackInfo != null) {
-                val dialogPair = TrackSelectionDialogBuilder(context, "選擇品質", trackSelector, 0)
-                    .setShowDisableOption(false)
-                    .setAllowAdaptiveSelections(true)
-                    .build()
-
-                dialogPair.show()
-            }
-        }
-
         player.addVideoListener(object : VideoListener {
             override fun onVideoSizeChanged(
                 width: Int,
@@ -129,6 +125,25 @@ class PlaybackVideoExoFragment : Fragment() {
 
             }
         })
+
+
+        // Track Selection Button
+        val trackSelectionButton = view.exo_track_selection_button
+        trackSelectionButton.setOnClickListener {
+            trackSelectionDialog(context)
+        }
+    }
+
+    fun trackSelectionDialog(context: Context) {
+        val mappedTrackInfo = trackSelector.currentMappedTrackInfo
+        if (mappedTrackInfo != null) {
+            val dialogPair = TrackSelectionDialogBuilder(context, "選擇品質", trackSelector, 0)
+                .setShowDisableOption(false)
+                .setAllowAdaptiveSelections(true)
+                .build()
+
+            dialogPair.show()
+        }
     }
 
     override fun onStop() {

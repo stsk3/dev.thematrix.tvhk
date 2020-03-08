@@ -88,7 +88,7 @@ class PlaybackVideoFragment : VideoSupportFragment() {
 
         mTransportControlGlue.isControlsOverlayAutoHideEnabled = true
         hideControlsOverlay(true)
-        mTransportControlGlue.isSeekEnabled = true
+        mTransportControlGlue.isSeekEnabled = false
     }
 
     fun playVideo(videoUrl: String) {
