@@ -50,7 +50,7 @@ class PlaybackVideoFragment : VideoSupportFragment() {
     }
 
     override fun onVideoSizeChanged(width: Int, height: Int) {
-        if (mediaUrl.contains("grtn")) {
+        if (mediaUrl.contains("grtn") || mediaUrl.contains("in")) {
             val screenWidth = this.view!!.width
             val screenHeight = this.view!!.height
             val p = this.surfaceView.layoutParams

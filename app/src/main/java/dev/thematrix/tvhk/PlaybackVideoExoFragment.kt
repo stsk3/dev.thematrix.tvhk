@@ -45,9 +45,12 @@ class PlaybackVideoExoFragment : Fragment() {
             if (view.systemUiVisibility != SYSTEM_UI_FLAG) {
                 val trackSelectionButton = view.exo_track_selection_button
                 trackSelectionButton.visibility = VISIBLE
+                val resizeModeButton = view.exo_resize_button
+                resizeModeButton.visibility = VISIBLE
                 Handler().postDelayed({
                     view.systemUiVisibility = SYSTEM_UI_FLAG
                     trackSelectionButton.visibility = GONE
+                    resizeModeButton.visibility = GONE
                 }, 3000)
             }
         }
