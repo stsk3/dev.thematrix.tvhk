@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment
 import com.google.android.exoplayer2.ExoPlaybackException
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
+import com.google.android.exoplayer2.analytics.AnalyticsListener
 import com.google.android.exoplayer2.source.BehindLiveWindowException
 import com.google.android.exoplayer2.source.ConcatenatingMediaSource
 import com.google.android.exoplayer2.source.dash.DashMediaSource
@@ -99,6 +100,20 @@ class PlaybackVideoExoFragment : Fragment() {
         dashMediaSourceFactory = DashMediaSource.Factory(dataSourceFactory)
 
         player.run {
+            addAnalyticsListener(object : AnalyticsListener {
+                override fun onSeekProcessed(eventTime: AnalyticsListener.EventTime) {
+                    super.onSeekProcessed(eventTime)
+
+                    if (windowIndex != eventTime.windowIndex) {
+                        windowIndex = eventTime.windowIndex
+                        toast.setText("已轉到Source $windowIndex")
+                        toast.show()
+                    }
+                }
+
+
+            })
+
             addListener(object : Player.EventListener {
                 override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
                     super.onPlayerStateChanged(playWhenReady, playbackState)
@@ -110,13 +125,7 @@ class PlaybackVideoExoFragment : Fragment() {
                             player.seekToDefaultPosition()
                         }
                         Player.STATE_BUFFERING -> {}
-                        Player.STATE_READY -> {
-                            if (player.currentTimeline.windowCount > 1) {
-                                toast.setText("已轉到Source ${player.currentWindowIndex}")
-                                toast.show()
-                            }
-
-                        }
+                        Player.STATE_READY -> {}
                         Player.STATE_ENDED -> {
                             toast.setText("STATE_ENDED")
                             toast.show()
@@ -232,6 +241,7 @@ class PlaybackVideoExoFragment : Fragment() {
     fun playVideo(videoUrl: String, window: Int = 0) {
         val concatenatingMediaSource = ConcatenatingMediaSource()
         mediaUrl = videoUrl
+        windowIndex = window
 
         videoUrl.split("#").forEach {
             val videoUri = Uri.parse(it)
@@ -245,7 +255,7 @@ class PlaybackVideoExoFragment : Fragment() {
         }
 
         player.prepare(concatenatingMediaSource)
-        player.seekToDefaultPosition(window)
+        player.seekToDefaultPosition(windowIndex)
     }
 
 
@@ -256,6 +266,7 @@ class PlaybackVideoExoFragment : Fragment() {
         private lateinit var hlsMediaSourceFactory: HlsMediaSource.Factory
         private lateinit var dashMediaSourceFactory: DashMediaSource.Factory
         private lateinit var mediaUrl: String
+        private var windowIndex: Int = 0
         private const val SYSTEM_UI_FLAG = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
     }
 }
