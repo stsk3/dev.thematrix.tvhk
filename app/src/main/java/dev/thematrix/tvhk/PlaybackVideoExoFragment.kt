@@ -12,10 +12,11 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.google.android.exoplayer2.C
+import com.google.android.exoplayer2.ExoPlaybackException
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.analytics.AnalyticsListener
+import com.google.android.exoplayer2.source.BehindLiveWindowException
 import com.google.android.exoplayer2.source.ConcatenatingMediaSource
 import com.google.android.exoplayer2.source.dash.DashMediaSource
 import com.google.android.exoplayer2.source.hls.HlsMediaSource
@@ -82,6 +83,7 @@ class PlaybackVideoExoFragment : Fragment() {
             .setBandwidthMeter(bandwidthMeter).build()
         player.playWhenReady = true
         player.repeatMode = Player.REPEAT_MODE_ALL
+        player.setHandleWakeLock(true)
         val playerView = view.player_view
         playerView.useController = true
         playerView.requestFocus()
@@ -93,52 +95,91 @@ class PlaybackVideoExoFragment : Fragment() {
         hlsMediaSourceFactory = HlsMediaSource.Factory(dataSourceFactory)
         dashMediaSourceFactory = DashMediaSource.Factory(dataSourceFactory)
 
-        player.addAnalyticsListener(object : AnalyticsListener {
-            override fun onSeekProcessed(eventTime: AnalyticsListener.EventTime) {
-                toast.setText("正在轉到Source ${eventTime.windowIndex}")
-                toast.show()
-            }
-        })
+        player.run {
+            addAnalyticsListener(object : AnalyticsListener {
+                override fun onSeekProcessed(eventTime: AnalyticsListener.EventTime) {
+                    super.onSeekProcessed(eventTime)
 
-        player.addVideoListener(object : VideoListener {
-            override fun onVideoSizeChanged(
-                width: Int,
-                height: Int,
-                unappliedRotationDegrees: Int,
-                pixelWidthHeightRatio: Float
-            ) {
+                    toast.setText("正在轉到Source ${eventTime.windowIndex}")
+                    toast.show()
+                }
+            })
 
-                if (mediaUrl.contains("webch630") || mediaUrl.contains("grtn")) {
-                    val playerView = view.player_view
-                    val screenWidth = playerView.width
-                    val screenHeight = playerView.height
-                    val p = playerView.layoutParams
 
-                    //Set all to 16:9 Ratio
-                    val ratio = 16.0 / 9.0
-                    if (screenWidth / screenHeight > ratio) {
-                        p.width = (screenHeight * ratio).toInt()
-                        p.height = screenHeight
+            addListener(object : Player.EventListener {
+                override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
+                    super.onPlayerStateChanged(playWhenReady, playbackState)
+
+                    when (playbackState) {
+                        Player.STATE_IDLE -> {
+                            toast.setText(Player.STATE_IDLE.toString())
+                            toast.show()
+                            player.seekToDefaultPosition()
+                        }
+                        Player.STATE_BUFFERING -> {}
+                        Player.STATE_READY -> {}
+                        Player.STATE_ENDED -> {
+                            toast.setText(Player.STATE_ENDED.toString())
+                            toast.show()
+                            player.seekToDefaultPosition()
+                        }
+                    }
+                }
+
+                override fun onPlayerError(e: ExoPlaybackException) {
+                    super.onPlayerError(e)
+                    if (e.type == ExoPlaybackException.TYPE_SOURCE)
+                    {
+                        if (e.sourceException is BehindLiveWindowException) {
+                            toast.setText("BehindLiveWindowException")
+                            toast.show()
+                            playVideo(mediaUrl)
+                        }
+                    }
+                }
+            })
+
+
+            addVideoListener(object : VideoListener {
+                override fun onVideoSizeChanged(
+                    width: Int,
+                    height: Int,
+                    unappliedRotationDegrees: Int,
+                    pixelWidthHeightRatio: Float
+                ) {
+                    if (mediaUrl.contains("webch630") || mediaUrl.contains("grtn")) {
+                        val playerView = view.player_view
+                        val screenWidth = playerView.width
+                        val screenHeight = playerView.height
+                        val p = playerView.layoutParams
+
+                        //Set all to 16:9 Ratio
+                        val ratio = 16.0 / 9.0
+                        if (screenWidth / screenHeight > ratio) {
+                            p.width = (screenHeight * ratio).toInt()
+                            p.height = screenHeight
+                        } else {
+                            p.width = screenWidth
+                            p.height = (screenWidth / ratio).toInt()
+                        }
+
+                        playerView.resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FILL
+
+                        Log.d("Video Size: ", width.toString() + " " + height + " " + width / height.toDouble())
+                        Log.d(
+                            "Output Size: ",
+                            p.width.toString() + " " + p.height + " " + p.width / p.height.toDouble()
+                        )
+
+                        // Redraw myView
+                        playerView.requestLayout()
                     } else {
-                        p.width = screenWidth
-                        p.height = (screenWidth / ratio).toInt()
+                        playerView.resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FIT
                     }
 
-                    playerView.resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FILL
-
-                    Log.d("Video Size: ", width.toString() + " " + height + " " + width / height.toDouble())
-                    Log.d("Output Size: ", p.width.toString() + " " + p.height + " " + p.width / p.height.toDouble())
-
-                    // Redraw myView
-                    playerView.requestLayout()
                 }
-                else
-                {
-                    playerView.resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FIT
-                }
-
-            }
-        })
+            })
+        }
 
 
         // Track Selection Button
@@ -167,8 +208,11 @@ class PlaybackVideoExoFragment : Fragment() {
         }
     }
 
-    fun videoSeek(index: Int) {
-        player.seekTo(index, C.TIME_UNSET)
+    fun videoSeek(isNext: Boolean) {
+        if (isNext)
+            player.next()
+        else
+            player.previous()
     }
 
     override fun onStop() {

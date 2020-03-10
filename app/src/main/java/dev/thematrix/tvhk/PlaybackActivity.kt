@@ -164,7 +164,7 @@ class PlaybackActivity : FragmentActivity() {
                     }
 
                     if (isCurrentExo)
-                        PlaybackVideoExoFragment().videoSeek(currentSourceIndex)
+                        PlaybackVideoExoFragment().videoSeek(direction == "RIGHT")
                     else
                         prepareAndChangePlayer(item.videoUrl, item.title, item.func, item.exo, item.exo == isCurrentExo)
 
