@@ -15,7 +15,6 @@ import androidx.fragment.app.Fragment
 import com.google.android.exoplayer2.ExoPlaybackException
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
-import com.google.android.exoplayer2.analytics.AnalyticsListener
 import com.google.android.exoplayer2.source.BehindLiveWindowException
 import com.google.android.exoplayer2.source.ConcatenatingMediaSource
 import com.google.android.exoplayer2.source.dash.DashMediaSource
@@ -45,13 +44,18 @@ class PlaybackVideoExoFragment : Fragment() {
         view.setOnSystemUiVisibilityChangeListener {
             if (view.systemUiVisibility != SYSTEM_UI_FLAG) {
                 val trackSelectionButton = view.exo_track_selection_button
-                trackSelectionButton.visibility = VISIBLE
                 val resizeModeButton = view.exo_resize_button
+                val liveButton = view.exo_live_button
+
+                trackSelectionButton.visibility = VISIBLE
                 resizeModeButton.visibility = VISIBLE
+                liveButton.visibility = VISIBLE
+
                 Handler().postDelayed({
                     view.systemUiVisibility = SYSTEM_UI_FLAG
                     trackSelectionButton.visibility = GONE
                     resizeModeButton.visibility = GONE
+                    liveButton.visibility = GONE
                 }, 3000)
             }
         }
@@ -83,7 +87,6 @@ class PlaybackVideoExoFragment : Fragment() {
             .setBandwidthMeter(bandwidthMeter).build()
         player.playWhenReady = true
         player.repeatMode = Player.REPEAT_MODE_ALL
-        player.setHandleWakeLock(true)
         val playerView = view.player_view
         playerView.useController = true
         playerView.requestFocus()
@@ -96,30 +99,26 @@ class PlaybackVideoExoFragment : Fragment() {
         dashMediaSourceFactory = DashMediaSource.Factory(dataSourceFactory)
 
         player.run {
-            addAnalyticsListener(object : AnalyticsListener {
-                override fun onSeekProcessed(eventTime: AnalyticsListener.EventTime) {
-                    super.onSeekProcessed(eventTime)
-
-                    toast.setText("正在轉到Source ${eventTime.windowIndex}")
-                    toast.show()
-                }
-            })
-
-
             addListener(object : Player.EventListener {
                 override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
                     super.onPlayerStateChanged(playWhenReady, playbackState)
 
                     when (playbackState) {
                         Player.STATE_IDLE -> {
-                            toast.setText(Player.STATE_IDLE.toString())
+                            toast.setText("STATE_IDLE")
                             toast.show()
                             player.seekToDefaultPosition()
                         }
                         Player.STATE_BUFFERING -> {}
-                        Player.STATE_READY -> {}
+                        Player.STATE_READY -> {
+                            if (player.currentTimeline.windowCount > 1) {
+                                toast.setText("已轉到Source ${player.currentWindowIndex}")
+                                toast.show()
+                            }
+
+                        }
                         Player.STATE_ENDED -> {
-                            toast.setText(Player.STATE_ENDED.toString())
+                            toast.setText("STATE_ENDED")
                             toast.show()
                             player.seekToDefaultPosition()
                         }
@@ -133,7 +132,7 @@ class PlaybackVideoExoFragment : Fragment() {
                         if (e.sourceException is BehindLiveWindowException) {
                             toast.setText("BehindLiveWindowException")
                             toast.show()
-                            playVideo(mediaUrl)
+                            playVideo(mediaUrl, player.currentWindowIndex)
                         }
                     }
                 }
@@ -194,6 +193,11 @@ class PlaybackVideoExoFragment : Fragment() {
             playerView.resizeMode = if (playerView.resizeMode == AspectRatioFrameLayout.RESIZE_MODE_FIT)
                 AspectRatioFrameLayout.RESIZE_MODE_FILL else AspectRatioFrameLayout.RESIZE_MODE_FIT
         }
+        // Back to live Button
+        val liveButton = view.exo_live_button
+        liveButton.setOnClickListener {
+            player.seekToDefaultPosition()
+        }
     }
 
     fun trackSelectionDialog(context: Context) {
@@ -225,7 +229,7 @@ class PlaybackVideoExoFragment : Fragment() {
         player.release()
     }
 
-    fun playVideo(videoUrl: String) {
+    fun playVideo(videoUrl: String, window: Int = 0) {
         val concatenatingMediaSource = ConcatenatingMediaSource()
         mediaUrl = videoUrl
 
@@ -241,6 +245,7 @@ class PlaybackVideoExoFragment : Fragment() {
         }
 
         player.prepare(concatenatingMediaSource)
+        player.seekToDefaultPosition(window)
     }
 
 

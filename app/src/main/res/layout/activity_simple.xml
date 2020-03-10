@@ -32,5 +32,15 @@
             android:layout_toEndOf="@id/exo_track_selection_button"
             android:layout_marginStart="10dp"/>
 
+    <ImageView
+            android:id="@+id/exo_live_button"
+            android:src="@android:drawable/ic_menu_rotate"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:tint="#377c3c"
+            android:visibility="gone"
+            android:layout_toEndOf="@id/exo_resize_button"
+            android:layout_marginStart="10dp"/>
+
 
 </RelativeLayout>
