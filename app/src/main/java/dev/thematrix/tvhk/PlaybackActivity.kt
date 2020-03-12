@@ -12,8 +12,9 @@ import org.json.JSONObject
 import org.xml.sax.InputSource
 import java.io.IOException
 import java.io.StringReader
+import java.net.HttpURLConnection
+import java.net.URL
 import javax.xml.parsers.DocumentBuilderFactory
-import java.net.*
 
 
 class PlaybackActivity : FragmentActivity() {
@@ -432,7 +433,7 @@ class PlaybackActivity : FragmentActivity() {
 
         } else if(ch.startsWith("gdtv")){
 
-            var url = "http://www.gdtv.cn/m2o/channel/channel_info.php?id=" + ch.substring(5)
+            val url = "http://www.gdtv.cn/m2o/channel/channel_info.php?id=" + ch.substring(5)
             val stringRequest = object: StringRequest(
                 Method.GET,
                 url,
@@ -463,6 +464,42 @@ class PlaybackActivity : FragmentActivity() {
                     params.put("Cookie", "WEB=20111112; UM_distinctid=170004ad7b8181-0e74af8ca05e59-6952732d-1fa400-170004ad7b94dc")
 
                     return params
+                }
+            }
+            requestQueue.add(stringRequest)
+
+        } else if(ch.startsWith("gztv")) {
+
+            val url = "https://channel.gztv.com/channelf/viewapi/player/channelVideo?id=" + ch.substring(5)
+            val stringRequest = object: StringRequest(
+                Method.GET,
+                url,
+                Response.Listener { response ->
+                    val result = Regex("standardUrl='.*'").find(response)
+                    if (result != null)
+                    {
+                        var url = Regex("https.*?'").find(result.value)?.value ?: ""
+                        url = url.substring(0, url.length - 1)
+
+                        try {
+                            if (play)
+                                playByPlayer(url)
+                            else {
+                                changePlayer(url, exo)
+                            }
+
+                        }catch (exception: Exception){
+                            showPlaybackErrorMessage(title, url)
+                        }
+                    }
+
+                },
+                Response.ErrorListener{ error ->
+                    showPlaybackErrorMessage(title, "")
+                }
+            ){
+                override fun getRetryPolicy(): RetryPolicy {
+                    return DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 5, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
                 }
             }
             requestQueue.add(stringRequest)

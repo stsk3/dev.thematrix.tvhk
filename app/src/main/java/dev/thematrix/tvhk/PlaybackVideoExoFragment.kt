@@ -12,12 +12,14 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.google.android.exoplayer2.DefaultRenderersFactory
 import com.google.android.exoplayer2.ExoPlaybackException
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.analytics.AnalyticsListener
 import com.google.android.exoplayer2.source.BehindLiveWindowException
 import com.google.android.exoplayer2.source.ConcatenatingMediaSource
+import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.source.dash.DashMediaSource
 import com.google.android.exoplayer2.source.hls.HlsMediaSource
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection
@@ -78,14 +80,15 @@ class PlaybackVideoExoFragment : Fragment() {
         trackSelector = DefaultTrackSelector(context, videoTrackSelectionFactory)
         trackSelector.parameters = trackSelectorParameters
 
-
-
+        val rendererFactory = DefaultRenderersFactory(context)
+            .setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_ON)
 
 
         // create player
-        player = SimpleExoPlayer.Builder(context)
+        player = SimpleExoPlayer.Builder(context, rendererFactory)
             .setTrackSelector(trackSelector)
-            .setBandwidthMeter(bandwidthMeter).build()
+            .setBandwidthMeter(bandwidthMeter)
+            .build()
         player.playWhenReady = true
         player.repeatMode = Player.REPEAT_MODE_ALL
         val playerView = view.player_view
@@ -98,6 +101,7 @@ class PlaybackVideoExoFragment : Fragment() {
         val dataSourceFactory = DefaultDataSourceFactory(activity, "exoplayer")
         hlsMediaSourceFactory = HlsMediaSource.Factory(dataSourceFactory)
         dashMediaSourceFactory = DashMediaSource.Factory(dataSourceFactory)
+        progressiveMediaSourceFactory = ProgressiveMediaSource.Factory(dataSourceFactory)
 
         player.run {
             addAnalyticsListener(object : AnalyticsListener {
@@ -246,10 +250,11 @@ class PlaybackVideoExoFragment : Fragment() {
         videoUrl.split("#").forEach {
             val videoUri = Uri.parse(it)
 
-            val mediaSource = if (videoUrl.contains(".mpd"))
-                dashMediaSourceFactory.createMediaSource(videoUri)
-            else
-                hlsMediaSourceFactory.createMediaSource(videoUri)
+            val mediaSource = when {
+                videoUrl.contains(".mpd") -> dashMediaSourceFactory.createMediaSource(videoUri)
+                videoUrl.contains(".m3u8") -> hlsMediaSourceFactory.createMediaSource(videoUri)
+                else -> progressiveMediaSourceFactory.createMediaSource(videoUri)
+            }
 
             concatenatingMediaSource.addMediaSource(mediaSource)
         }
@@ -265,6 +270,7 @@ class PlaybackVideoExoFragment : Fragment() {
         private lateinit var trackSelector: DefaultTrackSelector
         private lateinit var hlsMediaSourceFactory: HlsMediaSource.Factory
         private lateinit var dashMediaSourceFactory: DashMediaSource.Factory
+        private lateinit var progressiveMediaSourceFactory: ProgressiveMediaSource.Factory
         private lateinit var mediaUrl: String
         private var windowIndex: Int = 0
         private const val SYSTEM_UI_FLAG = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
