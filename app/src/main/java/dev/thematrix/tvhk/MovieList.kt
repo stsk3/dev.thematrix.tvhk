@@ -1,7 +1,7 @@
 package dev.thematrix.tvhk
 
 object MovieList {
-    const val FB_INDEX = 8
+    const val FB_INDEX = 9
     const val FB_CATEGORY_INDEX = 1
 
     val CATEGORY = arrayOf(
@@ -26,7 +26,9 @@ object MovieList {
         "有線財經資訊台",
         "有線直播台",
         "有線新聞台",
+        "有線新聞台後備",
         "now新聞台",
+        "now新聞台後備",
         "now直播台",
         "港台電視32",
         "SKIP",
@@ -133,6 +135,8 @@ object MovieList {
         R.drawable.cablefinance,
         R.drawable.cablelivenews,
         R.drawable.cablenews,
+        R.drawable.cablenews,
+        R.drawable.nowtv332,
         R.drawable.nowtv332,
         R.drawable.nowtv331,
         R.drawable.rthktv32,
@@ -242,6 +246,8 @@ object MovieList {
         "#https://ottproxy2.mott.tv/livehls/MOB-SCC/index.m3u8",
         "",
         "",
+        "",
+        "",
         "https://www.rthk.hk/feeds/dtt/rthktv32_https.m3u8",
         "SKIP",
         "http://live.cdn.hk01.com/origin/smil:01news.smil/playlist.m3u8",
@@ -256,8 +262,8 @@ object MovieList {
         "http://rmtv24hweblive-lh.akamaihd.net/i/rmtv24hwebes_1@300661/master.m3u8#http://rmtv24hweblive-lh.akamaihd.net/i/rmtv24hweben_1@300662/master.m3u8",
         "",
         "SKIP",
-        "http://111.40.205.87/PLTV/88888888/224/3221225591/index.m3u8#http://live-wcloud-cdn.ysp.cctv.cn/tlivecloud-cdn.ysp.cctv.cn/001/2000205102.m3u8#http://httpdvb.slave.bfgd.com.cn:13164/playurl?playtype=live&protocol=hls&accesstoken=R5E6BC06AU3191604BKB3807037IAEB8EC77P8M340BFBDV0Z334B7W15FBECAB3397ABD7&playtoken=ABCDEFGHI&auth=no&rate=sd&programid=4200000086.m3u8#http://httpdvb.slave.ttcatv.tv:13164/playurl?playtype=live&protocol=hls&accesstoken=R5E6B6915U30992010K778A0BD4IAEB8EC77PBM3233C4EV1044EZ33519WE6843B8C451&playtoken=ABCDEFGHI&rate=hd&programid=4200000135.m3u8#http://ottrrs.hl.chinamobile.com/PLTV/88888888/224/3221225591/index.m3u8",
-        "http://111.40.205.87/PLTV/88888888/224/3221225689/index.m3u8#http://live-wcloud-cdn.ysp.cctv.cn/tlivecloud-cdn.ysp.cctv.cn/001/2000204503.m3u8#http://httpdvb.slave.bfgd.com.cn:13164/playurl?playtype=live&protocol=hls&accesstoken=R5E6BC06AU3191604BKB3807037IAEB8EC77P8M340BFBDV0Z334B7W15FBECAB3397ABD7&playtoken=ABCDEFGHI&auth=no&rate=sd&programid=4200000087.m3u8#http://httpdvb.slave.ttcatv.tv:13164/playurl?playtype=live&protocol=hls&accesstoken=R5E6B6915U30992010K778A0BD4IAEB8EC77PBM3233C4EV1044EZ33519WE6843B8C451&playtoken=ABCDEFGHI&rate=hd&programid=4200000138.m3u8#http://ottrrs.hl.chinamobile.com/PLTV/88888888/224/3221225603/index.m3u8",
+        "http://live-wcloud-cdn.ysp.cctv.cn/tlivecloud-cdn.ysp.cctv.cn/001/2000205102.m3u8#http://111.40.205.87/PLTV/88888888/224/3221225591/index.m3u8#http://ottrrs.hl.chinamobile.com/PLTV/88888888/224/3221225591/index.m3u8",
+        "http://live-wcloud-cdn.ysp.cctv.cn/tlivecloud-cdn.ysp.cctv.cn/001/2000204503.m3u8#http://111.40.205.87/PLTV/88888888/224/3221225689/index.m3u8#http://ottrrs.hl.chinamobile.com/PLTV/88888888/224/3221225603/index.m3u8",
         "",
         "",
         "http://keonline.shanghai.liveplay.qq.com/live/program/live/ssty/2300000/mnf.m3u8",
@@ -347,7 +353,9 @@ object MovieList {
         "wowgua_ch108",
         "cabletv110",
         "wowgua_ch109",
+        "ggiptv_gt_31",
         "nowtv332",
+        "ggiptv_gt_16",
         "nowtv331",
         "rthk",
         "hkatv",
@@ -513,8 +521,7 @@ object MovieList {
             func.contains("^nowtv|^fantv$|^rthk$|^fox$|^fb$|^wowgua|^in$|^uae$|^tw$|^rmtv$|^viutv99$".toRegex())
         else
             true
-        movie.fixRatio = func.contains("^gdtv|^nowtv630$|^in$|^mocable$".toRegex()) || videoUrl.contains("".toRegex())
-                || title in "遼寧體育"
+        movie.fixRatio = func.contains("^gdtv|^nowtv630$|^in$|^mocable$".toRegex()) || videoUrl.contains("".toRegex()) || title in "遼寧體育"
 
         return movie
     }

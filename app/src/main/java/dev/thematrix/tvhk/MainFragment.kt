@@ -14,7 +14,7 @@ import java.net.URL
 
 class MainFragment : BrowseFragment() {
 
-    private val default = 2
+    private val default = if (android.os.Build.VERSION.SDK_INT < 21) 3 else 2
     private val titleList = mutableListOf<String>()
     private val cardImageUrlList = mutableListOf<Int>()
     private val videoUrlList = mutableListOf<String>()
@@ -109,7 +109,7 @@ class MainFragment : BrowseFragment() {
             getFbLiveVideo("hk.nextmedia", "蘋果日報", R.drawable.fb_hk_nextmedia)
             getFbLiveVideo("inmediahknet", "香港獨立媒體網", R.drawable.fb_inmediahk)
             getFbLiveVideo("hk01wemedia", "HK01", R.drawable.fb_hk01wemedia)
-            getFbLiveVideo("TMHK.ORG", "TMHK", R.drawable.fb_tmhk_org)
+            getFbLiveVideo("truthmediahk", "TMHK", R.drawable.fb_tmhk_org)
             getFbLiveVideo("onccnews", "東網", R.drawable.fb_onccnews)
             getFbLiveVideo("icablenews", "有線新聞 i-Cable News", R.drawable.fb_icablenews)
             getFbLiveVideo("now.comNews", "Now News - 新聞", R.drawable.fb_now_comnews)

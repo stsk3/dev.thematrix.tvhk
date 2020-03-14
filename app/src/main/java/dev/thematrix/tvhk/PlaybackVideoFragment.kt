@@ -22,7 +22,7 @@ class PlaybackVideoFragment : VideoSupportFragment() {
 
         setUpPlayer()
 
-        playVideo(videoUrl, fixRatio)
+        playVideo(videoUrl.split("#")[0], fixRatio)
     }
 
     override fun onStart() {
@@ -51,30 +51,38 @@ class PlaybackVideoFragment : VideoSupportFragment() {
     }
 
     override fun onVideoSizeChanged(width: Int, height: Int) {
-        if (isFixRatio) {
-            val screenWidth = this.view!!.width
-            val screenHeight = this.view!!.height
-            val p = this.surfaceView.layoutParams
+        val screenWidth = this.view!!.width
+        val screenHeight = this.view!!.height
+        val p = this.surfaceView.layoutParams
 
-            //Set all to 16:9 Ratio
-            val ratio = 16.0 / 9.0
-            if (screenWidth / screenHeight > ratio) {
-                p.width = (screenHeight * ratio).toInt()
-                p.height = screenHeight
+        if (screenWidth > 0 && screenHeight > 0) {
+            if (isFixRatio) {
+                //Set all to 16:9 Ratio
+                val ratio = 16.0 / 9.0
+                if (screenWidth / screenHeight > ratio) {
+                    p.width = (screenHeight * ratio).toInt()
+                    p.height = screenHeight
+                } else {
+                    p.width = screenWidth
+                    p.height = (screenWidth / ratio).toInt()
+                }
+
+                Log.d("Video Size: ", width.toString() + " " + height + " " + width / height.toDouble())
+                Log.d("Output Size: ", p.width.toString() + " " + p.height + " " + p.width / p.height.toDouble())
+
+                this.surfaceView.layoutParams = p
             } else {
-                p.width = screenWidth
-                p.height = (screenWidth / ratio).toInt()
+                super.onVideoSizeChanged(width, height)
             }
-
-            Log.d("Video Size: ", width.toString() + " " + height + " " + width / height.toDouble())
-            Log.d("Output Size: ", p.width.toString() + " " + p.height + " " + p.width / p.height.toDouble())
-
-            this.surfaceView.layoutParams = p
         }
-        else
-        {
-            super.onVideoSizeChanged(width, height)
-        }
+    }
+
+    override fun onError(errorCode: Int, errorMessage: CharSequence?) {
+        super.onError(errorCode, errorMessage)
+
+        PlaybackActivity.toast.setText(errorMessage)
+        PlaybackActivity.toast.show()
+        playVideo(mediaUrl.split("#")[0], isFixRatio)
     }
 
     private fun setUpPlayer(){
@@ -84,10 +92,10 @@ class PlaybackVideoFragment : VideoSupportFragment() {
 
         val glueHost = VideoSupportFragmentGlueHost(this@PlaybackVideoFragment)
         mTransportControlGlue.host = glueHost
-
         mTransportControlGlue.isControlsOverlayAutoHideEnabled = true
         hideControlsOverlay(false)
         mTransportControlGlue.isSeekEnabled = false
+        progressBarManager.disableProgressBar()
 
     }
 

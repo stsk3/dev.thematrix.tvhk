@@ -50,21 +50,6 @@ class PlaybackActivity : FragmentActivity() {
         requestQueue = RequestQueue(NoCache(), BasicNetwork(hurlStack)).apply {
             start()
         }
-
-
-        //Header redirect
-        val hurlStackRedirect = object : HurlStack() {
-            @Throws(IOException::class) override fun createConnection(url: URL): HttpURLConnection {
-                val connection = super.createConnection(url)
-                connection.instanceFollowRedirects = true
-                return connection
-            }
-        }
-
-        //Volley
-        requestQueueRedirect = RequestQueue(NoCache(), BasicNetwork(hurlStackRedirect)).apply {
-            start()
-        }
     }
 
     private fun prepareAndChangePlayer(playDirectly: Boolean)
@@ -141,6 +126,7 @@ class PlaybackActivity : FragmentActivity() {
                 val channelCount = list.count()
 
                 // Change channel
+                val skipChannelList = "^SKIP$|^有線新聞台$|^now新聞台$".toRegex()
                 if (direction == "PREVIOUS" || direction == "NEXT") {
                     if (direction == "PREVIOUS") {
                         videoId--
@@ -148,7 +134,7 @@ class PlaybackActivity : FragmentActivity() {
                         //Fix Underflow
                         if (videoId < 0) {
                             videoId = channelCount - 2 //Skipping SKIP
-                        } else if (list[videoId].title == "SKIP") {
+                        } else if (list[videoId].title.contains(skipChannelList)) {
                             videoId--
                         }
                         currentSourceIndex = 0
@@ -158,7 +144,7 @@ class PlaybackActivity : FragmentActivity() {
                         //Fix Overflow
                         if (videoId >= (channelCount - 1)) { //Skipping SKIP
                             videoId = 0
-                        } else if (list[videoId].title == "SKIP") {
+                        } else if (list[videoId].title.contains(skipChannelList)) {
                             videoId++
                         }
                         currentSourceIndex = 0
@@ -167,6 +153,7 @@ class PlaybackActivity : FragmentActivity() {
                     // New Channel
                     val item = list[videoId]
                     currentVideoID = videoId
+                    currentMovie = item
 
                     // Play
                     prepareAndChangePlayer(item.exo == isCurrentExo)
@@ -218,7 +205,6 @@ class PlaybackActivity : FragmentActivity() {
 
 
         requestQueue.cancelAll(this)
-        requestQueueRedirect.cancelAll(this)
 
         lateinit var url: String
 
@@ -473,7 +459,7 @@ class PlaybackActivity : FragmentActivity() {
 
         } else if(ch.startsWith("ggiptv")) {
 
-            val url = "http://play.ggiptv.com/?act=play&tid=" + ch.substring(7, 9) +"&id=" + ch.substring(10)
+            val url = "http://m.iptv807.com/?act=play&tid=" + ch.substring(7, 9) +"&id=" + ch.substring(10)
             val stringRequest = object: StringRequest(
                 Method.GET,
                 url,
@@ -495,7 +481,7 @@ class PlaybackActivity : FragmentActivity() {
                     return DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 5, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
                 }
             }
-            requestQueueRedirect.add(stringRequest)
+            requestQueue.add(stringRequest)
 
         }
     }
@@ -544,6 +530,5 @@ class PlaybackActivity : FragmentActivity() {
         internal lateinit var currentMovie: Movie
         lateinit var toast: Toast
         lateinit var requestQueue: RequestQueue
-        lateinit var requestQueueRedirect: RequestQueue
     }
 }
