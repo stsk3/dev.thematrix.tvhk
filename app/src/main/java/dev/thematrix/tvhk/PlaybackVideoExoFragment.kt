@@ -42,6 +42,7 @@ class PlaybackVideoExoFragment : Fragment() {
             false)
 
         val videoUrl = activity?.intent?.getStringExtra("videoUrl") as String
+        val fixRatio = activity?.intent?.getBooleanExtra("fixRatio", false) as Boolean
         view.setBackgroundColor(Color.BLACK)
         view.systemUiVisibility = SYSTEM_UI_FLAG
         view.setOnSystemUiVisibilityChangeListener {
@@ -66,7 +67,7 @@ class PlaybackVideoExoFragment : Fragment() {
         PlaybackActivity.isCurrentExo = true
         setupExoPlayer(view)
 
-        playVideo(videoUrl)
+        playVideo(videoUrl, fixRatio)
         return view
     }
 
@@ -126,14 +127,14 @@ class PlaybackVideoExoFragment : Fragment() {
                         Player.STATE_IDLE -> {
                             toast.setText("STATE_IDLE")
                             toast.show()
-                            player.seekToDefaultPosition()
+                            playVideo(mediaUrl, isFixRatio)
                         }
                         Player.STATE_BUFFERING -> {}
                         Player.STATE_READY -> {}
                         Player.STATE_ENDED -> {
                             toast.setText("STATE_ENDED")
                             toast.show()
-                            player.seekToDefaultPosition()
+                            playVideo(mediaUrl, isFixRatio)
                         }
                     }
                 }
@@ -145,7 +146,7 @@ class PlaybackVideoExoFragment : Fragment() {
                         if (e.sourceException is BehindLiveWindowException) {
                             toast.setText("BehindLiveWindowException")
                             toast.show()
-                            playVideo(mediaUrl, player.currentWindowIndex)
+                            playVideo(mediaUrl, isFixRatio, player.currentWindowIndex)
                         }
                     }
                 }
@@ -159,9 +160,7 @@ class PlaybackVideoExoFragment : Fragment() {
                     unappliedRotationDegrees: Int,
                     pixelWidthHeightRatio: Float
                 ) {
-                    if (mediaUrl.contains("webch630") || mediaUrl.contains("grtn")
-                        || mediaUrl.contains("45.126.83.51") || mediaUrl.contains("210.210.155.35")
-                        || mediaUrl.contains("202.175.127.77") || mediaUrl.contains("httpdvb")) {
+                    if (isFixRatio) {
                         val playerView = view.player_view
                         val screenWidth = playerView.width
                         val screenHeight = playerView.height
@@ -244,9 +243,10 @@ class PlaybackVideoExoFragment : Fragment() {
         player.release()
     }
 
-    fun playVideo(videoUrl: String, window: Int = 0) {
+    fun playVideo(videoUrl: String, fixRatio: Boolean, window: Int = 0) {
         val concatenatingMediaSource = ConcatenatingMediaSource()
         mediaUrl = videoUrl
+        isFixRatio = fixRatio
         windowIndex = window
 
         videoUrl.split("#").forEach {
@@ -274,6 +274,7 @@ class PlaybackVideoExoFragment : Fragment() {
         private lateinit var dashMediaSourceFactory: DashMediaSource.Factory
         private lateinit var progressiveMediaSourceFactory: ProgressiveMediaSource.Factory
         private lateinit var mediaUrl: String
+        private var isFixRatio: Boolean = false
         private var windowIndex: Int = 0
         private const val SYSTEM_UI_FLAG = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
     }

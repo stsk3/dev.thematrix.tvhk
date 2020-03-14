@@ -16,7 +16,6 @@ class MainFragment : BrowseFragment() {
 
     private val default = 2
     private val titleList = mutableListOf<String>()
-    private val descriptionList = mutableListOf<String>()
     private val cardImageUrlList = mutableListOf<Int>()
     private val videoUrlList = mutableListOf<String>()
     private val funcList = mutableListOf<String>()
@@ -37,7 +36,6 @@ class MainFragment : BrowseFragment() {
     private fun addOnccLive() {
         Thread(Runnable {
             val titleList = mutableListOf<String>()
-            val descriptionList = mutableListOf<String>()
             val cardImageUrlList = mutableListOf<Int>()
             val videoUrlList = mutableListOf<String>()
             val funcList = mutableListOf<String>()
@@ -72,7 +70,6 @@ class MainFragment : BrowseFragment() {
                             }
 
                             titleList.add("$name $title")
-                            descriptionList.add("")
                             cardImageUrlList.add(R.drawable.oncc)
                             videoUrlList.add(linkList.joinToString("#"))
                             funcList.add("oncc")
@@ -84,13 +81,11 @@ class MainFragment : BrowseFragment() {
                 //Add to movie list
                 if (titleList.count() > 0) {
                     titleList.add("SKIP")
-                    descriptionList.add("SKIP")
                     cardImageUrlList.add(0)
                     videoUrlList.add("SKIP")
                     funcList.add("SKIP")
 
                     MovieList.TITLE.addAll(MovieList.FB_INDEX, titleList)
-                    MovieList.DESCRIPTION.addAll(MovieList.FB_INDEX, descriptionList)
                     MovieList.CARD_IMAGE_URL.addAll(MovieList.FB_INDEX, cardImageUrlList)
                     MovieList.VIDEO_URL.addAll(MovieList.FB_INDEX, videoUrlList)
                     MovieList.FUNC.addAll(MovieList.FB_INDEX, funcList)
@@ -131,13 +126,11 @@ class MainFragment : BrowseFragment() {
             //Add to movie list
             if (titleList.count() > 0) {
                 titleList.add("SKIP")
-                descriptionList.add("SKIP")
                 cardImageUrlList.add(0)
                 videoUrlList.add("SKIP")
                 funcList.add("SKIP")
 
                 MovieList.TITLE.addAll(MovieList.FB_INDEX, titleList)
-                MovieList.DESCRIPTION.addAll(MovieList.FB_INDEX, descriptionList)
                 MovieList.CARD_IMAGE_URL.addAll(MovieList.FB_INDEX, cardImageUrlList)
                 MovieList.VIDEO_URL.addAll(MovieList.FB_INDEX, videoUrlList)
                 MovieList.FUNC.addAll(MovieList.FB_INDEX, funcList)
@@ -174,7 +167,6 @@ class MainFragment : BrowseFragment() {
 
                 if (liveLink != "") {
                     titleList.add(pageName)
-                    descriptionList.add("")
                     cardImageUrlList.add(image)
                     videoUrlList.add(liveLink)
                     funcList.add("fb")

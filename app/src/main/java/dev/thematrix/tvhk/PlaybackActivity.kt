@@ -29,15 +29,15 @@ class PlaybackActivity : FragmentActivity() {
 
         //First time channel (on click)
         if (savedInstanceState == null) {
-            val (id, title, _, _, videoUrl, func, exo) = this?.intent?.getSerializableExtra(DetailsActivity.MOVIE) as Movie
-            currentVideoID = id
+            currentMovie = this?.intent?.getSerializableExtra(DetailsActivity.MOVIE) as Movie
+            currentVideoID = currentMovie.id
             currentSourceIndex = 0
 
-            prepareAndChangePlayer(videoUrl, title, func, exo, false)
+            prepareAndChangePlayer(false)
         }
     }
     private fun setUpNetwork(){
-        //Header redirect
+        //Header NO redirect
         val hurlStack = object : HurlStack() {
             @Throws(IOException::class) override fun createConnection(url: URL): HttpURLConnection {
                 val connection = super.createConnection(url)
@@ -50,15 +50,34 @@ class PlaybackActivity : FragmentActivity() {
         requestQueue = RequestQueue(NoCache(), BasicNetwork(hurlStack)).apply {
             start()
         }
+
+
+        //Header redirect
+        val hurlStackRedirect = object : HurlStack() {
+            @Throws(IOException::class) override fun createConnection(url: URL): HttpURLConnection {
+                val connection = super.createConnection(url)
+                connection.instanceFollowRedirects = true
+                return connection
+            }
+        }
+
+        //Volley
+        requestQueueRedirect = RequestQueue(NoCache(), BasicNetwork(hurlStackRedirect)).apply {
+            start()
+        }
     }
 
-    private fun prepareAndChangePlayer(videoUrl:String, title: String, func: String, exo: Boolean, playDirectly: Boolean)
+    private fun prepareAndChangePlayer(playDirectly: Boolean)
     {
+        val videoUrl = currentMovie.videoUrl
+        val title = currentMovie.title
+
+
         when {
             videoUrl == "" || (currentSourceIndex == 0 && videoUrl.startsWith("#"))
-                -> getVideoUrl(title, func, exo, playDirectly, videoUrl)
+                -> getVideoUrl(playDirectly)
             playDirectly -> playByPlayer(videoUrl)
-            else -> changePlayer(videoUrl, exo)
+            else -> changePlayer(videoUrl)
         }
 
         val sourceText = if (videoUrl.split("#").size > 1) ", Source $currentSourceIndex" else ""
@@ -150,7 +169,7 @@ class PlaybackActivity : FragmentActivity() {
                     currentVideoID = videoId
 
                     // Play
-                    prepareAndChangePlayer(item.videoUrl, item.title, item.func, item.exo, item.exo == isCurrentExo)
+                    prepareAndChangePlayer(item.exo == isCurrentExo)
                 }
 
                 //Change Source
@@ -169,13 +188,7 @@ class PlaybackActivity : FragmentActivity() {
                         if (isCurrentExo)
                             PlaybackVideoExoFragment().videoSeek(direction == "RIGHT")
                         else
-                            prepareAndChangePlayer(
-                                item.videoUrl,
-                                item.title,
-                                item.func,
-                                item.exo,
-                                item.exo == isCurrentExo
-                            )
+                            prepareAndChangePlayer(item.exo == isCurrentExo)
 
                     } else {
                         toast.setText("只有一個Source")
@@ -190,15 +203,22 @@ class PlaybackActivity : FragmentActivity() {
 
     private fun playByPlayer(videoUrl:String)
     {
+        val fixRatio = currentMovie.fixRatio
+
         if (isCurrentExo)
-            PlaybackVideoExoFragment().playVideo(videoUrl)
+            PlaybackVideoExoFragment().playVideo(videoUrl, fixRatio)
         else
-            PlaybackVideoFragment().playVideo(videoUrl.split("#")[currentSourceIndex])
+            PlaybackVideoFragment().playVideo(videoUrl.split("#")[currentSourceIndex], fixRatio)
     }
 
 
-    private fun getVideoUrl(title: String, ch: String, exo: Boolean, play: Boolean, originalVideoUrl:String) {
+    private fun getVideoUrl(play: Boolean) {
+        val title: String = currentMovie.title
+        val ch: String = currentMovie.func
+
+
         requestQueue.cancelAll(this)
+        requestQueueRedirect.cancelAll(this)
 
         lateinit var url: String
 
@@ -235,7 +255,7 @@ class PlaybackActivity : FragmentActivity() {
                 Response.Listener { response ->
                     var mediaUrl: String = JSONArray(JSONObject(JSONObject(response.get("asset").toString()).get("hls").toString()).get("adaptive").toString()).get(0).toString()
 
-                    this.play(play, mediaUrl, title, exo, originalVideoUrl)
+                    this.play(mediaUrl, play)
                 },
                 Response.ErrorListener{ error ->
                     showPlaybackErrorMessage(title, "")
@@ -268,7 +288,7 @@ class PlaybackActivity : FragmentActivity() {
                         }
                     }
 
-                    this.play(play, url, title, exo, originalVideoUrl)
+                    this.play(url, play)
                 },
                 Response.ErrorListener{ error ->
                     showPlaybackErrorMessage(title, url)
@@ -299,7 +319,7 @@ class PlaybackActivity : FragmentActivity() {
                 Response.Listener { response ->
                     val mediaUrl = JSONObject(JSONObject(response).get("result").toString()).get("stream").toString()
 
-                    this.play(play, mediaUrl, title, exo, originalVideoUrl)
+                    this.play(mediaUrl, play)
                 },
                 Response.ErrorListener{ error ->
                     showPlaybackErrorMessage(title, "")
@@ -374,7 +394,7 @@ class PlaybackActivity : FragmentActivity() {
                     if (error.networkResponse.statusCode == 302) {
                         val url = error.networkResponse.headers["Location"].toString()
 
-                        this.play(play, url, title, exo, originalVideoUrl)
+                        this.play(url, play)
                     }
                     else
                     {
@@ -404,7 +424,7 @@ class PlaybackActivity : FragmentActivity() {
                 Response.Listener { response ->
                     var mediaUrl: String = JSONArray(response).getJSONObject(0).get("m3u8").toString()
 
-                    this.play(play, mediaUrl, title, exo, originalVideoUrl)
+                    this.play(mediaUrl, play)
                 },
                 Response.ErrorListener{ error ->
                     showPlaybackErrorMessage(title, "")
@@ -437,7 +457,7 @@ class PlaybackActivity : FragmentActivity() {
                         var url = Regex("https.*?'").find(result.value)?.value ?: ""
                         url = url.substring(0, url.length - 1)
 
-                        this.play(play, url, title, exo, originalVideoUrl)
+                        this.play(url, play)
                     }
 
                 },
@@ -451,15 +471,44 @@ class PlaybackActivity : FragmentActivity() {
             }
             requestQueue.add(stringRequest)
 
+        } else if(ch.startsWith("ggiptv")) {
+
+            val url = "http://play.ggiptv.com/?act=play&tid=" + ch.substring(7, 9) +"&id=" + ch.substring(10)
+            val stringRequest = object: StringRequest(
+                Method.GET,
+                url,
+                Response.Listener { response ->
+                    val result = Regex("<option value=\".*?\"").find(response)
+                    if (result != null)
+                    {
+                        var url = Regex("http.*?\"").find(result.value)?.value ?: ""
+                        url = url.substring(0, url.length - 1).replace("player.php", "play.m3u8")
+                        this.play(url, play)
+                    }
+
+                },
+                Response.ErrorListener{ error ->
+                    showPlaybackErrorMessage(title, "")
+                }
+            ){
+                override fun getRetryPolicy(): RetryPolicy {
+                    return DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 5, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
+                }
+            }
+            requestQueueRedirect.add(stringRequest)
+
         }
     }
 
-    private fun play(play: Boolean, mediaUrl: String, title: String, exo: Boolean, originalVideoUrl: String) {
+    private fun play(mediaUrl: String, play: Boolean) {
+        val originalVideoUrl = currentMovie.videoUrl
+        val title = currentMovie.title
+
         try {
             if (play)
                 playByPlayer(mediaUrl + originalVideoUrl)
             else {
-                changePlayer(mediaUrl + originalVideoUrl, exo)
+                changePlayer(mediaUrl + originalVideoUrl)
             }
 
         }catch (exception: Exception){
@@ -475,9 +524,13 @@ class PlaybackActivity : FragmentActivity() {
             playByPlayer(mediaUrl)
     }
 
-    private fun changePlayer(mediaUrl: String, exo: Boolean)
+    private fun changePlayer(mediaUrl: String)
     {
+        val fixRatio = currentMovie.fixRatio
+        val exo = currentMovie.exo
+
         this?.intent?.putExtra("videoUrl", mediaUrl)
+        this?.intent?.putExtra("fixRatio", fixRatio)
         supportFragmentManager
             .beginTransaction()
             .replace(android.R.id.content, if (exo) PlaybackVideoExoFragment() else PlaybackVideoFragment())
@@ -488,7 +541,9 @@ class PlaybackActivity : FragmentActivity() {
         var currentVideoID = -1
         var currentSourceIndex = 0
         internal var isCurrentExo = false
+        internal lateinit var currentMovie: Movie
         lateinit var toast: Toast
         lateinit var requestQueue: RequestQueue
+        lateinit var requestQueueRedirect: RequestQueue
     }
 }

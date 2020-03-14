@@ -17,11 +17,12 @@ class PlaybackVideoFragment : VideoSupportFragment() {
         super.onCreate(savedInstanceState)
 
         val videoUrl = activity?.intent?.getStringExtra("videoUrl") as String
+        val fixRatio = activity?.intent?.getBooleanExtra("fixRatio", false) as Boolean
         PlaybackActivity.isCurrentExo = false
 
         setUpPlayer()
 
-        playVideo(videoUrl)
+        playVideo(videoUrl, fixRatio)
     }
 
     override fun onStart() {
@@ -50,8 +51,7 @@ class PlaybackVideoFragment : VideoSupportFragment() {
     }
 
     override fun onVideoSizeChanged(width: Int, height: Int) {
-        if (mediaUrl.contains("grtn") || mediaUrl.contains("202.175.127.77")
-            || mediaUrl.contains("httpdvb")) {
+        if (isFixRatio) {
             val screenWidth = this.view!!.width
             val screenHeight = this.view!!.height
             val p = this.surfaceView.layoutParams
@@ -91,8 +91,9 @@ class PlaybackVideoFragment : VideoSupportFragment() {
 
     }
 
-    fun playVideo(videoUrl: String) {
+    fun playVideo(videoUrl: String, fixRatio: Boolean) {
         mediaUrl = videoUrl
+        isFixRatio = fixRatio
         playerAdapter.reset()
         playerAdapter.setDataSource(Uri.parse(handleUrl(videoUrl)))
         mTransportControlGlue.playWhenPrepared()
@@ -111,6 +112,7 @@ class PlaybackVideoFragment : VideoSupportFragment() {
         private lateinit var mTransportControlGlue: PlaybackTransportControlGlue<MediaPlayerAdapter>
         private lateinit var playerAdapter: MediaPlayerAdapter
         private lateinit var mediaUrl: String
+        private var isFixRatio: Boolean = false
         private const val SYSTEM_UI_FLAG = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
     }
 }

@@ -5,11 +5,11 @@ import java.io.Serializable
 data class Movie(
     var id: Int = 0,
     var title: String = "",
-    var description: String = "",
     var cardImageUrl: Int = 0,
     var videoUrl: String = "",
     var func: String = "",
-    var exo: Boolean = false
+    var exo: Boolean = false,
+    var fixRatio: Boolean = false
 ) : Serializable {
 
 
@@ -19,6 +19,6 @@ data class Movie(
     }
 
     override fun toString(): String {
-        return "Movie(id=$id, title='$title', description='$description', cardImageUrl=$cardImageUrl, videoUrl='$videoUrl', func='$func', exo=$exo)"
+        return "Movie(id=$id, title='$title', cardImageUrl=$cardImageUrl, videoUrl='$videoUrl', func='$func', exo=$exo, fixRatio=$fixRatio)"
     }
 }
