@@ -50,7 +50,8 @@ class PlaybackVideoFragment : VideoSupportFragment() {
     }
 
     override fun onVideoSizeChanged(width: Int, height: Int) {
-        if (mediaUrl.contains("grtn") || mediaUrl.contains("in")) {
+        if (mediaUrl.contains("grtn") || mediaUrl.contains("202.175.127.77")
+            || mediaUrl.contains("httpdvb")) {
             val screenWidth = this.view!!.width
             val screenHeight = this.view!!.height
             val p = this.surfaceView.layoutParams

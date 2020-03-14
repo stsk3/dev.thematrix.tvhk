@@ -55,7 +55,8 @@ class PlaybackActivity : FragmentActivity() {
     private fun prepareAndChangePlayer(videoUrl:String, title: String, func: String, exo: Boolean, playDirectly: Boolean)
     {
         when {
-            videoUrl == "" -> getVideoUrl(title, func, exo, playDirectly)
+            videoUrl == "" || (currentSourceIndex == 0 && videoUrl.startsWith("#"))
+                -> getVideoUrl(title, func, exo, playDirectly, videoUrl)
             playDirectly -> playByPlayer(videoUrl)
             else -> changePlayer(videoUrl, exo)
         }
@@ -196,7 +197,7 @@ class PlaybackActivity : FragmentActivity() {
     }
 
 
-    private fun getVideoUrl(title: String, ch: String, exo: Boolean, play: Boolean) {
+    private fun getVideoUrl(title: String, ch: String, exo: Boolean, play: Boolean, originalVideoUrl:String) {
         requestQueue.cancelAll(this)
 
         lateinit var url: String
@@ -233,16 +234,8 @@ class PlaybackActivity : FragmentActivity() {
                 params,
                 Response.Listener { response ->
                     var mediaUrl: String = JSONArray(JSONObject(JSONObject(response.get("asset").toString()).get("hls").toString()).get("adaptive").toString()).get(0).toString()
-                    try {
-                        if (play)
-                            playByPlayer(mediaUrl)
-                        else {
-                            changePlayer(mediaUrl, exo)
-                        }
 
-                    }catch (exception: Exception){
-                        showPlaybackErrorMessage(title, mediaUrl)
-                    }
+                    this.play(play, mediaUrl, title, exo, originalVideoUrl)
                 },
                 Response.ErrorListener{ error ->
                     showPlaybackErrorMessage(title, "")
@@ -259,34 +252,23 @@ class PlaybackActivity : FragmentActivity() {
                 Method.GET,
                 url,
                 Response.Listener { response ->
-                    try {
-                        var url = ""
 
-                        val factory = DocumentBuilderFactory.newInstance()
-                        val builder = factory.newDocumentBuilder()
-                        val source = InputSource(StringReader(response))
-                        val document = builder.parse(source)
-                        val nodes = document.getElementsByTagName("RESULT").item(0).childNodes
+                    var url = ""
 
-                        for (i in 0 until nodes.length) {
-                            if (nodes.item(i).nodeName == "html5streamurlhq") {
-                                url = nodes.item(i).textContent
-                                break
-                            }
+                    val factory = DocumentBuilderFactory.newInstance()
+                    val builder = factory.newDocumentBuilder()
+                    val source = InputSource(StringReader(response))
+                    val document = builder.parse(source)
+                    val nodes = document.getElementsByTagName("RESULT").item(0).childNodes
+
+                    for (i in 0 until nodes.length) {
+                        if (nodes.item(i).nodeName == "html5streamurlhq") {
+                            url = nodes.item(i).textContent
+                            break
                         }
-
-                        if (url != "") {
-                            if (play)
-                                playByPlayer(url)
-                            else {
-                                changePlayer(url, exo)
-                            }
-                        } else {
-                            showPlaybackErrorMessage(title, url)
-                        }
-                    }catch (exception: Exception){
-                        showPlaybackErrorMessage(title, url)
                     }
+
+                    this.play(play, url, title, exo, originalVideoUrl)
                 },
                 Response.ErrorListener{ error ->
                     showPlaybackErrorMessage(title, url)
@@ -316,15 +298,8 @@ class PlaybackActivity : FragmentActivity() {
                 url,
                 Response.Listener { response ->
                     val mediaUrl = JSONObject(JSONObject(response).get("result").toString()).get("stream").toString()
-                    try {
-                        if (play)
-                            playByPlayer(mediaUrl)
-                        else
-                            changePlayer(mediaUrl, exo)
 
-                    }catch (exception: Exception){
-                        showPlaybackErrorMessage(title, mediaUrl)
-                    }
+                    this.play(play, mediaUrl, title, exo, originalVideoUrl)
                 },
                 Response.ErrorListener{ error ->
                     showPlaybackErrorMessage(title, "")
@@ -398,19 +373,8 @@ class PlaybackActivity : FragmentActivity() {
                 Response.ErrorListener { error ->
                     if (error.networkResponse.statusCode == 302) {
                         val url = error.networkResponse.headers["Location"].toString()
-                        try {
-                            if (url != "") {
-                                if (play)
-                                    playByPlayer(url)
-                                else {
-                                    changePlayer(url, exo)
-                                }
-                            } else {
-                                showPlaybackErrorMessage(title, url)
-                            }
-                        } catch (exception: Exception) {
-                            showPlaybackErrorMessage(title, url)
-                        }
+
+                        this.play(play, url, title, exo, originalVideoUrl)
                     }
                     else
                     {
@@ -439,16 +403,8 @@ class PlaybackActivity : FragmentActivity() {
                 url,
                 Response.Listener { response ->
                     var mediaUrl: String = JSONArray(response).getJSONObject(0).get("m3u8").toString()
-                    try {
-                        if (play)
-                            playByPlayer(mediaUrl)
-                        else {
-                            changePlayer(mediaUrl, exo)
-                        }
 
-                    }catch (exception: Exception){
-                        showPlaybackErrorMessage(title, mediaUrl)
-                    }
+                    this.play(play, mediaUrl, title, exo, originalVideoUrl)
                 },
                 Response.ErrorListener{ error ->
                     showPlaybackErrorMessage(title, "")
@@ -481,16 +437,7 @@ class PlaybackActivity : FragmentActivity() {
                         var url = Regex("https.*?'").find(result.value)?.value ?: ""
                         url = url.substring(0, url.length - 1)
 
-                        try {
-                            if (play)
-                                playByPlayer(url)
-                            else {
-                                changePlayer(url, exo)
-                            }
-
-                        }catch (exception: Exception){
-                            showPlaybackErrorMessage(title, url)
-                        }
+                        this.play(play, url, title, exo, originalVideoUrl)
                     }
 
                 },
@@ -504,6 +451,19 @@ class PlaybackActivity : FragmentActivity() {
             }
             requestQueue.add(stringRequest)
 
+        }
+    }
+
+    private fun play(play: Boolean, mediaUrl: String, title: String, exo: Boolean, originalVideoUrl: String) {
+        try {
+            if (play)
+                playByPlayer(mediaUrl + originalVideoUrl)
+            else {
+                changePlayer(mediaUrl + originalVideoUrl, exo)
+            }
+
+        }catch (exception: Exception){
+            showPlaybackErrorMessage(title, mediaUrl)
         }
     }
 

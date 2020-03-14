@@ -159,7 +159,9 @@ class PlaybackVideoExoFragment : Fragment() {
                     unappliedRotationDegrees: Int,
                     pixelWidthHeightRatio: Float
                 ) {
-                    if (mediaUrl.contains("webch630") || mediaUrl.contains("grtn")) {
+                    if (mediaUrl.contains("webch630") || mediaUrl.contains("grtn")
+                        || mediaUrl.contains("45.126.83.51") || mediaUrl.contains("210.210.155.35")
+                        || mediaUrl.contains("202.175.127.77") || mediaUrl.contains("httpdvb")) {
                         val playerView = view.player_view
                         val screenWidth = playerView.width
                         val screenHeight = playerView.height
