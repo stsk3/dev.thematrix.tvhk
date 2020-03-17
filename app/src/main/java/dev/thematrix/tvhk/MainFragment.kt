@@ -14,7 +14,7 @@ import java.net.URL
 
 class MainFragment : BrowseFragment() {
 
-    private val default = if (android.os.Build.VERSION.SDK_INT < 21) 3 else 2
+    private val default = 2
     private val titleList = mutableListOf<String>()
     private val cardImageUrlList = mutableListOf<Int>()
     private val videoUrlList = mutableListOf<String>()

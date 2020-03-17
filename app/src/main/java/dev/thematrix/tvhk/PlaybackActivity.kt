@@ -127,10 +127,7 @@ class PlaybackActivity : FragmentActivity() {
                 val channelCount = list.count()
 
                 // Change channel
-                val skipChannelList = if (android.os.Build.VERSION.SDK_INT < 21)
-                    "^SKIP$|^有線新聞台$|^now新聞台$".toRegex()
-                else
-                    "^SKIP$|^有線新聞台\\(2\\)$|^now新聞台\\(2\\)$".toRegex()
+                val skipChannelList = "^SKIP$".toRegex()
                 if (direction == "PREVIOUS" || direction == "NEXT") {
                     if (direction == "PREVIOUS") {
                         videoId--

@@ -1,7 +1,7 @@
 package dev.thematrix.tvhk
 
 object MovieList {
-    const val FB_INDEX = 9
+    const val FB_INDEX = 7
     const val FB_CATEGORY_INDEX = 1
 
     val CATEGORY = arrayOf(
@@ -27,9 +27,7 @@ object MovieList {
         "有線財經資訊台",
         "有線直播台",
         "有線新聞台",
-        "有線新聞台(2)",
         "now新聞台",
-        "now新聞台(2)",
         "now直播台",
         "港台電視32",
         "SKIP",
@@ -150,8 +148,6 @@ object MovieList {
         R.drawable.cablefinance,
         R.drawable.cablelivenews,
         R.drawable.cablenews,
-        R.drawable.cablenews,
-        R.drawable.nowtv332,
         R.drawable.nowtv332,
         R.drawable.nowtv331,
         R.drawable.rthktv32,
@@ -275,8 +271,6 @@ object MovieList {
         "#https://ottproxy2.mott.tv/livehls/MOB-SCC/index.m3u8",
         "",
         "",
-        "",
-        "",
         "https://www.rthk.hk/feeds/dtt/rthktv32_https.m3u8",
         "SKIP",
         "http://live.cdn.hk01.com/origin/smil:01news.smil/playlist.m3u8",
@@ -288,7 +282,10 @@ object MovieList {
         "",
         "",
         "http://ms003.happytv.com.tw/live/OcScNdWHvBx5P4w3/index.m3u8",
-        "http://rmtv24hweblive-lh.akamaihd.net/i/rmtv24hwebes_1@300661/master.m3u8#http://rmtv24hweblive-lh.akamaihd.net/i/rmtv24hweben_1@300662/master.m3u8",
+        if (android.os.Build.VERSION.SDK_INT < 21)
+            "http://rmtv24hweblive-lh.akamaihd.net/i/rmtv24hwebes_1@300661/index_3_av-p.m3u8#http://rmtv24hweblive-lh.akamaihd.net/i/rmtv24hweben_1@300662/index_3_av-p.m3u8"
+        else
+            "http://rmtv24hweblive-lh.akamaihd.net/i/rmtv24hwebes_1@300661/master.m3u8#http://rmtv24hweblive-lh.akamaihd.net/i/rmtv24hweben_1@300662/master.m3u8",
         "",
         "SKIP",
         "http://live-wcloud-cdn.ysp.cctv.cn/tlivecloud-cdn.ysp.cctv.cn/001/2000205102.m3u8#http://111.40.205.87/PLTV/88888888/224/3221225591/index.m3u8#http://ottrrs.hl.chinamobile.com/PLTV/88888888/224/3221225591/index.m3u8",
@@ -396,9 +393,7 @@ object MovieList {
         "wowgua_ch108",
         "cabletv110",
         "wowgua_ch109",
-        "ggiptv_gt_31",
         "nowtv332",
-        "ggiptv_gt_16",
         "nowtv331",
         "rthk",
         "hkatv",
@@ -575,7 +570,7 @@ object MovieList {
         movie.videoUrl = videoUrl
         movie.func = func
         movie.exo = if (android.os.Build.VERSION.SDK_INT < 21)
-            func.contains("^nowtv|^fantv$|^rthk$|^fox$|^fb$|^wowgua|^in$|^uae$|^tw$|^rmtv$|^viutv99$|^cctv13$".toRegex())
+            func.contains("^nowtv|^fantv$|^rthk$|^fox$|^fb$|^wowgua|^in$|^uae$|^tw$|^viutv99$|^cctv13$".toRegex())
         else
             true
         movie.fixRatio = func.contains("^gdtv|^nowtv630$|^in$|^mocable$".toRegex()) || videoUrl.contains("".toRegex()) || title in "遼寧體育"
