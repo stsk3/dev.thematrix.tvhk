@@ -20,7 +20,8 @@ object MovieList {
         "印尼",
         "廣東電視",
         "廣州電視",
-        "UTV"
+        "UTV",
+        "自選"
     )
 
     val TITLE = mutableListOf(
@@ -37,11 +38,11 @@ object MovieList {
         "SKIP",
         "now630",
         "澳視體育",
-        "ELTA1",
-        "Eleven1",
         "博斯魅力",
         "皇馬台",
         "NBATV",
+        "ELTA1",
+        "Eleven1",
         "SKIP",
         "CCTV5",
         "CCTV5+",
@@ -114,7 +115,6 @@ object MovieList {
         "天映頻道",
         "Thrill",
         "Cinema World",
-        "GemTV",
         "Hits",
         "SKIP",
         "廣東衛視",
@@ -142,6 +142,11 @@ object MovieList {
         "SKIP",
         "C+",
         "賽馬頻道",
+        "SKIP",
+        "自選1",
+        "自選2",
+        "自選Exo1",
+        "自選Exo2",
         "SKIP"
     )
 
@@ -159,11 +164,11 @@ object MovieList {
         0,
         R.drawable.nowtv630,
         R.drawable.tdmsport,
-        R.drawable.sport_elta1,
-        R.drawable.sport_eleven1,
         R.drawable.sportcast,
         R.drawable.rmtv,
         R.drawable.nbatv,
+        R.drawable.sport_elta1,
+        R.drawable.sport_eleven1,
         0,
         R.drawable.cctv5,
         R.drawable.cctv5plus,
@@ -236,7 +241,6 @@ object MovieList {
         R.drawable.in_celestial,
         R.drawable.in_thrill,
         R.drawable.in_cinemaworld,
-        R.drawable.in_gem,
         R.drawable.in_hits,
         0,
         R.drawable.gdtv_star,
@@ -264,6 +268,11 @@ object MovieList {
         0,
         R.drawable.utv,
         R.drawable.utv,
+        0,
+        R.mipmap.ic_pepe,
+        R.mipmap.ic_pepe,
+        R.mipmap.ic_pepe,
+        R.mipmap.ic_pepe,
         0
     )
 
@@ -281,22 +290,22 @@ object MovieList {
         "SKIP",
         "",
         "http://live1.tdm.com.mo:1935/ch4/sport_ch4.live/playlist.m3u8#http://live2.tdm.com.mo:1935/ch4/sport_ch4.live/playlist.m3u8#http://live3.tdm.com.mo:1935/ch4/sport_ch4.live/playlist.m3u8#http://live4.tdm.com.mo:1935/ch4/sport_ch4.live/playlist.m3u8",
-        "",
-        "",
         "http://ms003.happytv.com.tw/live/OcScNdWHvBx5P4w3/index.m3u8",
         if (android.os.Build.VERSION.SDK_INT < 21)
             "http://rmtv24hweblive-lh.akamaihd.net/i/rmtv24hwebes_1@300661/index_3_av-p.m3u8#http://rmtv24hweblive-lh.akamaihd.net/i/rmtv24hweben_1@300662/index_3_av-p.m3u8"
         else
             "http://rmtv24hweblive-lh.akamaihd.net/i/rmtv24hwebes_1@300661/master.m3u8#http://rmtv24hweblive-lh.akamaihd.net/i/rmtv24hweben_1@300662/master.m3u8",
         "",
+        "",
+        "",
         "SKIP",
         "http://111.40.205.87/PLTV/88888888/224/3221225591/index.m3u8#http://ottrrs.hl.chinamobile.com/PLTV/88888888/224/3221225591/index.m3u8",
         "http://111.40.205.87/PLTV/88888888/224/3221225689/index.m3u8#http://ottrrs.hl.chinamobile.com/PLTV/88888888/224/3221225603/index.m3u8",
         "",
         "",
-        "http://183.207.255.190/live/program/live/ssty/2300000/mnf.m3u8",
-        "http://183.207.255.190/live/program/live/jbtyhd/2300000/mnf.m3u8",
-        "http://183.207.255.190/live/program/live/xsjhd/2300000/mnf.m3u8",
+        "#http://183.207.255.190/live/program/live/ssty/2300000/mnf.m3u8",
+        "#http://183.207.255.190/live/program/live/jbtyhd/2300000/mnf.m3u8",
+        "#http://183.207.255.190/live/program/live/xsjhd/2300000/mnf.m3u8",
         "",
         "",
         "http://play.ggiptv.com:13164/v/hunantv.php?id=329&type=.m3u8",
@@ -361,7 +370,6 @@ object MovieList {
         "http://45.126.83.51/qwr9ew/s/s33/index.m3u8#http://210.210.155.35/qwr9ew/s/s33/index.m3u8",
         "http://45.126.83.51/qwr9ew/s/s34/index.m3u8#http://210.210.155.35/qwr9ew/s/s34/index.m3u8",
         "http://45.126.83.51/uq2663/h/h04/index2.m3u8#http://210.210.155.35/uq2663/h/h04/index2.m3u8",
-        "http://45.126.83.51/uq2663/h/h19/index.m3u8#http://210.210.155.35/uq2663/h/h19/index.m3u8",
         "http://45.126.83.51/uq2663/h/h37/index.m3u8#http://210.210.155.35/uq2663/h/h37/index.m3u8",
         "SKIP",
         "",
@@ -389,6 +397,11 @@ object MovieList {
         "SKIP",
         "",
         "",
+        "SKIP",
+        "",
+        "",
+        "",
+        "",
         "SKIP"
     )
 
@@ -406,19 +419,19 @@ object MovieList {
         "SKIP",
         "nowtv630",
         "",
-        "ggiptv_ty_21",
-        "ggiptv_ty_28",
         "",
         "rmtv",
         "wowgua_nbatv",
+        "ggiptv_ty_21",
+        "ggiptv_ty_28",
         "SKIP",
         "",
         "",
         "ggiptv_ty_6",
         "gztv_5c7f70b7e4b01c17db18fbd9",
-        "china_sport",//"ggiptv_ty_5",
-        "china_sport",//"ggiptv_ty_3",
-        "china_sport",//"ggiptv_ty_4",
+        "ggiptv_ty_5",
+        "ggiptv_ty_3",
+        "ggiptv_ty_4",
         "ggiptv_ty_7_1",
         "ggiptv_ty_8",
         "",
@@ -484,7 +497,6 @@ object MovieList {
         "in",
         "in",
         "in",
-        "in",
         "SKIP",
         "gdtv_25",
         "gdtv_26",
@@ -511,6 +523,11 @@ object MovieList {
         "SKIP",
         "wowgua_utv_c_plus",
         "wowgua_utv_racing",
+        "SKIP",
+        "custom1",
+        "custom2",
+        "exoCustom1",
+        "exoCustom2",
         "SKIP"
     )
 
@@ -574,9 +591,9 @@ object MovieList {
         movie.videoUrl = videoUrl
         movie.func = func
         movie.exo = if (android.os.Build.VERSION.SDK_INT < 21)
-            func.contains("^nowtv|^fantv$|^rthk$|^fox$|^fb$|^wowgua|^in$|^uae$|^tw$|^viutv99$|^cctv13$|^china_sport$".toRegex())
+            func.contains("^nowtv|^fantv$|^rthk$|^fox$|^fb$|^wowgua|^in$|^uae$|^tw$|^viutv99$|^cctv13$|^exoCustom".toRegex())
         else
-            true
+            !func.contains("^custom".toRegex())
         movie.fixRatio = func.contains("^gdtv|^nowtv630$|^in$|^mocable$".toRegex()) || videoUrl.contains("".toRegex()) || title in "遼寧體育"
 
         return movie

@@ -1,6 +1,7 @@
 package dev.thematrix.tvhk
 
 import android.os.Bundle
+import android.util.Log
 import android.view.KeyEvent
 import android.view.WindowManager
 import android.widget.Toast
@@ -462,7 +463,7 @@ class PlaybackActivity : FragmentActivity() {
         } else if(ch.startsWith("ggiptv")) {
             val dataList = ch.split("_")
 
-            val url = "http://m.iptv807.com/?act=play&tid=" + dataList[1] +"&id=" + dataList[2] + if (dataList.size > 2)  "&p=$dataList[3]" else ""
+            val url = "http://m.iptv807.com/?act=play&tid=" + dataList[1] +"&id=" + dataList[2]
             val stringRequest = object: StringRequest(
                 Method.GET,
                 url,
@@ -471,7 +472,7 @@ class PlaybackActivity : FragmentActivity() {
                     if (result != null)
                     {
                         var url = Regex("http.*?\"").find(result.value)?.value ?: ""
-                        url = url.substring(0, url.length - 1)
+                        url = url.substring(0, url.length - 1) + if (dataList.size > 2)  "&p=${dataList[3]}" else ""
                         this.play(url, play)
                     }
 
@@ -493,6 +494,8 @@ class PlaybackActivity : FragmentActivity() {
             }
             requestQueue.add(stringRequest)
 
+        } else if(ch.contains("^custom|^exoCustom".toRegex())) {
+            this.play(webInfoMap[ch]?:"", play)
         }
     }
 
