@@ -82,7 +82,9 @@ class PlaybackVideoFragment : VideoSupportFragment() {
 
         PlaybackActivity.toast.setText("未能播放! $errorMessage")
         PlaybackActivity.toast.show()
-        playVideo(mediaUrl.split("#")[0], isFixRatio)
+
+        //Not allow play the same link twice
+        playVideo(if (mediaUrl.endsWith("?")) mediaUrl.removeSuffix("?") else "$mediaUrl?", isFixRatio)
     }
 
     private fun setUpPlayer(){

@@ -1,7 +1,6 @@
 package dev.thematrix.tvhk
 
 import android.os.Bundle
-import android.util.Log
 import android.view.KeyEvent
 import android.view.WindowManager
 import android.widget.Toast
@@ -38,6 +37,13 @@ class PlaybackActivity : FragmentActivity() {
             prepareAndChangePlayer(false)
         }
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        requestQueue.cancelAll{ true }
+    }
+
     private fun setUpNetwork(){
         //Header NO redirect
         val hurlStack = object : HurlStack() {
@@ -541,7 +547,7 @@ class PlaybackActivity : FragmentActivity() {
             .commit()
     }
 
-    private val getCustomerRetryPolicy = DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 10, 2, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
+    private val getCustomerRetryPolicy = DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 6, 2, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
 
     companion object {
         var currentVideoID = -1
