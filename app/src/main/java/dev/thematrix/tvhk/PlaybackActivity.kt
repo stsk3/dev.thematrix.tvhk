@@ -7,6 +7,7 @@ import android.widget.Toast
 import androidx.fragment.app.FragmentActivity
 import com.android.volley.*
 import com.android.volley.toolbox.*
+import dev.thematrix.tvhk.MainFragment.Companion.webInfoMap
 import org.json.JSONArray
 import org.json.JSONObject
 import org.xml.sax.InputSource
@@ -245,11 +246,11 @@ class PlaybackActivity : FragmentActivity() {
                     this.play(mediaUrl, play)
                 },
                 Response.ErrorListener{ error ->
-                    showPlaybackErrorMessage(title, "")
+                    showPlaybackErrorMessage(title, play)
                 }
             )
 
-            jsonObjectRequest.retryPolicy = DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 5, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
+            jsonObjectRequest.retryPolicy = getCustomerRetryPolicy
 
             requestQueue.add(jsonObjectRequest)
         }else if(ch.equals("nowtv630")){
@@ -278,11 +279,11 @@ class PlaybackActivity : FragmentActivity() {
                     this.play(url, play)
                 },
                 Response.ErrorListener{ error ->
-                    showPlaybackErrorMessage(title, url)
+                    showPlaybackErrorMessage(title, play)
                 }
             ){
                 override fun getRetryPolicy(): RetryPolicy {
-                    return DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 5, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
+                    return getCustomerRetryPolicy
                 }
 
                 override fun getHeaders(): MutableMap<String, String> {
@@ -309,11 +310,11 @@ class PlaybackActivity : FragmentActivity() {
                     this.play(mediaUrl, play)
                 },
                 Response.ErrorListener{ error ->
-                    showPlaybackErrorMessage(title, "")
+                    showPlaybackErrorMessage(title, play)
                 }
             ){
                 override fun getRetryPolicy(): RetryPolicy {
-                    return DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 5, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
+                    return getCustomerRetryPolicy
                 }
 
                 override fun getHeaders(): MutableMap<String, String> {
@@ -378,19 +379,19 @@ class PlaybackActivity : FragmentActivity() {
                 url,
                 Response.Listener { },
                 Response.ErrorListener { error ->
-                    if (error.networkResponse.statusCode == 302) {
+                    if (error.networkResponse != null && error.networkResponse.statusCode == 302) {
                         val url = error.networkResponse.headers["Location"].toString()
 
                         this.play(url, play)
                     }
                     else
                     {
-                        showPlaybackErrorMessage(title, url)
+                        showPlaybackErrorMessage(title, play)
                     }
                 }
             ){
                 override fun getRetryPolicy(): RetryPolicy {
-                    return DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 5, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
+                    return getCustomerRetryPolicy
                 }
 
                 override fun getHeaders(): MutableMap<String, String> {
@@ -414,17 +415,17 @@ class PlaybackActivity : FragmentActivity() {
                     this.play(mediaUrl, play)
                 },
                 Response.ErrorListener{ error ->
-                    showPlaybackErrorMessage(title, "")
+                    showPlaybackErrorMessage(title, play)
                 }
             ){
                 override fun getRetryPolicy(): RetryPolicy {
-                    return DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 5, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
+                    return getCustomerRetryPolicy
                 }
 
                 override fun getHeaders(): MutableMap<String, String> {
                     val params =  mutableMapOf<String, String>()
                     params.put("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4043.2 Safari/537.36")
-                    params.put("Cookie", "WEB=20111112; UM_distinctid=170004ad7b8181-0e74af8ca05e59-6952732d-1fa400-170004ad7b94dc")
+                    params.put("Cookie", "WEB=20111112; UM_distinctid=${webInfoMap["UM_distinctid"]}")
 
                     return params
                 }
@@ -449,18 +450,19 @@ class PlaybackActivity : FragmentActivity() {
 
                 },
                 Response.ErrorListener{ error ->
-                    showPlaybackErrorMessage(title, "")
+                    showPlaybackErrorMessage(title, play)
                 }
             ){
                 override fun getRetryPolicy(): RetryPolicy {
-                    return DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 5, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
+                    return getCustomerRetryPolicy
                 }
             }
             requestQueue.add(stringRequest)
 
         } else if(ch.startsWith("ggiptv")) {
+            val dataList = ch.split("_")
 
-            val url = "http://m.iptv807.com/?act=play&tid=" + ch.substring(7, 9) +"&id=" + ch.substring(10)
+            val url = "http://m.iptv807.com/?act=play&tid=" + dataList[1] +"&id=" + dataList[2] + if (dataList.size > 2)  "&p=$dataList[3]" else ""
             val stringRequest = object: StringRequest(
                 Method.GET,
                 url,
@@ -469,17 +471,24 @@ class PlaybackActivity : FragmentActivity() {
                     if (result != null)
                     {
                         var url = Regex("http.*?\"").find(result.value)?.value ?: ""
-                        url = url.substring(0, url.length - 1).replace("player.php", "play.m3u8")
+                        url = url.substring(0, url.length - 1)
                         this.play(url, play)
                     }
 
                 },
                 Response.ErrorListener{ error ->
-                    showPlaybackErrorMessage(title, "")
+                    showPlaybackErrorMessage(title, play)
                 }
             ){
                 override fun getRetryPolicy(): RetryPolicy {
-                    return DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 5, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
+                    return getCustomerRetryPolicy
+                }
+
+                override fun getHeaders(): MutableMap<String, String> {
+                    val params =  mutableMapOf<String, String>()
+                    params.put("User-Agent", "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4101.0 Mobile Safari/537.36")
+
+                    return params
                 }
             }
             requestQueue.add(stringRequest)
@@ -488,8 +497,13 @@ class PlaybackActivity : FragmentActivity() {
     }
 
     private fun play(mediaUrl: String, play: Boolean) {
-        val originalVideoUrl = currentMovie.videoUrl
+        var originalVideoUrl = currentMovie.videoUrl
         val title = currentMovie.title
+
+        //Error in getting url, play url directly
+        if (mediaUrl == "" && originalVideoUrl.startsWith("#"))
+            originalVideoUrl = originalVideoUrl.removePrefix("#")
+
 
         try {
             if (play)
@@ -499,16 +513,16 @@ class PlaybackActivity : FragmentActivity() {
             }
 
         }catch (exception: Exception){
-            showPlaybackErrorMessage(title, mediaUrl)
+            showPlaybackErrorMessage(title, play)
         }
     }
 
 
-    private fun showPlaybackErrorMessage(title: String, mediaUrl: String){
+    private fun showPlaybackErrorMessage(title: String, play: Boolean){
         toast.setText("$title 暫時未能播放，請稍候再試。")
         toast.show()
-        if (mediaUrl != "")
-            playByPlayer(mediaUrl)
+
+        this.play("", play)
     }
 
     private fun changePlayer(mediaUrl: String)
@@ -523,6 +537,8 @@ class PlaybackActivity : FragmentActivity() {
             .replace(android.R.id.content, if (exo) PlaybackVideoExoFragment() else PlaybackVideoFragment())
             .commit()
     }
+
+    private val getCustomerRetryPolicy = DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 10, 2, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
 
     companion object {
         var currentVideoID = -1

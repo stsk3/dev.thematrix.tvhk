@@ -20,6 +20,10 @@ class MainFragment : BrowseFragment() {
     private val videoUrlList = mutableListOf<String>()
     private val funcList = mutableListOf<String>()
 
+    companion object {
+        val webInfoMap = mutableMapOf<String, String>()
+    }
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
@@ -30,7 +34,33 @@ class MainFragment : BrowseFragment() {
         setupEventListeners()
         defaultPlay()
 
+        getWebInfo()
         addOnccLive()
+    }
+
+    private fun getWebInfo() {
+        Thread(Runnable {
+            val client = OkHttpClient()
+            val url = URL("https://telegra.ph/TVSTHK-04-03")
+            val request = Request.Builder()
+                .url(url)
+                .get()
+                .build()
+            val response = client.newCall(request).execute()
+            val responseBody = response.body()!!.string()
+
+            if (responseBody != "") {
+                val resultHtml = Regex("(?<=<blockquote>)(.*?)(?=</blockquote>)").findAll(responseBody)
+                if (resultHtml.count() > 0)
+                {
+                    resultHtml.forEach {
+                        val result = it.value
+                        val line = result.split("=")
+                        webInfoMap[line[0]] = line[1]
+                    }
+                }
+            }
+        }).start()
     }
 
     private fun addOnccLive() {

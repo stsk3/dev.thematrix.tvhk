@@ -80,7 +80,7 @@ class PlaybackVideoFragment : VideoSupportFragment() {
     override fun onError(errorCode: Int, errorMessage: CharSequence?) {
         super.onError(errorCode, errorMessage)
 
-        PlaybackActivity.toast.setText(errorMessage)
+        PlaybackActivity.toast.setText("未能播放! $errorMessage")
         PlaybackActivity.toast.show()
         playVideo(mediaUrl.split("#")[0], isFixRatio)
     }
@@ -92,7 +92,7 @@ class PlaybackVideoFragment : VideoSupportFragment() {
 
         val glueHost = VideoSupportFragmentGlueHost(this@PlaybackVideoFragment)
         mTransportControlGlue.host = glueHost
-        mTransportControlGlue.isControlsOverlayAutoHideEnabled = true
+        mTransportControlGlue.isControlsOverlayAutoHideEnabled = false
         hideControlsOverlay(false)
         mTransportControlGlue.isSeekEnabled = false
         progressBarManager.disableProgressBar()
@@ -105,6 +105,7 @@ class PlaybackVideoFragment : VideoSupportFragment() {
         playerAdapter.reset()
         playerAdapter.setDataSource(Uri.parse(handleUrl(videoUrl)))
         mTransportControlGlue.playWhenPrepared()
+        Log.i("Video Link:", videoUrl)
     }
 
     private fun handleUrl(url: String): String{

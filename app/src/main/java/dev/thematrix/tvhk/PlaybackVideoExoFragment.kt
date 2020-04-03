@@ -28,6 +28,7 @@ import com.google.android.exoplayer2.ui.AspectRatioFrameLayout
 import com.google.android.exoplayer2.ui.TrackSelectionDialogBuilder
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
 import com.google.android.exoplayer2.video.VideoListener
 import dev.thematrix.tvhk.PlaybackActivity.Companion.toast
 import kotlinx.android.synthetic.main.activity_simple.view.*
@@ -99,7 +100,8 @@ class PlaybackVideoExoFragment : Fragment() {
         playerView.hideController()
 
 
-        val dataSourceFactory = DefaultDataSourceFactory(activity, "exoplayer")
+        httpDataSourceFactory = DefaultHttpDataSourceFactory("exoplayer")
+        val dataSourceFactory = DefaultDataSourceFactory(activity, httpDataSourceFactory)
         hlsMediaSourceFactory = HlsMediaSource.Factory(dataSourceFactory)
         dashMediaSourceFactory = DashMediaSource.Factory(dataSourceFactory)
         progressiveMediaSourceFactory = ProgressiveMediaSource.Factory(dataSourceFactory)
@@ -127,14 +129,16 @@ class PlaybackVideoExoFragment : Fragment() {
                         Player.STATE_IDLE -> {
                             toast.setText("STATE_IDLE")
                             toast.show()
-                            playVideo(mediaUrl, isFixRatio)
+                            if (mediaUrl != "")
+                                playVideo(mediaUrl, isFixRatio)
                         }
                         Player.STATE_BUFFERING -> {}
                         Player.STATE_READY -> {}
                         Player.STATE_ENDED -> {
                             toast.setText("STATE_ENDED")
                             toast.show()
-                            playVideo(mediaUrl, isFixRatio)
+                            if (mediaUrl != "")
+                                playVideo(mediaUrl, isFixRatio)
                         }
                     }
                 }
@@ -244,6 +248,13 @@ class PlaybackVideoExoFragment : Fragment() {
     }
 
     fun playVideo(videoUrl: String, fixRatio: Boolean, window: Int = 0) {
+        if (videoUrl.contains("grtn")) {
+            httpDataSourceFactory.defaultRequestProperties.set("Referer", "http://www.gdtv.cn/")
+        } else {
+            httpDataSourceFactory.defaultRequestProperties.clear()
+        }
+
+
         val concatenatingMediaSource = ConcatenatingMediaSource()
         mediaUrl = videoUrl
         isFixRatio = fixRatio
@@ -263,6 +274,8 @@ class PlaybackVideoExoFragment : Fragment() {
 
         player.prepare(concatenatingMediaSource)
         player.seekToDefaultPosition(windowIndex)
+
+        Log.i("Video Link:", videoUrl)
     }
 
 
@@ -273,6 +286,7 @@ class PlaybackVideoExoFragment : Fragment() {
         private lateinit var hlsMediaSourceFactory: HlsMediaSource.Factory
         private lateinit var dashMediaSourceFactory: DashMediaSource.Factory
         private lateinit var progressiveMediaSourceFactory: ProgressiveMediaSource.Factory
+        private lateinit var httpDataSourceFactory: DefaultHttpDataSourceFactory
         private lateinit var mediaUrl: String
         private var isFixRatio: Boolean = false
         private var windowIndex: Int = 0
