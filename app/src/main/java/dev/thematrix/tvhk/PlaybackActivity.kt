@@ -214,6 +214,7 @@ class PlaybackActivity : FragmentActivity() {
 
 
         requestQueue.cancelAll(this)
+        retry = defaultRetryNum
 
         lateinit var url: String
 
@@ -257,7 +258,7 @@ class PlaybackActivity : FragmentActivity() {
                 }
             )
 
-            jsonObjectRequest.retryPolicy = getCustomerRetryPolicy
+            jsonObjectRequest.retryPolicy = getCustomerRetryPolicy()
 
             requestQueue.add(jsonObjectRequest)
         }else if(ch.equals("nowtv630")){
@@ -290,7 +291,7 @@ class PlaybackActivity : FragmentActivity() {
                 }
             ){
                 override fun getRetryPolicy(): RetryPolicy {
-                    return getCustomerRetryPolicy
+                    return getCustomerRetryPolicy()
                 }
 
                 override fun getHeaders(): MutableMap<String, String> {
@@ -321,7 +322,7 @@ class PlaybackActivity : FragmentActivity() {
                 }
             ){
                 override fun getRetryPolicy(): RetryPolicy {
-                    return getCustomerRetryPolicy
+                    return getCustomerRetryPolicy()
                 }
 
                 override fun getHeaders(): MutableMap<String, String> {
@@ -398,7 +399,7 @@ class PlaybackActivity : FragmentActivity() {
                 }
             ){
                 override fun getRetryPolicy(): RetryPolicy {
-                    return getCustomerRetryPolicy
+                    return getCustomerRetryPolicy()
                 }
 
                 override fun getHeaders(): MutableMap<String, String> {
@@ -426,7 +427,7 @@ class PlaybackActivity : FragmentActivity() {
                 }
             ){
                 override fun getRetryPolicy(): RetryPolicy {
-                    return getCustomerRetryPolicy
+                    return getCustomerRetryPolicy()
                 }
 
                 override fun getHeaders(): MutableMap<String, String> {
@@ -461,7 +462,7 @@ class PlaybackActivity : FragmentActivity() {
                 }
             ){
                 override fun getRetryPolicy(): RetryPolicy {
-                    return getCustomerRetryPolicy
+                    return getCustomerRetryPolicy()
                 }
             }
             requestQueue.add(stringRequest)
@@ -478,7 +479,7 @@ class PlaybackActivity : FragmentActivity() {
                     if (result != null)
                     {
                         var url = Regex("http.*?\"").find(result.value)?.value ?: ""
-                        url = url.substring(0, url.length - 1) + if (dataList.size > 2)  "&p=${dataList[3]}" else ""
+                        url = "${url.substring(0, url.length - 1)}${if (dataList.size > 3)  "&p=${dataList[3]}" else ""}"
                         this.play(url, play)
                     }
 
@@ -488,7 +489,7 @@ class PlaybackActivity : FragmentActivity() {
                 }
             ){
                 override fun getRetryPolicy(): RetryPolicy {
-                    return getCustomerRetryPolicy
+                    return getCustomerRetryPolicy()
                 }
 
                 override fun getHeaders(): MutableMap<String, String> {
@@ -547,7 +548,12 @@ class PlaybackActivity : FragmentActivity() {
             .commit()
     }
 
-    private val getCustomerRetryPolicy = DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * 6, 2, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
+    private fun getCustomerRetryPolicy(): DefaultRetryPolicy {
+        return DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * if (currentMovie.videoUrl != "") 1 else 6, retry--, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
+    }
+
+    private val defaultRetryNum = 2
+    private var retry = defaultRetryNum
 
     companion object {
         var currentVideoID = -1

@@ -8,7 +8,6 @@ import android.util.Log
 import android.view.View
 import androidx.leanback.app.VideoSupportFragment
 import androidx.leanback.app.VideoSupportFragmentGlueHost
-import androidx.leanback.media.MediaPlayerAdapter
 import androidx.leanback.media.PlaybackTransportControlGlue
 import androidx.leanback.widget.PlaybackControlsRow
 
@@ -22,6 +21,7 @@ class PlaybackVideoFragment : VideoSupportFragment() {
 
         setUpPlayer()
 
+        Log.i("PlaybackVideo", videoUrl)
         playVideo(videoUrl.split("#")[0], fixRatio)
     }
 
@@ -83,12 +83,13 @@ class PlaybackVideoFragment : VideoSupportFragment() {
         PlaybackActivity.toast.setText("未能播放! $errorMessage")
         PlaybackActivity.toast.show()
 
-        //Not allow play the same link twice
-        playVideo(if (mediaUrl.endsWith("?")) mediaUrl.removeSuffix("?") else "$mediaUrl?", isFixRatio)
+        if (retry > 0) {
+            playVideo(mediaUrl, isFixRatio)
+        }
     }
 
     private fun setUpPlayer(){
-        playerAdapter = MediaPlayerAdapter(activity)
+        playerAdapter = NewMediaPlayerAdapter(activity)
         playerAdapter.setRepeatAction(PlaybackControlsRow.RepeatAction.INDEX_ONE)
         mTransportControlGlue = PlaybackTransportControlGlue(activity, playerAdapter)
 
@@ -102,10 +103,20 @@ class PlaybackVideoFragment : VideoSupportFragment() {
     }
 
     fun playVideo(videoUrl: String, fixRatio: Boolean) {
+        if (mediaUrl == videoUrl)
+            retry--
+        else
+            retry = defaultRetryNum
+
+        val headers = HashMap<String, String>()
+        if (videoUrl.contains("grtn")) {
+            headers["Referer"] = "http://www.gdtv.cn/"
+        }
+
         mediaUrl = videoUrl
         isFixRatio = fixRatio
         playerAdapter.reset()
-        playerAdapter.setDataSource(Uri.parse(handleUrl(videoUrl)))
+        playerAdapter.setDataSource(Uri.parse(handleUrl(videoUrl)), headers)
         mTransportControlGlue.playWhenPrepared()
         Log.i("Video Link:", videoUrl)
     }
@@ -118,11 +129,14 @@ class PlaybackVideoFragment : VideoSupportFragment() {
         }
     }
 
+    private val defaultRetryNum = 3
+    private var retry = defaultRetryNum
+
     companion object {
         private val SDK_VER = android.os.Build.VERSION.SDK_INT
-        private lateinit var mTransportControlGlue: PlaybackTransportControlGlue<MediaPlayerAdapter>
-        private lateinit var playerAdapter: MediaPlayerAdapter
-        private lateinit var mediaUrl: String
+        private lateinit var mTransportControlGlue: PlaybackTransportControlGlue<NewMediaPlayerAdapter>
+        private lateinit var playerAdapter: NewMediaPlayerAdapter
+        private var mediaUrl: String = ""
         private var isFixRatio: Boolean = false
         private const val SYSTEM_UI_FLAG = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
     }

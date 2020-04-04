@@ -68,6 +68,7 @@ class PlaybackVideoExoFragment : Fragment() {
         PlaybackActivity.isCurrentExo = true
         setupExoPlayer(view)
 
+        Log.i("PlaybackVideoExo", videoUrl)
         playVideo(videoUrl, fixRatio)
         return view
     }

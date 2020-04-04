@@ -2,6 +2,7 @@ package dev.thematrix.tvhk
 
 import android.app.Activity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException
 import com.google.android.gms.common.GooglePlayServicesRepairableException
@@ -50,9 +51,12 @@ class MainActivity : Activity() {
                 val engine = sslContext.createSSLEngine()
                 engine.enabledCipherSuites
 
-                val allHostsValid = HostnameVerifier { _, _ -> true }
+                val ignoreHostnameVerifier = HostnameVerifier { s, sslsession ->
+                    Log.i("HostNameVer", "WARNING: Hostname is not matched for cert.")
+                    true
+                }
                 setDefaultSSLSocketFactory(sslContext.socketFactory)
-                setDefaultHostnameVerifier(allHostsValid)
+                setDefaultHostnameVerifier(ignoreHostnameVerifier)
 
                 Toast.makeText(this, "強制使用 TLSv1.2", Toast.LENGTH_SHORT).show()
             } catch (e: KeyManagementException) {
