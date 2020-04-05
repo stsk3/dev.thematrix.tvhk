@@ -32,7 +32,6 @@ class MainFragment : BrowseFragment() {
 
         loadRows()
         setupEventListeners()
-        defaultPlay()
 
         getWebInfo()
         addOnccLive()
@@ -58,6 +57,8 @@ class MainFragment : BrowseFragment() {
                         val line = result.split("=")
                         webInfoMap[line[0]] = line[1]
                     }
+
+                    defaultPlay()
                 }
             }
         }).start()
@@ -230,6 +231,10 @@ class MainFragment : BrowseFragment() {
     }
 
     private fun defaultPlay() {
+        var default = 2
+        if (webInfoMap.containsKey("defaultChannel"))
+            default = webInfoMap["defaultChannel"]!!.toInt()
+
         val intent = Intent(activity, PlaybackActivity::class.java)
         intent.putExtra(DetailsActivity.MOVIE, MovieList.list[default])
         startActivity(intent)

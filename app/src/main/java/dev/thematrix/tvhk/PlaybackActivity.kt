@@ -125,7 +125,7 @@ class PlaybackActivity : FragmentActivity() {
 
 
         // Find correct channel / source
-        if(event.action == KeyEvent.ACTION_DOWN) {
+        if(event.action == KeyEvent.ACTION_DOWN && !isDownloadingChannelInfo) {
             if (direction == "MENU") {
                 if (isCurrentExo)
                     PlaybackVideoExoFragment().trackSelectionDialog(this)
@@ -172,7 +172,7 @@ class PlaybackActivity : FragmentActivity() {
                 else if (direction == "LEFT" || direction == "RIGHT") {
                     val item = list[videoId]
                     val sourceCount = item.videoUrl.split("#").size
-                    if (item.videoUrl != "" && sourceCount > 1) {
+                    if (item.func.startsWith("chinaSport") || (item.videoUrl != "" && sourceCount > 1)) {
                         if (direction == "LEFT") {
                             currentSourceIndex = (currentSourceIndex - 1) % sourceCount
                             if (currentSourceIndex < 0)
@@ -211,6 +211,8 @@ class PlaybackActivity : FragmentActivity() {
     private fun getVideoUrl(play: Boolean) {
         val title: String = currentMovie.title
         val ch: String = currentMovie.func
+
+        isDownloadingChannelInfo = true
 
 
         requestQueue.cancelAll(this)
@@ -470,7 +472,7 @@ class PlaybackActivity : FragmentActivity() {
         } else if(ch.startsWith("ggiptv")) {
             val dataList = ch.split("_")
 
-            val url = "http://m.iptv807.com/?act=play&tid=" + dataList[1] +"&id=" + dataList[2]
+            val url = "http://${webInfoMap["ggiptvHost"]}/?act=play&tid=" + dataList[1] +"&id=" + dataList[2]
             val stringRequest = object: StringRequest(
                 Method.GET,
                 url,
@@ -479,7 +481,7 @@ class PlaybackActivity : FragmentActivity() {
                     if (result != null)
                     {
                         var url = Regex("http.*?\"").find(result.value)?.value ?: ""
-                        url = "${url.substring(0, url.length - 1)}${if (dataList.size > 3)  "&p=${dataList[3]}" else ""}"
+                        url = url.substring(0, url.length - 1) + if (dataList.size > 3) "&p=${dataList[3]}" else ""
                         this.play(url, play)
                     }
 
@@ -503,12 +505,16 @@ class PlaybackActivity : FragmentActivity() {
 
         } else if(ch.contains("^custom|^exoCustom".toRegex())) {
             this.play(webInfoMap[ch]?:"", play)
+        } else if (ch.startsWith("chinaSport")) {
+            this.play("http://${webInfoMap["chinaSportLink1"]}/live/program/live/${ch.split("_")[1]}/2300000/mnf.m3u8#http://${webInfoMap["chinaSportLink2"]}/live/program/live/${ch.split("_")[1]}/2300000/mnf.m3u8", play)
         }
     }
 
     private fun play(mediaUrl: String, play: Boolean) {
         var originalVideoUrl = currentMovie.videoUrl
         val title = currentMovie.title
+
+        isDownloadingChannelInfo = false
 
         //Error in getting url, play url directly
         if (mediaUrl == "" && originalVideoUrl.startsWith("#"))
@@ -554,6 +560,7 @@ class PlaybackActivity : FragmentActivity() {
 
     private val defaultRetryNum = 2
     private var retry = defaultRetryNum
+    private var isDownloadingChannelInfo = false
 
     companion object {
         var currentVideoID = -1
