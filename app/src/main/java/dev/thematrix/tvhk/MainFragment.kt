@@ -105,9 +105,9 @@ class MainFragment : BrowseFragment() {
                             val title = camera.getJSONArray("title").join(" ")
                             val linkArray = camera.getJSONArray("signal_key")
                             val linkList = mutableListOf<String>()
-                            for (i in 0..(linkArray.length() - 1)) {
+                            for (i in (linkArray.length() - 1) downTo 0) { //The first one may be https only
                                 val link : String = linkArray.getString(i)
-                                linkList.add(link.replace("https", "http"))
+                                linkList.add(link)
                             }
 
                             titleList.add("$name $title")
