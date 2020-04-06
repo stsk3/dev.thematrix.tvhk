@@ -5,7 +5,6 @@ object MovieList {
     const val NEWS_CATEGORY_INDEX = 1
     const val SPORTS_INDEX = 30
     const val SPORTS_CATEGORY_INDEX = 4
-    const val CHINA_SPORTS_INDEX = 23
 
     val CATEGORY = arrayOf(
         "新聞",
@@ -92,7 +91,6 @@ object MovieList {
         "有線互動新聞台",
         "有線第三頻道",
         "SKIP",
-        "華視",
         "中視",
         "動物星球",
         "龍祥時代",
@@ -218,7 +216,6 @@ object MovieList {
         R.drawable.mo_news,
         R.drawable.mo_ch3,
         0,
-        R.drawable.tw_cts,
         R.drawable.tw_ctv,
         R.drawable.tw_animalplanet,
         R.drawable.tw_lstime,
@@ -347,7 +344,6 @@ object MovieList {
         "http://202.175.127.77/live/show/ch2/index.m3u8",
         "http://202.175.127.77/live/show/ch3/index.m3u8",
         "SKIP",
-        "http://104.250.154.42:8080/ZZ_huashi/ZZ_huashi.m3u8#http://192.200.120.82:8080/ZZ_huashi/ZZ_huashi.m3u8#http://192.154.103.75:8080/ZZ_huashi/ZZ_huashi.m3u8",
         "http://104.250.154.42:8080/ZZ_zhongshi/ZZ_zhongshi.m3u8#http://192.200.120.82:8080/ZZ_zhongshi/ZZ_zhongshi.m3u8#http://192.154.103.75:8080/ZZ_zhongshi/ZZ_zhongshi.m3u8",
         "http://104.250.154.42:8080/ZZ_dongwuxingqiu/ZZ_dongwuxingqiu.m3u8#http://192.200.120.82:8080/ZZ_dongwuxingqiu/ZZ_dongwuxingqiu.m3u8#http://192.154.103.75:8080/ZZ_dongwuxingqiu/ZZ_dongwuxingqiu.m3u8",
         "http://104.250.154.42:8080/ZZ_shidai/ZZ_shidai.m3u8#http://192.200.120.82:8080/ZZ_shidai/ZZ_shidai.m3u8#http://192.154.103.75:8080/ZZ_shidai/ZZ_shidai.m3u8",
@@ -473,7 +469,6 @@ object MovieList {
         "mocable",
         "mocable",
         "SKIP",
-        "",
         "",
         "",
         "",

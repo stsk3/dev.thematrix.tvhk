@@ -217,7 +217,6 @@ class PlaybackActivity : FragmentActivity() {
 
 
         requestQueue.cancelAll(this)
-        retryTimeout = defaultRetryTimeoutNum
 
         lateinit var url: String
 
@@ -508,7 +507,7 @@ class PlaybackActivity : FragmentActivity() {
     }
 
     private fun play(mediaUrl: String, play: Boolean) {
-        if (retryGetLink > 0) {
+        if (mediaUrl == "" && retryGetLink > 0) {
             retryGetLink--
             this.getVideoUrl(play)
             toast.setText("重試取得播放址中...")
@@ -560,12 +559,10 @@ class PlaybackActivity : FragmentActivity() {
     }
 
     private fun getCustomerRetryPolicy(): DefaultRetryPolicy {
-        return DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * if (currentMovie.videoUrl != "") 1 else 6, retryTimeout--, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
+        return DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * if (currentMovie.videoUrl != "") 3 else 6, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
     }
 
-    private val defaultRetryTimeoutNum = 2
     private val defaultRetryGetLinkNum = 2
-    private var retryTimeout = defaultRetryTimeoutNum
     private var retryGetLink = defaultRetryGetLinkNum
     private var isDownloadingChannelInfo = false
 
