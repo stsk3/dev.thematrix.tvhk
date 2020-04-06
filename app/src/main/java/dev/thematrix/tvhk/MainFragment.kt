@@ -67,16 +67,22 @@ class MainFragment : BrowseFragment() {
 
     private fun fixChannel() {
         if (webInfoMap.containsKey("cableNewsDown") && !webInfoMap["cableNewsDown"]!!.toBoolean()) {
-            val cableNewsMovie = MovieList.list[2]
+            val cableNewsMovie = MovieList.list[MovieList.TITLE.indexOf("有線新聞台")]
             cableNewsMovie.videoUrl = webInfoMap["cableNews"]!!
             cableNewsMovie.func = ""
             cableNewsMovie.exo = android.os.Build.VERSION.SDK_INT >= 19
         }
 
         for (i in 0..2) {
-            val chinaSportMovie = MovieList.list[CHINA_SPORTS_INDEX + i]
+            val chinaSportMovie = MovieList.list[MovieList.TITLE.indexOf("五星體育") + i]
             chinaSportMovie.videoUrl = "http://${webInfoMap["chinaSportLink1"]}/live/program/live/${chinaSportMovie.func.split("_")[1]}/2300000/mnf.m3u8#http://${webInfoMap["chinaSportLink2"]}/live/program/live/${chinaSportMovie.func.split("_")[1]}/2300000/mnf.m3u8"
         }
+
+        for (i in 0..3) {
+            val customMovie = MovieList.list[MovieList.TITLE.indexOf("自選1") + i]
+            customMovie.videoUrl = webInfoMap[customMovie.func]?:""
+        }
+
     }
 
     private fun addOlympicChannel() {

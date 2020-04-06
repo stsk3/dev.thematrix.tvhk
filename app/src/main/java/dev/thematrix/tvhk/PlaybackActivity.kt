@@ -64,6 +64,7 @@ class PlaybackActivity : FragmentActivity() {
     {
         val videoUrl = currentMovie.videoUrl
         val title = currentMovie.title
+        retryGetLink = defaultRetryGetLinkNum
 
 
         when {
@@ -216,7 +217,7 @@ class PlaybackActivity : FragmentActivity() {
 
 
         requestQueue.cancelAll(this)
-        retry = defaultRetryNum
+        retryTimeout = defaultRetryTimeoutNum
 
         lateinit var url: String
 
@@ -503,31 +504,37 @@ class PlaybackActivity : FragmentActivity() {
             }
             requestQueue.add(stringRequest)
 
-        } else if(ch.contains("^custom|^exoCustom".toRegex())) {
-            this.play(webInfoMap[ch]?:"", play)
         }
     }
 
     private fun play(mediaUrl: String, play: Boolean) {
-        var originalVideoUrl = currentMovie.videoUrl
-        val title = currentMovie.title
+        if (retryGetLink > 0) {
+            retryGetLink--
+            this.getVideoUrl(play)
+            toast.setText("重試取得播放址中...")
+            toast.show()
+        } else {
 
-        isDownloadingChannelInfo = false
+            var originalVideoUrl = currentMovie.videoUrl
+            val title = currentMovie.title
 
-        //Error in getting url, play url directly
-        if (mediaUrl == "" && originalVideoUrl.startsWith("#"))
-            originalVideoUrl = originalVideoUrl.removePrefix("#")
+            isDownloadingChannelInfo = false
+
+            //Error in getting url, play url directly
+            if (mediaUrl == "" && originalVideoUrl.startsWith("#"))
+                originalVideoUrl = originalVideoUrl.removePrefix("#")
 
 
-        try {
-            if (play)
-                playByPlayer(mediaUrl + originalVideoUrl)
-            else {
-                changePlayer(mediaUrl + originalVideoUrl)
+            try {
+                if (play)
+                    playByPlayer(mediaUrl + originalVideoUrl)
+                else {
+                    changePlayer(mediaUrl + originalVideoUrl)
+                }
+
+            } catch (exception: Exception) {
+                showPlaybackErrorMessage(title, play)
             }
-
-        }catch (exception: Exception){
-            showPlaybackErrorMessage(title, play)
         }
     }
 
@@ -553,11 +560,13 @@ class PlaybackActivity : FragmentActivity() {
     }
 
     private fun getCustomerRetryPolicy(): DefaultRetryPolicy {
-        return DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * if (currentMovie.videoUrl != "") 1 else 6, retry--, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
+        return DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS * if (currentMovie.videoUrl != "") 1 else 6, retryTimeout--, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
     }
 
-    private val defaultRetryNum = 2
-    private var retry = defaultRetryNum
+    private val defaultRetryTimeoutNum = 2
+    private val defaultRetryGetLinkNum = 2
+    private var retryTimeout = defaultRetryTimeoutNum
+    private var retryGetLink = defaultRetryGetLinkNum
     private var isDownloadingChannelInfo = false
 
     companion object {
