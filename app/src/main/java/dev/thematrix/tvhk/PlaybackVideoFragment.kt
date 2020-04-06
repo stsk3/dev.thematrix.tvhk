@@ -122,14 +122,14 @@ class PlaybackVideoFragment : VideoSupportFragment() {
     }
 
     private fun handleUrl(url: String): String{
-        return if(SDK_VER < 21){
+        return if(SDK_VER < 19){
             url.replace("https://", "http://")
         }else{
             url
         }
     }
 
-    private val defaultRetryNum = 3
+    private val defaultRetryNum = 1
     private var retry = defaultRetryNum
 
     companion object {

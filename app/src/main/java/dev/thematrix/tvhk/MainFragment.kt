@@ -58,10 +58,20 @@ class MainFragment : BrowseFragment() {
                         webInfoMap[line[0]] = line[1]
                     }
 
+                    fixChannel()
                     defaultPlay()
                 }
             }
         }).start()
+    }
+
+    private fun fixChannel() {
+        if (webInfoMap.containsKey("cableNewsDown") && !webInfoMap["cableNewsDown"]!!.toBoolean()) {
+            val cableNewsMovie = MovieList.list[2]
+            cableNewsMovie.videoUrl = webInfoMap["cableNews"]!!
+            cableNewsMovie.func = ""
+            cableNewsMovie.exo = android.os.Build.VERSION.SDK_INT >= 19
+        }
     }
 
     private fun addOnccLive() {

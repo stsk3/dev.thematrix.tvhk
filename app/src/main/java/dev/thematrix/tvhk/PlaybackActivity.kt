@@ -415,7 +415,7 @@ class PlaybackActivity : FragmentActivity() {
 
         } else if(ch.startsWith("gdtv")){
 
-            val url = "http://www.gdtv.cn/m2o/channel/channel_info.php?id=" + ch.substring(5)
+            val url = "http://www.gdtv.cn/m2o/channel/channel_info.php?id=" + ch.split("_")[1]
             val stringRequest = object: StringRequest(
                 Method.GET,
                 url,

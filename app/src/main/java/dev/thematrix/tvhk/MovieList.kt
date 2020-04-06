@@ -37,7 +37,7 @@ object MovieList {
         "HK01",
         "SKIP",
         "now630",
-        "澳視體育",
+        "澳門體育",
         "博斯魅力",
         "皇馬台",
         "NBATV",
@@ -291,7 +291,7 @@ object MovieList {
         "",
         "http://live1.tdm.com.mo:1935/ch4/sport_ch4.live/playlist.m3u8#http://live2.tdm.com.mo:1935/ch4/sport_ch4.live/playlist.m3u8#http://live3.tdm.com.mo:1935/ch4/sport_ch4.live/playlist.m3u8#http://live4.tdm.com.mo:1935/ch4/sport_ch4.live/playlist.m3u8",
         "http://ms003.happytv.com.tw/live/OcScNdWHvBx5P4w3/index.m3u8",
-        if (android.os.Build.VERSION.SDK_INT < 21)
+        if (android.os.Build.VERSION.SDK_INT < 19)
             "http://rmtv24hweblive-lh.akamaihd.net/i/rmtv24hwebes_1@300661/index_3_av-p.m3u8#http://rmtv24hweblive-lh.akamaihd.net/i/rmtv24hweben_1@300662/index_3_av-p.m3u8"
         else
             "http://rmtv24hweblive-lh.akamaihd.net/i/rmtv24hwebes_1@300661/master.m3u8#http://rmtv24hweblive-lh.akamaihd.net/i/rmtv24hweben_1@300662/master.m3u8",
@@ -498,17 +498,17 @@ object MovieList {
         "in",
         "in",
         "SKIP",
-        "gdtv_25",
-        "gdtv_26",
-        "gdtv_31",
-        "gdtv_27",
-        "gdtv_29",
-        "gdtv_30",
-        "gdtv_93",
-        "gdtv_7",
-        "gdtv_166",
-        "gdtv_37",
-        "gdtv_38",
+        "gdtve_25",
+        "gdtve_26",
+        "gdtve_31",
+        "gdtve_27",
+        "gdtve_29",
+        "gdtve_30",
+        "gdtve_93",
+        "gdtve_7",
+        "gdtve_166",
+        "gdtve_37",
+        "gdtve_38",
         "gdtv_33",
         "gdtv_169",
         "gdtv_101",
@@ -591,7 +591,7 @@ object MovieList {
         movie.videoUrl = videoUrl
         movie.func = func
         movie.exo = if (android.os.Build.VERSION.SDK_INT < 21)
-            func.contains("^nowtv|^fantv$|^rthk$|^fox$|^fb$|^wowgua|^in$|^uae$|^tw$|^viutv99$|^cctv13$|^exoCustom".toRegex())
+            func.contains("^nowtv|^fantv$|^rthk$|^fox$|^fb$|^wowgua|^in$|^uae$|^tw$|^viutv99$|^gdtve|^exoCustom".toRegex())
         else
             !func.contains("^custom".toRegex())
         movie.fixRatio = func.contains("^gdtv|^nowtv630$|^in$|^mocable$".toRegex()) || videoUrl.contains("".toRegex()) || title in "遼寧體育"
