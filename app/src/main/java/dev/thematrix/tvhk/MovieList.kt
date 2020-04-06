@@ -454,7 +454,7 @@ object MovieList {
         "tw",
         "",
         "",
-        "gdtv_28",
+        "gdtvm_28",
         "gztv_5c7f6f73e4b01c17db18fbd3",
         "in",
         "in",

@@ -83,12 +83,9 @@ class PlaybackVideoExoFragment : Fragment() {
         trackSelector = DefaultTrackSelector(context, videoTrackSelectionFactory)
         trackSelector.parameters = trackSelectorParameters
 
-        val rendererFactory = DefaultRenderersFactory(context)
-            .setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_ON)
-
 
         // create player
-        player = SimpleExoPlayer.Builder(context, rendererFactory)
+        player = SimpleExoPlayer.Builder(context)
             .setTrackSelector(trackSelector)
             .setBandwidthMeter(bandwidthMeter)
             .build()
