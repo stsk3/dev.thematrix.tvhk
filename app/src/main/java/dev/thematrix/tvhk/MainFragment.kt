@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.leanback.app.BrowseFragment
 import androidx.leanback.widget.*
+import dev.thematrix.tvhk.MovieList.CHINA_SPORTS_INDEX
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.json.JSONArray
@@ -14,11 +15,10 @@ import java.net.URL
 
 class MainFragment : BrowseFragment() {
 
-    private val default = 3
-    private val titleList = mutableListOf<String>()
-    private val cardImageUrlList = mutableListOf<Int>()
-    private val videoUrlList = mutableListOf<String>()
-    private val funcList = mutableListOf<String>()
+    private val fbTitleList = mutableListOf<String>()
+    private val fbCardImageUrlList = mutableListOf<Int>()
+    private val fbVideoUrlList = mutableListOf<String>()
+    private val fbFuncList = mutableListOf<String>()
 
     companion object {
         val webInfoMap = mutableMapOf<String, String>()
@@ -34,7 +34,7 @@ class MainFragment : BrowseFragment() {
         setupEventListeners()
 
         getWebInfo()
-        addOnccLive()
+        addOlympicChannel()
     }
 
     private fun getWebInfo() {
@@ -72,6 +72,74 @@ class MainFragment : BrowseFragment() {
             cableNewsMovie.func = ""
             cableNewsMovie.exo = android.os.Build.VERSION.SDK_INT >= 19
         }
+
+        for (i in 0..2) {
+            val chinaSportMovie = MovieList.list[CHINA_SPORTS_INDEX + i]
+            chinaSportMovie.videoUrl = "http://${webInfoMap["chinaSportLink1"]}/live/program/live/${chinaSportMovie.func.split("_")[1]}/2300000/mnf.m3u8#http://${webInfoMap["chinaSportLink2"]}/live/program/live/${chinaSportMovie.func.split("_")[1]}/2300000/mnf.m3u8"
+        }
+    }
+
+    private fun addOlympicChannel() {
+        Thread(Runnable {
+            val titleList = mutableListOf<String>()
+            val cardImageUrlList = mutableListOf<Int>()
+            val videoUrlList = mutableListOf<String>()
+            val funcList = mutableListOf<String>()
+
+            //Get live link
+            val client = OkHttpClient()
+            val url = URL("https://www.olympicchannel.com/en/api/v1/d3vp/epg/live")
+            val request = Request.Builder()
+                .url(url)
+                .get()
+                .build()
+            val response = client.newCall(request).execute()
+            val responseBody = response.body()!!.string()
+
+            if (responseBody != "") {
+                val resultArray = JSONArray(responseBody)
+                for (i in 0..(resultArray.length() - 1)) {
+                    val item : JSONObject = resultArray.getJSONObject(i)
+                    val title : String = item.getString("title")
+                    val src : String = item.getString("src")
+                    val additionalOptions = item.getJSONObject("additionalOptions")
+                    val channelId = additionalOptions.getString("channelId")
+
+
+                    val link = if (channelId == "OC1") "https://ott-live.olympicchannel.com/out/u/OC1.m3u8" else src
+                    titleList.add(title)
+                    cardImageUrlList.add(R.drawable.olympic)
+                    videoUrlList.add(link.replace(".m3u8", "_1.m3u8")
+                            + "#" + link.replace(".m3u8", "_2.m3u8")
+                            + "#" + link.replace(".m3u8", "_3.m3u8")
+                            + "#" + link.replace(".m3u8", "_4.m3u8")
+                            + "#" + link.replace(".m3u8", "_5.m3u8") )
+                    funcList.add("")
+                }
+
+
+                //Add to movie list
+                if (titleList.count() > 0) {
+                    titleList.add("SKIP")
+                    cardImageUrlList.add(0)
+                    videoUrlList.add("SKIP")
+                    funcList.add("SKIP")
+
+                    MovieList.TITLE.addAll(MovieList.SPORTS_INDEX, titleList)
+                    MovieList.CARD_IMAGE_URL.addAll(MovieList.SPORTS_INDEX, cardImageUrlList)
+                    MovieList.VIDEO_URL.addAll(MovieList.SPORTS_INDEX, videoUrlList)
+                    MovieList.FUNC.addAll(MovieList.SPORTS_INDEX, funcList)
+
+                    // Update UI
+                    this.activity.runOnUiThread {
+                        MovieList.updateList(false)
+                        addOlympicChannelRows()
+                    }
+                }
+
+                addOnccLive()
+            }
+        }).start()
     }
 
     private fun addOnccLive() {
@@ -126,14 +194,14 @@ class MainFragment : BrowseFragment() {
                     videoUrlList.add("SKIP")
                     funcList.add("SKIP")
 
-                    MovieList.TITLE.addAll(MovieList.FB_INDEX, titleList)
-                    MovieList.CARD_IMAGE_URL.addAll(MovieList.FB_INDEX, cardImageUrlList)
-                    MovieList.VIDEO_URL.addAll(MovieList.FB_INDEX, videoUrlList)
-                    MovieList.FUNC.addAll(MovieList.FB_INDEX, funcList)
+                    MovieList.TITLE.addAll(MovieList.NEWS_INDEX, titleList)
+                    MovieList.CARD_IMAGE_URL.addAll(MovieList.NEWS_INDEX, cardImageUrlList)
+                    MovieList.VIDEO_URL.addAll(MovieList.NEWS_INDEX, videoUrlList)
+                    MovieList.FUNC.addAll(MovieList.NEWS_INDEX, funcList)
 
                     // Update UI
                     this.activity.runOnUiThread {
-                        MovieList.updateList()
+                        MovieList.updateList(true)
                         addOnccRows()
                     }
                 }
@@ -165,20 +233,20 @@ class MainFragment : BrowseFragment() {
 
 
             //Add to movie list
-            if (titleList.count() > 0) {
-                titleList.add("SKIP")
-                cardImageUrlList.add(0)
-                videoUrlList.add("SKIP")
-                funcList.add("SKIP")
+            if (fbTitleList.count() > 0) {
+                fbTitleList.add("SKIP")
+                fbCardImageUrlList.add(0)
+                fbVideoUrlList.add("SKIP")
+                fbFuncList.add("SKIP")
 
-                MovieList.TITLE.addAll(MovieList.FB_INDEX, titleList)
-                MovieList.CARD_IMAGE_URL.addAll(MovieList.FB_INDEX, cardImageUrlList)
-                MovieList.VIDEO_URL.addAll(MovieList.FB_INDEX, videoUrlList)
-                MovieList.FUNC.addAll(MovieList.FB_INDEX, funcList)
+                MovieList.TITLE.addAll(MovieList.NEWS_INDEX, fbTitleList)
+                MovieList.CARD_IMAGE_URL.addAll(MovieList.NEWS_INDEX, fbCardImageUrlList)
+                MovieList.VIDEO_URL.addAll(MovieList.NEWS_INDEX, fbVideoUrlList)
+                MovieList.FUNC.addAll(MovieList.NEWS_INDEX, fbFuncList)
 
                 // Update UI
                 this.activity.runOnUiThread {
-                    MovieList.updateList()
+                    MovieList.updateList(true)
                     addFbRows()
                 }
             }
@@ -207,10 +275,10 @@ class MainFragment : BrowseFragment() {
                 val liveLink = getFbLiveLink("https://www.facebook.com/$page/videos/$id/")
 
                 if (liveLink != "") {
-                    titleList.add(pageName)
-                    cardImageUrlList.add(image)
-                    videoUrlList.add(liveLink)
-                    funcList.add("fb")
+                    fbTitleList.add(pageName)
+                    fbCardImageUrlList.add(image)
+                    fbVideoUrlList.add(liveLink)
+                    fbFuncList.add("fb")
                 }
             }
         }
@@ -293,7 +361,7 @@ class MainFragment : BrowseFragment() {
         val cardPresenter = CardPresenter()
 
         var listRowAdapter = ArrayObjectAdapter(cardPresenter)
-        var i = MovieList.FB_INDEX
+        var i = MovieList.NEWS_INDEX
         while (MovieList.list[i].title != "SKIP")
         {
             listRowAdapter.add(MovieList.list[i])
@@ -301,8 +369,8 @@ class MainFragment : BrowseFragment() {
         }
 
         if(listRowAdapter.size() > 0){
-            val header = HeaderItem(MovieList.FB_INDEX.toLong(), "Facebook")
-            rowsAdapter.add(MovieList.FB_CATEGORY_INDEX, ListRow(header, listRowAdapter))
+            val header = HeaderItem(MovieList.NEWS_INDEX.toLong(), "Facebook")
+            rowsAdapter.add(MovieList.NEWS_CATEGORY_INDEX, ListRow(header, listRowAdapter))
         }
     }
 
@@ -311,7 +379,7 @@ class MainFragment : BrowseFragment() {
         val cardPresenter = CardPresenter()
 
         var listRowAdapter = ArrayObjectAdapter(cardPresenter)
-        var i = MovieList.FB_INDEX
+        var i = MovieList.NEWS_INDEX
         while (MovieList.list[i].title != "SKIP")
         {
             listRowAdapter.add(MovieList.list[i])
@@ -319,8 +387,26 @@ class MainFragment : BrowseFragment() {
         }
 
         if(listRowAdapter.size() > 0){
-            val header = HeaderItem(MovieList.FB_INDEX.toLong(), "Oncc")
-            rowsAdapter.add(MovieList.FB_CATEGORY_INDEX, ListRow(header, listRowAdapter))
+            val header = HeaderItem(MovieList.NEWS_INDEX.toLong(), "Oncc")
+            rowsAdapter.add(MovieList.NEWS_CATEGORY_INDEX, ListRow(header, listRowAdapter))
+        }
+    }
+
+    private fun addOlympicChannelRows() {
+        val rowsAdapter : ArrayObjectAdapter = adapter as ArrayObjectAdapter
+        val cardPresenter = CardPresenter()
+
+        var listRowAdapter = ArrayObjectAdapter(cardPresenter)
+        var i = MovieList.SPORTS_INDEX
+        while (MovieList.list[i].title != "SKIP")
+        {
+            listRowAdapter.add(MovieList.list[i])
+            i++
+        }
+
+        if(listRowAdapter.size() > 0){
+            val header = HeaderItem(MovieList.SPORTS_INDEX.toLong(), "奧運")
+            rowsAdapter.add(MovieList.SPORTS_CATEGORY_INDEX, ListRow(header, listRowAdapter))
         }
     }
 

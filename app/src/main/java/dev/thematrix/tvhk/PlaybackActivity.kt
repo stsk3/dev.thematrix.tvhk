@@ -172,7 +172,7 @@ class PlaybackActivity : FragmentActivity() {
                 else if (direction == "LEFT" || direction == "RIGHT") {
                     val item = list[videoId]
                     val sourceCount = item.videoUrl.split("#").size
-                    if (item.func.startsWith("chinaSport") || (item.videoUrl != "" && sourceCount > 1)) {
+                    if (item.videoUrl != "" && sourceCount > 1) {
                         if (direction == "LEFT") {
                             currentSourceIndex = (currentSourceIndex - 1) % sourceCount
                             if (currentSourceIndex < 0)
@@ -505,8 +505,6 @@ class PlaybackActivity : FragmentActivity() {
 
         } else if(ch.contains("^custom|^exoCustom".toRegex())) {
             this.play(webInfoMap[ch]?:"", play)
-        } else if (ch.startsWith("chinaSport")) {
-            this.play("http://${webInfoMap["chinaSportLink1"]}/live/program/live/${ch.split("_")[1]}/2300000/mnf.m3u8#http://${webInfoMap["chinaSportLink2"]}/live/program/live/${ch.split("_")[1]}/2300000/mnf.m3u8", play)
         }
     }
 

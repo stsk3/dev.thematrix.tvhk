@@ -1,15 +1,18 @@
 package dev.thematrix.tvhk
 
 object MovieList {
-    const val FB_INDEX = 7
-    const val FB_CATEGORY_INDEX = 1
+    const val NEWS_INDEX = 7
+    const val NEWS_CATEGORY_INDEX = 1
+    const val SPORTS_INDEX = 30
+    const val SPORTS_CATEGORY_INDEX = 4
+    const val CHINA_SPORTS_INDEX = 23
 
     val CATEGORY = arrayOf(
         "新聞",
-        "HK01",
+        "HK01", //1
         "體育",
         "其他體育",
-        "FOX體育",
+        "FOX體育", //4
         "有線電視",
         "ViuTV",
         "RTHK",
@@ -32,7 +35,7 @@ object MovieList {
         "now直播台",
         "港台電視32",
         "SKIP",
-        "HK01",
+        "HK01", //7
         "HK01",
         "HK01",
         "SKIP",
@@ -48,14 +51,14 @@ object MovieList {
         "CCTV5+",
         "廣東體育",
         "廣州競賽",
-        "五星體育",
+        "五星體育", //23
         "勁爆體育",
         "新視覺HD",
         "北京冬奧紀實",
         "遼寧體育",
         "先鋒乒羽",
         "SKIP",
-        "FS1",
+        "FS1", //30
         "FS2",
         "FS3",
         "FS4",
@@ -269,10 +272,10 @@ object MovieList {
         R.drawable.utv,
         R.drawable.utv,
         0,
-        R.mipmap.ic_pepe,
-        R.mipmap.ic_pepe,
-        R.mipmap.ic_pepe,
-        R.mipmap.ic_pepe,
+        R.drawable.custom,
+        R.drawable.custom,
+        R.drawable.custom,
+        R.drawable.custom,
         0
     )
 
@@ -535,14 +538,15 @@ object MovieList {
         setupMovies()
     }
 
-    fun updateList() {
-        count = FB_INDEX
+    fun updateList(isNews: Boolean) {
+        val indexType = if (isNews) NEWS_INDEX else SPORTS_INDEX
+        count = indexType
 
         val newMovieCount = TITLE.count() - list.count()
 
         //Fix index
         list.forEachIndexed { index, movie ->
-            if (index >= FB_INDEX)
+            if (index >= indexType)
             {
                 movie.id += newMovieCount
             }

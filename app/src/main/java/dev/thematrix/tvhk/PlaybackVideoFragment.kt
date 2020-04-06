@@ -21,7 +21,7 @@ class PlaybackVideoFragment : VideoSupportFragment() {
 
         setUpPlayer()
 
-        Log.i("PlaybackVideo", videoUrl)
+        Log.i("PLAYER", "PlaybackVideoFragment")
         playVideo(videoUrl.split("#")[0], fixRatio)
     }
 
