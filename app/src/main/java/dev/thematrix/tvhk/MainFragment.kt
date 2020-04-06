@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.leanback.app.BrowseFragment
 import androidx.leanback.widget.*
-import dev.thematrix.tvhk.MovieList.CHINA_SPORTS_INDEX
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.json.JSONArray
