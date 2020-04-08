@@ -40,7 +40,7 @@ class MainFragment : BrowseFragment() {
         addOlympicChannel()
     }
 
-    private var getWebInfoRetry = 20
+    private var getWebInfoRetry = 10
     private fun getWebInfo() {
         Thread(Runnable {
             val client = OkHttpClient()
@@ -64,8 +64,10 @@ class MainFragment : BrowseFragment() {
                         }
 
                         //Other Operations
-                        fixChannel()
-                        defaultPlay()
+                        this.activity.runOnUiThread {
+                            fixChannel()
+                            defaultPlay()
+                        }
                     }
                 }
             } catch (e: Exception) {

@@ -96,12 +96,12 @@ class PlaybackVideoFragment : VideoSupportFragment() {
             Handler().postDelayed({
                 this.activity?.runOnUiThread {
                     if (isBuffering) {
-                        PlaybackActivity.toast.setText("Buffer失敗, 重新連接!")
+                        PlaybackActivity.toast.setText("重新連接中．．．")
                         PlaybackActivity.toast.show()
                         this.playVideo(mediaUrl, isFixRatio)
                     }
                 }
-            }, 4000)
+            }, 10000)
         }
         else
             isBuffering = false
