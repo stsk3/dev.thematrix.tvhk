@@ -3,7 +3,7 @@ package dev.thematrix.tvhk
 object MovieList {
     const val NEWS_INDEX = 7
     const val NEWS_CATEGORY_INDEX = 1
-    const val SPORTS_INDEX = 30
+    const val SPORTS_INDEX = 31
     const val SPORTS_CATEGORY_INDEX = 4
 
     val CATEGORY = arrayOf(
@@ -41,7 +41,8 @@ object MovieList {
         "now630",
         "澳門體育",
         "博斯魅力",
-        "皇馬台",
+        "皇馬台(西班牙)",
+        "皇馬台(英文)",
         "NBATV",
         "ELTA1",
         "Eleven1",
@@ -57,7 +58,7 @@ object MovieList {
         "遼寧體育",
         "先鋒乒羽",
         "SKIP",
-        "FS1", //30
+        "FS1", //31
         "FS2",
         "FS3",
         "FS4",
@@ -166,6 +167,7 @@ object MovieList {
         R.drawable.nowtv630,
         R.drawable.tdmsport,
         R.drawable.sportcast,
+        R.drawable.rmtv,
         R.drawable.rmtv,
         R.drawable.nbatv,
         R.drawable.sport_elta1,
@@ -289,18 +291,37 @@ object MovieList {
         "http://live.cdn.hk01.com/origin/smil:EventBox001.smil/playlist.m3u8",
         "SKIP",
         "",
-        "http://live1.tdm.com.mo:1935/ch4/sport_ch4.live/playlist.m3u8#http://live2.tdm.com.mo:1935/ch4/sport_ch4.live/playlist.m3u8#http://live3.tdm.com.mo:1935/ch4/sport_ch4.live/playlist.m3u8#http://live4.tdm.com.mo:1935/ch4/sport_ch4.live/playlist.m3u8",
+        "http://live1.tdm.com.mo:1935/ch4/sport_ch4.live/playlist.m3u8#" +
+                "http://live2.tdm.com.mo:1935/ch4/sport_ch4.live/playlist.m3u8#" +
+                "http://live3.tdm.com.mo:1935/ch4/sport_ch4.live/playlist.m3u8#" +
+                "http://live4.tdm.com.mo:1935/ch4/sport_ch4.live/playlist.m3u8",
         "http://ms003.happytv.com.tw/live/OcScNdWHvBx5P4w3/index.m3u8",
         if (android.os.Build.VERSION.SDK_INT < 19)
-            "http://rmtv24hweblive-lh.akamaihd.net/i/rmtv24hwebes_1@300661/index_3_av-p.m3u8#http://rmtv24hweblive-lh.akamaihd.net/i/rmtv24hweben_1@300662/index_3_av-p.m3u8"
+            "http://rmtv24hweblive-lh.akamaihd.net/i/rmtv24hwebes_1@300661/index_3_av-p.m3u8#" +
+                    "http://rmtv24hweblive-lh.akamaihd.net/i/rmtv24hwebes_1@300661/index_3_av-b.m3u8#" +
+                    "http://rmtv24hweblive-lh.akamaihd.net/i/rmtv24hwebes_1@300661/index_2_av-p.m3u8#" +
+                    "http://rmtv24hweblive-lh.akamaihd.net/i/rmtv24hwebes_1@300661/index_2_av-b.m3u8#" +
+                    "http://rmtv24hweblive-lh.akamaihd.net/i/rmtv24hwebes_1@300661/index_1_av-p.m3u8#" +
+                    "http://rmtv24hweblive-lh.akamaihd.net/i/rmtv24hwebes_1@300661/index_1_av-b.m3u8"
         else
-            "http://rmtv24hweblive-lh.akamaihd.net/i/rmtv24hwebes_1@300661/master.m3u8#http://rmtv24hweblive-lh.akamaihd.net/i/rmtv24hweben_1@300662/master.m3u8",
+            "http://rmtv24hweblive-lh.akamaihd.net/i/rmtv24hwebes_1@300661/master.m3u8",
+        if (android.os.Build.VERSION.SDK_INT < 19)
+            "http://rmtv24hweblive-lh.akamaihd.net/i/rmtv24hweben_1@300662/index_3_av-p.m3u8#" +
+                    "http://rmtv24hweblive-lh.akamaihd.net/i/rmtv24hweben_1@300662/index_3_av-b.m3u8#" +
+                    "http://rmtv24hweblive-lh.akamaihd.net/i/rmtv24hweben_1@300662/index_2_av-p.m3u8#" +
+                    "http://rmtv24hweblive-lh.akamaihd.net/i/rmtv24hweben_1@300662/index_2_av-b.m3u8#" +
+                    "http://rmtv24hweblive-lh.akamaihd.net/i/rmtv24hweben_1@300662/index_1_av-p.m3u8#" +
+                    "http://rmtv24hweblive-lh.akamaihd.net/i/rmtv24hweben_1@300662/index_1_av-b.m3u8"
+        else
+            "http://rmtv24hweblive-lh.akamaihd.net/i/rmtv24hweben_1@300662/master.m3u8",
         "",
         "",
         "",
         "SKIP",
-        "http://111.40.205.87/PLTV/88888888/224/3221225591/index.m3u8#http://ottrrs.hl.chinamobile.com/PLTV/88888888/224/3221225591/index.m3u8",
-        "http://111.40.205.87/PLTV/88888888/224/3221225689/index.m3u8#http://ottrrs.hl.chinamobile.com/PLTV/88888888/224/3221225603/index.m3u8",
+        "http://111.40.205.87/PLTV/88888888/224/3221225591/index.m3u8#" +
+                "http://ottrrs.hl.chinamobile.com/PLTV/88888888/224/3221225591/index.m3u8",
+        "http://111.40.205.87/PLTV/88888888/224/3221225689/index.m3u8#" +
+                "http://ottrrs.hl.chinamobile.com/PLTV/88888888/224/3221225603/index.m3u8",
         "",
         "",
         "",
@@ -325,34 +346,71 @@ object MovieList {
         "SKIP",
         "https://www.rthk.hk/feeds/dtt/rthktv31_https.m3u8",
         "SKIP",
-        "http://210.61.56.23/hls/ftvtv/index.m3u8#http://6.mms.vlog.xuite.net/hls/ftvtv/index.m3u8#http://1.mms.vlog.xuite.net/hls/ftvtv/index.m3u8",
+        "http://210.61.56.23/hls/ftvtv/index.m3u8#" +
+                "http://6.mms.vlog.xuite.net/hls/ftvtv/index.m3u8#" +
+                "http://1.mms.vlog.xuite.net/hls/ftvtv/index.m3u8",
         "http://60.199.188.65/HLS/WG_ETTV-N/index.m3u8",
-        "http://live1.tdm.com.mo:1935/ch5/info_ch5.live/playlist.m3u8#http://live2.tdm.com.mo:1935/ch5/info_ch5.live/playlist.m3u8#http://live3.tdm.com.mo:1935/ch5/info_ch5.live/playlist.m3u8#http://live4.tdm.com.mo:1935/ch5/info_ch5.live/playlist.m3u8",
+        "http://live1.tdm.com.mo:1935/ch5/info_ch5.live/playlist.m3u8#" +
+                "http://live2.tdm.com.mo:1935/ch5/info_ch5.live/playlist.m3u8#" +
+                "http://live3.tdm.com.mo:1935/ch5/info_ch5.live/playlist.m3u8#" +
+                "http://live4.tdm.com.mo:1935/ch5/info_ch5.live/playlist.m3u8",
         "",
         "",
         "http://45.126.83.51/uq2663/h/h23/index.m3u8#http://210.210.155.35/uq2663/h/h23/index.m3u8",
         "http://45.126.83.51/uq2663/h/h29/index.m3u8#http://210.210.155.35/uq2663/h/h29/index.m3u8",
         "http://45.126.83.51/qwr9ew/s/s17/index.m3u8#http://210.210.155.35/qwr9ew/s/s17/index.m3u8",
-        "http://111.40.205.87/PLTV/88888888/224/3221225599/index.m3u8#http://ottrrs.hl.chinamobile.com/PLTV/88888888/224/3221225599/index.m3u8",
-        "http://111.40.205.87/PLTV/88888888/224/3221225710/index.m3u8#http://ottrrs.hl.chinamobile.com/PLTV/88888888/224/3221225587/index.m3u8",
+        "http://111.40.205.87/PLTV/88888888/224/3221225599/index.m3u8#" +
+                "http://ottrrs.hl.chinamobile.com/PLTV/88888888/224/3221225599/index.m3u8",
+        "http://111.40.205.87/PLTV/88888888/224/3221225710/index.m3u8#" +
+                "http://ottrrs.hl.chinamobile.com/PLTV/88888888/224/3221225587/index.m3u8",
         "SKIP",
-        "http://live1.tdm.com.mo:1935/ch1/ch1.live/playlist.m3u8#http://live2.tdm.com.mo:1935/ch1/ch1.live/playlist.m3u8#http://live3.tdm.com.mo:1935/ch1/ch1.live/playlist.m3u8#http://live4.tdm.com.mo:1935/ch1/ch1.live/playlist.m3u8",
-        "http://live1.tdm.com.mo:1935/ch6/hd_ch6.live/playlist.m3u8#http://live2.tdm.com.mo:1935/ch6/hd_ch6.live/playlist.m3u8#http://live3.tdm.com.mo:1935/ch6/hd_ch6.live/playlist.m3u8#http://live4.tdm.com.mo:1935/ch6/hd_ch6.live/playlist.m3u8",
-        "http://live1.tdm.com.mo:1935/ch3/ch3.live/playlist.m3u8#http://live2.tdm.com.mo:1935/ch3/ch3.live/playlist.m3u8#http://live3.tdm.com.mo:1935/ch3/ch3.live/playlist.m3u8#http://live4.tdm.com.mo:1935/ch3/ch3.live/playlist.m3u8",
-        "http://live1.tdm.com.mo:1935/ch2/ch2.live/playlist.m3u8#http://live2.tdm.com.mo:1935/ch2/ch2.live/playlist.m3u8#http://live3.tdm.com.mo:1935/ch2/ch2.live/playlist.m3u8#http://live4.tdm.com.mo:1935/ch2/ch2.live/playlist.m3u8",
+        "http://live1.tdm.com.mo:1935/ch1/ch1.live/playlist.m3u8#" +
+                "http://live2.tdm.com.mo:1935/ch1/ch1.live/playlist.m3u8#" +
+                "http://live3.tdm.com.mo:1935/ch1/ch1.live/playlist.m3u8#" +
+                "http://live4.tdm.com.mo:1935/ch1/ch1.live/playlist.m3u8",
+        "http://live1.tdm.com.mo:1935/ch6/hd_ch6.live/playlist.m3u8#" +
+                "http://live2.tdm.com.mo:1935/ch6/hd_ch6.live/playlist.m3u8#" +
+                "http://live3.tdm.com.mo:1935/ch6/hd_ch6.live/playlist.m3u8#" +
+                "http://live4.tdm.com.mo:1935/ch6/hd_ch6.live/playlist.m3u8",
+        "http://live1.tdm.com.mo:1935/ch3/ch3.live/playlist.m3u8#" +
+                "http://live2.tdm.com.mo:1935/ch3/ch3.live/playlist.m3u8#" +
+                "http://live3.tdm.com.mo:1935/ch3/ch3.live/playlist.m3u8#" +
+                "http://live4.tdm.com.mo:1935/ch3/ch3.live/playlist.m3u8",
+        "http://live1.tdm.com.mo:1935/ch2/ch2.live/playlist.m3u8#" +
+                "http://live2.tdm.com.mo:1935/ch2/ch2.live/playlist.m3u8#" +
+                "http://live3.tdm.com.mo:1935/ch2/ch2.live/playlist.m3u8#" +
+                "http://live4.tdm.com.mo:1935/ch2/ch2.live/playlist.m3u8",
         "http://202.175.127.77/live/show/ch1/index.m3u8",
         "http://202.175.127.77/live/show/ch2/index.m3u8",
         "http://202.175.127.77/live/show/ch3/index.m3u8",
         "SKIP",
-        "http://104.250.154.42:8080/ZZ_zhongshi/ZZ_zhongshi.m3u8#http://192.200.120.82:8080/ZZ_zhongshi/ZZ_zhongshi.m3u8#http://192.154.103.75:8080/ZZ_zhongshi/ZZ_zhongshi.m3u8",
-        "http://104.250.154.42:8080/ZZ_dongwuxingqiu/ZZ_dongwuxingqiu.m3u8#http://192.200.120.82:8080/ZZ_dongwuxingqiu/ZZ_dongwuxingqiu.m3u8#http://192.154.103.75:8080/ZZ_dongwuxingqiu/ZZ_dongwuxingqiu.m3u8",
-        "http://104.250.154.42:8080/ZZ_shidai/ZZ_shidai.m3u8#http://192.200.120.82:8080/ZZ_shidai/ZZ_shidai.m3u8#http://192.154.103.75:8080/ZZ_shidai/ZZ_shidai.m3u8",
-        "http://104.250.154.42:8080/ZZ_haolaiwu/ZZ_haolaiwu.m3u8#http://192.200.120.82:8080/ZZ_haolaiwu/ZZ_haolaiwu.m3u8#http://192.154.103.75:8080/ZZ_haolaiwu/ZZ_haolaiwu.m3u8",
-        "http://104.250.154.42:8080/ZZ_foxaction/ZZ_foxaction.m3u8#http://192.200.120.82:8080/ZZ_foxaction/ZZ_foxaction.m3u8#http://192.154.103.75:8080/ZZ_foxaction/ZZ_foxaction.m3u8",
-        "http://104.250.154.42:8080/ZZ_huanadianying/ZZ_huanadianying.m3u8#http://192.200.120.82:8080/ZZ_huanadianying/ZZ_huanadianying.m3u8#http://192.154.103.75:8080/ZZ_huanadianying/ZZ_huanadianying.m3u8",
-        "http://104.250.154.42:8080/ZZ_dongsendianying/ZZ_dongsendianying.m3u8#http://192.200.120.82:8080/ZZ_dongsendianying/ZZ_dongsendianying.m3u8#http://192.154.103.75:8080/ZZ_dongsendianying/ZZ_dongsendianying.m3u8",
-        "http://104.250.154.42:8080/ZZ_dongsenyangpian/ZZ_dongsenyangpian.m3u8#http://192.200.120.82:8080/ZZ_dongsenyangpian/ZZ_dongsenyangpian.m3u8#http://192.154.103.75:8080/ZZ_dongsenyangpian/ZZ_dongsenyangpian.m3u8",
-        "http://104.250.154.42:8080/ZZ_zhongtianyazhou/ZZ_zhongtianyazhou.m3u8#http://192.200.120.82:8080/ZZ_zhongtianyazhou/ZZ_zhongtianyazhou.m3u8#http://192.154.103.75:8080/ZZ_zhongtianyazhou/ZZ_zhongtianyazhou.m3u8",
+        "http://104.250.154.42:8080/ZZ_zhongshi/ZZ_zhongshi.m3u8#" +
+                "http://192.200.120.82:8080/ZZ_zhongshi/ZZ_zhongshi.m3u8#" +
+                "http://192.154.103.75:8080/ZZ_zhongshi/ZZ_zhongshi.m3u8",
+        "http://104.250.154.42:8080/ZZ_dongwuxingqiu/ZZ_dongwuxingqiu.m3u8#" +
+                "http://192.200.120.82:8080/ZZ_dongwuxingqiu/ZZ_dongwuxingqiu.m3u8#" +
+                "http://192.154.103.75:8080/ZZ_dongwuxingqiu/ZZ_dongwuxingqiu.m3u8",
+        "http://104.250.154.42:8080/ZZ_shidai/ZZ_shidai.m3u8#" +
+                "http://192.200.120.82:8080/ZZ_shidai/ZZ_shidai.m3u8#" +
+                "http://192.154.103.75:8080/ZZ_shidai/ZZ_shidai.m3u8",
+        "http://104.250.154.42:8080/ZZ_haolaiwu/ZZ_haolaiwu.m3u8#" +
+                "http://192.200.120.82:8080/ZZ_haolaiwu/ZZ_haolaiwu.m3u8#" +
+                "http://192.154.103.75:8080/ZZ_haolaiwu/ZZ_haolaiwu.m3u8",
+        "http://104.250.154.42:8080/ZZ_foxaction/ZZ_foxaction.m3u8#" +
+                "http://192.200.120.82:8080/ZZ_foxaction/ZZ_foxaction.m3u8#" +
+                "http://192.154.103.75:8080/ZZ_foxaction/ZZ_foxaction.m3u8",
+        "http://104.250.154.42:8080/ZZ_huanadianying/ZZ_huanadianying.m3u8#" +
+                "http://192.200.120.82:8080/ZZ_huanadianying/ZZ_huanadianying.m3u8#" +
+                "http://192.154.103.75:8080/ZZ_huanadianying/ZZ_huanadianying.m3u8",
+        "http://104.250.154.42:8080/ZZ_dongsendianying/ZZ_dongsendianying.m3u8#" +
+                "http://192.200.120.82:8080/ZZ_dongsendianying/ZZ_dongsendianying.m3u8#" +
+                "http://192.154.103.75:8080/ZZ_dongsendianying/ZZ_dongsendianying.m3u8",
+        "http://104.250.154.42:8080/ZZ_dongsenyangpian/ZZ_dongsenyangpian.m3u8#" +
+                "http://192.200.120.82:8080/ZZ_dongsenyangpian/ZZ_dongsenyangpian.m3u8#" +
+                "http://192.154.103.75:8080/ZZ_dongsenyangpian/ZZ_dongsenyangpian.m3u8",
+        "http://104.250.154.42:8080/ZZ_zhongtianyazhou/ZZ_zhongtianyazhou.m3u8#" +
+                "http://192.200.120.82:8080/ZZ_zhongtianyazhou/ZZ_zhongtianyazhou.m3u8#" +
+                "http://192.154.103.75:8080/ZZ_zhongtianyazhou/ZZ_zhongtianyazhou.m3u8",
         "SKIP",
         "http://livecdnh1.tvanywhere.ae:80/hls/nat_geo/index.m3u8",
         "http://livecdnh1.tvanywhere.ae:80/hls/nat_geo_wild/index.m3u8",
@@ -366,10 +424,14 @@ object MovieList {
         "http://livecdnh3.tvanywhere.ae/hls/mbcmax/index.m3u8",
         "http://livecdnh3.tvanywhere.ae/hls/mbcaction/index.m3u8",
         "SKIP",
-        "http://45.126.83.51/qwr9ew/s/s33/index.m3u8#http://210.210.155.35/qwr9ew/s/s33/index.m3u8",
-        "http://45.126.83.51/qwr9ew/s/s34/index.m3u8#http://210.210.155.35/qwr9ew/s/s34/index.m3u8",
-        "http://45.126.83.51/uq2663/h/h04/index2.m3u8#http://210.210.155.35/uq2663/h/h04/index2.m3u8",
-        "http://45.126.83.51/uq2663/h/h37/index.m3u8#http://210.210.155.35/uq2663/h/h37/index.m3u8",
+        "http://45.126.83.51/qwr9ew/s/s33/index.m3u8#" +
+                "http://210.210.155.35/qwr9ew/s/s33/index.m3u8",
+        "http://45.126.83.51/qwr9ew/s/s34/index.m3u8#" +
+                "http://210.210.155.35/qwr9ew/s/s34/index.m3u8",
+        "http://45.126.83.51/uq2663/h/h04/index2.m3u8#" +
+                "http://210.210.155.35/uq2663/h/h04/index2.m3u8",
+        "http://45.126.83.51/uq2663/h/h37/index.m3u8#" +
+                "http://210.210.155.35/uq2663/h/h37/index.m3u8",
         "SKIP",
         "",
         "",
@@ -419,6 +481,7 @@ object MovieList {
         "nowtv630",
         "",
         "",
+        "rmtv",
         "rmtv",
         "wowgua_nbatv",
         "ggiptv_ty_21",

@@ -2,6 +2,7 @@ package dev.thematrix.tvhk
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.leanback.app.BrowseFragment
 import androidx.leanback.widget.*
@@ -9,6 +10,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.json.JSONArray
 import org.json.JSONObject
+import java.lang.Exception
 import java.net.URL
 
 
@@ -18,6 +20,8 @@ class MainFragment : BrowseFragment() {
     private val fbCardImageUrlList = mutableListOf<Int>()
     private val fbVideoUrlList = mutableListOf<String>()
     private val fbFuncList = mutableListOf<String>()
+
+    private lateinit var toast: Toast
 
     companion object {
         val webInfoMap = mutableMapOf<String, String>()
@@ -36,6 +40,7 @@ class MainFragment : BrowseFragment() {
         addOlympicChannel()
     }
 
+    private var getWebInfoRetry = 20
     private fun getWebInfo() {
         Thread(Runnable {
             val client = OkHttpClient()
@@ -44,21 +49,31 @@ class MainFragment : BrowseFragment() {
                 .url(url)
                 .get()
                 .build()
-            val response = client.newCall(request).execute()
-            val responseBody = response.body()!!.string()
 
-            if (responseBody != "") {
-                val resultHtml = Regex("(?<=<blockquote>)(.*?)(?=</blockquote>)").findAll(responseBody)
-                if (resultHtml.count() > 0)
-                {
-                    resultHtml.forEach {
-                        val result = it.value
-                        val line = result.split("=")
-                        webInfoMap[line[0]] = line[1]
+            try {
+                val response = client.newCall(request).execute()
+                val responseBody = response.body()!!.string()
+
+                if (responseBody != "") {
+                    val resultHtml = Regex("(?<=<blockquote>)(.*?)(?=</blockquote>)").findAll(responseBody)
+                    if (resultHtml.count() > 0) {
+                        resultHtml.forEach {
+                            val result = it.value
+                            val line = result.split("=")
+                            webInfoMap[line[0]] = line[1]
+                        }
+
+                        //Other Operations
+                        fixChannel()
+                        defaultPlay()
                     }
-
-                    fixChannel()
-                    defaultPlay()
+                }
+            } catch (e: Exception) {
+                Log.e("getWebInfo", e.message)
+                showToast("Error: getWebInfo - " + e.message)
+                if (getWebInfoRetry > 0) {
+                    getWebInfoRetry--
+                    getWebInfo()
                 }
             }
         }).start()
@@ -98,51 +113,57 @@ class MainFragment : BrowseFragment() {
                 .url(url)
                 .get()
                 .build()
-            val response = client.newCall(request).execute()
-            val responseBody = response.body()!!.string()
 
-            if (responseBody != "") {
-                val resultArray = JSONArray(responseBody)
-                for (i in 0..(resultArray.length() - 1)) {
-                    val item : JSONObject = resultArray.getJSONObject(i)
-                    val title : String = item.getString("title")
-                    val src : String = item.getString("src")
-                    val additionalOptions = item.getJSONObject("additionalOptions")
-                    val channelId = additionalOptions.getString("channelId")
+            try {
+                val response = client.newCall(request).execute()
+                val responseBody = response.body()!!.string()
 
-
-                    val link = if (channelId == "OC1") "https://ott-live.olympicchannel.com/out/u/OC1.m3u8" else src
-                    titleList.add(title)
-                    cardImageUrlList.add(R.drawable.olympic)
-                    videoUrlList.add(link.replace(".m3u8", "_1.m3u8")
-                            + "#" + link.replace(".m3u8", "_2.m3u8")
-                            + "#" + link.replace(".m3u8", "_3.m3u8")
-                            + "#" + link.replace(".m3u8", "_4.m3u8")
-                            + "#" + link.replace(".m3u8", "_5.m3u8") )
-                    funcList.add("")
-                }
+                if (responseBody != "") {
+                    val resultArray = JSONArray(responseBody)
+                    for (i in 0..(resultArray.length() - 1)) {
+                        val item : JSONObject = resultArray.getJSONObject(i)
+                        val title : String = item.getString("title")
+                        val src : String = item.getString("src")
+                        val additionalOptions = item.getJSONObject("additionalOptions")
+                        val channelId = additionalOptions.getString("channelId")
 
 
-                //Add to movie list
-                if (titleList.count() > 0) {
-                    titleList.add("SKIP")
-                    cardImageUrlList.add(0)
-                    videoUrlList.add("SKIP")
-                    funcList.add("SKIP")
+                        val link = if (channelId == "OC1") "https://ott-live.olympicchannel.com/out/u/OC1.m3u8" else src
+                        titleList.add(title)
+                        cardImageUrlList.add(R.drawable.olympic)
+                        videoUrlList.add(link.replace(".m3u8", "_1.m3u8")
+                                + "#" + link.replace(".m3u8", "_2.m3u8")
+                                + "#" + link.replace(".m3u8", "_3.m3u8")
+                                + "#" + link.replace(".m3u8", "_4.m3u8")
+                                + "#" + link.replace(".m3u8", "_5.m3u8") )
+                        funcList.add("")
+                    }
 
-                    MovieList.TITLE.addAll(MovieList.SPORTS_INDEX, titleList)
-                    MovieList.CARD_IMAGE_URL.addAll(MovieList.SPORTS_INDEX, cardImageUrlList)
-                    MovieList.VIDEO_URL.addAll(MovieList.SPORTS_INDEX, videoUrlList)
-                    MovieList.FUNC.addAll(MovieList.SPORTS_INDEX, funcList)
 
-                    // Update UI
-                    this.activity.runOnUiThread {
-                        MovieList.updateList(false)
-                        addOlympicChannelRows()
+                    //Add to movie list
+                    if (titleList.count() > 0) {
+                        titleList.add("SKIP")
+                        cardImageUrlList.add(0)
+                        videoUrlList.add("SKIP")
+                        funcList.add("SKIP")
+
+                        MovieList.TITLE.addAll(MovieList.SPORTS_INDEX, titleList)
+                        MovieList.CARD_IMAGE_URL.addAll(MovieList.SPORTS_INDEX, cardImageUrlList)
+                        MovieList.VIDEO_URL.addAll(MovieList.SPORTS_INDEX, videoUrlList)
+                        MovieList.FUNC.addAll(MovieList.SPORTS_INDEX, funcList)
+
+                        // Update UI
+                        this.activity.runOnUiThread {
+                            MovieList.updateList(false)
+                            addOlympicChannelRows()
+                        }
                     }
                 }
-
-                addOnccLive()
+            } catch (e: Exception) {
+                Log.e("addOlympicChannel", e.message)
+                showToast("Error: addOlympicChannel - " + e.message)
+            } finally {
+                this.activity.runOnUiThread { addOnccLive() }
             }
         }).start()
     }
@@ -161,57 +182,62 @@ class MainFragment : BrowseFragment() {
                 .url(url)
                 .get()
                 .build()
-            val response = client.newCall(request).execute()
-            val responseBody = response.body()!!.string()
 
-            if (responseBody != "") {
-                val resultArray = JSONArray(responseBody)
-                for (i in 0..(resultArray.length() - 1)) {
-                    val item : JSONObject = resultArray.getJSONObject(i)
-                    val name : String = item.getString("name")
-                    val payItem : Boolean = item.getBoolean("payItem")
-                    if (!payItem)
-                    {
-                        val cameraArray = item.getJSONArray("camera")
-                        for (i in 0..(cameraArray.length() - 1)) {
-                            val camera : JSONObject = cameraArray.getJSONObject(i)
-                            val title = camera.getJSONArray("title").join(" ")
-                            val linkArray = camera.getJSONArray("signal_key")
-                            val linkList = mutableListOf<String>()
-                            for (i in (linkArray.length() - 1) downTo 0) { //The first one may be https only
-                                val link : String = linkArray.getString(i)
-                                linkList.add(link)
+            try {
+                val response = client.newCall(request).execute()
+                val responseBody = response.body()!!.string()
+
+                if (responseBody != "") {
+                    val resultArray = JSONArray(responseBody)
+                    for (i in 0..(resultArray.length() - 1)) {
+                        val item: JSONObject = resultArray.getJSONObject(i)
+                        val name: String = item.getString("name")
+                        val payItem: Boolean = item.getBoolean("payItem")
+                        if (!payItem) {
+                            val cameraArray = item.getJSONArray("camera")
+                            for (i in 0..(cameraArray.length() - 1)) {
+                                val camera: JSONObject = cameraArray.getJSONObject(i)
+                                val title = camera.getJSONArray("title").join(" ")
+                                val linkArray = camera.getJSONArray("signal_key")
+                                val linkList = mutableListOf<String>()
+                                for (i in (linkArray.length() - 1) downTo 0) { //The first one may be https only
+                                    val link: String = linkArray.getString(i)
+                                    linkList.add(link)
+                                }
+
+                                titleList.add("$name $title")
+                                cardImageUrlList.add(R.drawable.oncc)
+                                videoUrlList.add(linkList.joinToString("#"))
+                                funcList.add("oncc")
                             }
+                        }
+                    }
 
-                            titleList.add("$name $title")
-                            cardImageUrlList.add(R.drawable.oncc)
-                            videoUrlList.add(linkList.joinToString("#"))
-                            funcList.add("oncc")
+
+                    //Add to movie list
+                    if (titleList.count() > 0) {
+                        titleList.add("SKIP")
+                        cardImageUrlList.add(0)
+                        videoUrlList.add("SKIP")
+                        funcList.add("SKIP")
+
+                        MovieList.TITLE.addAll(MovieList.NEWS_INDEX, titleList)
+                        MovieList.CARD_IMAGE_URL.addAll(MovieList.NEWS_INDEX, cardImageUrlList)
+                        MovieList.VIDEO_URL.addAll(MovieList.NEWS_INDEX, videoUrlList)
+                        MovieList.FUNC.addAll(MovieList.NEWS_INDEX, funcList)
+
+                        // Update UI
+                        this.activity.runOnUiThread {
+                            MovieList.updateList(true)
+                            addOnccRows()
                         }
                     }
                 }
-
-
-                //Add to movie list
-                if (titleList.count() > 0) {
-                    titleList.add("SKIP")
-                    cardImageUrlList.add(0)
-                    videoUrlList.add("SKIP")
-                    funcList.add("SKIP")
-
-                    MovieList.TITLE.addAll(MovieList.NEWS_INDEX, titleList)
-                    MovieList.CARD_IMAGE_URL.addAll(MovieList.NEWS_INDEX, cardImageUrlList)
-                    MovieList.VIDEO_URL.addAll(MovieList.NEWS_INDEX, videoUrlList)
-                    MovieList.FUNC.addAll(MovieList.NEWS_INDEX, funcList)
-
-                    // Update UI
-                    this.activity.runOnUiThread {
-                        MovieList.updateList(true)
-                        addOnccRows()
-                    }
-                }
-
-                addFbLive()
+            } catch (e: Exception) {
+                Log.e("addOnccLive", e.message)
+                showToast("Error: addOnccLive - " + e.message)
+            } finally {
+                this.activity.runOnUiThread { addFbLive() }
             }
         }).start()
     }
@@ -266,26 +292,31 @@ class MainFragment : BrowseFragment() {
             .url(url)
             .get()
             .build()
-        val response = client.newCall(request).execute()
-        val responseBody = response.body()!!.string()
+
+        try {
+            val response = client.newCall(request).execute()
+            val responseBody = response.body()!!.string()
 
 
-        //Get Link
-        val resultList = Regex("\\?src&amp;.*?id=\\d*").findAll(responseBody)
-        if (resultList.count() > 0)
-        {
-            resultList.forEach {
-                val result = it.value
-                val id = Regex("\\d*$").find(result)?.value ?: ""
-                val liveLink = getFbLiveLink("https://www.facebook.com/$page/videos/$id/")
+            //Get Link
+            val resultList = Regex("\\?src&amp;.*?id=\\d*").findAll(responseBody)
+            if (resultList.count() > 0) {
+                resultList.forEach {
+                    val result = it.value
+                    val id = Regex("\\d*$").find(result)?.value ?: ""
+                    val liveLink = getFbLiveLink("https://www.facebook.com/$page/videos/$id/")
 
-                if (liveLink != "") {
-                    fbTitleList.add(pageName)
-                    fbCardImageUrlList.add(image)
-                    fbVideoUrlList.add(liveLink)
-                    fbFuncList.add("fb")
+                    if (liveLink != "") {
+                        fbTitleList.add(pageName)
+                        fbCardImageUrlList.add(image)
+                        fbVideoUrlList.add(liveLink)
+                        fbFuncList.add("fb")
+                    }
                 }
             }
+        } catch (e: Exception) {
+            Log.e("getFbLiveVideo", e.message)
+            showToast("Error: getFbLiveVideo($pageName) - " + e.message)
         }
     }
 
@@ -298,17 +329,22 @@ class MainFragment : BrowseFragment() {
             .addHeader("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3902.4 Safari/537.36")
             .get()
             .build()
-        val response = client.newCall(request).execute()
-        val responseBody = response.body()!!.string()
 
-        //Get Link
-        val isLive = Regex("\"is_live_stream\":true").find(responseBody)?.value ?: ""
-        if (isLive != "")
-        {
-            val hdSrc = Regex("\"hd_src\":\".*?\"").find(responseBody)?.value ?: ""
-            var hdResult = Regex("https.*[^`\"]").find(hdSrc)?.value ?: ""
-            hdResult = hdResult.replace("\\", "")
-            return hdResult
+        try {
+            val response = client.newCall(request).execute()
+            val responseBody = response.body()!!.string()
+
+            //Get Link
+            val isLive = Regex("\"is_live_stream\":true").find(responseBody)?.value ?: ""
+            if (isLive != "") {
+                val hdSrc = Regex("\"hd_src\":\".*?\"").find(responseBody)?.value ?: ""
+                var hdResult = Regex("https.*[^`\"]").find(hdSrc)?.value ?: ""
+                hdResult = hdResult.replace("\\", "")
+                return hdResult
+            }
+        } catch (e: Exception) {
+            Log.e("getFbLiveLink", e.message)
+            showToast("Error: getFbLiveLink($videoUrl) - " + e.message)
         }
         return ""
     }
@@ -326,6 +362,7 @@ class MainFragment : BrowseFragment() {
     private fun setupUIElements() {
         title = getString(R.string.app_name)
         badgeDrawable = activity.resources.getDrawable(R.drawable.transparentbanner)
+        toast = Toast.makeText(activity, "", Toast.LENGTH_SHORT)
 //        headersState = BrowseFragment.HEADERS_HIDDEN
 //        isHeadersTransitionOnBackEnabled = false
     }
@@ -431,8 +468,15 @@ class MainFragment : BrowseFragment() {
                 intent.putExtra(DetailsActivity.MOVIE, item)
                 startActivity(intent)
             } else if (item is String) {
-                Toast.makeText(activity, item, Toast.LENGTH_SHORT).show()
+                showToast(item)
             }
+        }
+    }
+
+    private fun showToast(msg: String) {
+        this.activity.runOnUiThread {
+            toast.setText(msg)
+            toast.show()
         }
     }
 }

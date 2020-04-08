@@ -88,6 +88,26 @@ class PlaybackVideoFragment : VideoSupportFragment() {
         }
     }
 
+    override fun onBufferingStateChanged(start: Boolean) {
+        super.onBufferingStateChanged(start)
+
+        if (start) {
+            isBuffering = true
+            Handler().postDelayed({
+                this.activity?.runOnUiThread {
+                    if (isBuffering) {
+                        PlaybackActivity.toast.setText("Buffer失敗, 重新連接!")
+                        PlaybackActivity.toast.show()
+                        this.playVideo(mediaUrl, isFixRatio)
+                    }
+                }
+            }, 4000)
+        }
+        else
+            isBuffering = false
+
+    }
+
     private fun setUpPlayer(){
         playerAdapter = NewMediaPlayerAdapter(activity)
         playerAdapter.setRepeatAction(PlaybackControlsRow.RepeatAction.INDEX_ONE)
@@ -138,6 +158,7 @@ class PlaybackVideoFragment : VideoSupportFragment() {
         private lateinit var playerAdapter: NewMediaPlayerAdapter
         private var mediaUrl: String = ""
         private var isFixRatio: Boolean = false
+        private var isBuffering: Boolean = false
         private const val SYSTEM_UI_FLAG = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
     }
 }
