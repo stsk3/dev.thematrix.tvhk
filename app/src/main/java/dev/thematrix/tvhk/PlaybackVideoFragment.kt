@@ -10,6 +10,8 @@ import androidx.leanback.app.VideoSupportFragment
 import androidx.leanback.app.VideoSupportFragmentGlueHost
 import androidx.leanback.media.PlaybackTransportControlGlue
 import androidx.leanback.widget.PlaybackControlsRow
+import dev.thematrix.tvhk.MovieList.SDK_VERSION
+import dev.thematrix.tvhk.PlaybackActivity.Companion.toast
 
 class PlaybackVideoFragment : VideoSupportFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -18,6 +20,7 @@ class PlaybackVideoFragment : VideoSupportFragment() {
         val videoUrl = activity?.intent?.getStringExtra("videoUrl") as String
         val fixRatio = activity?.intent?.getBooleanExtra("fixRatio", false) as Boolean
         PlaybackActivity.isCurrentExo = false
+        handler = Handler()
 
         setUpPlayer()
 
@@ -80,10 +83,12 @@ class PlaybackVideoFragment : VideoSupportFragment() {
     override fun onError(errorCode: Int, errorMessage: CharSequence?) {
         super.onError(errorCode, errorMessage)
 
-        PlaybackActivity.toast.setText("未能播放! $errorMessage")
-        PlaybackActivity.toast.show()
+        toast.setText("未能播放! $errorMessage")
+        toast.show()
 
         if (retry > 0) {
+            toast.setText("Error; 重新連接中．．．")
+            toast.show()
             playVideo(mediaUrl, isFixRatio)
         }
     }
@@ -92,19 +97,16 @@ class PlaybackVideoFragment : VideoSupportFragment() {
         super.onBufferingStateChanged(start)
 
         if (start) {
-            isBuffering = true
-            Handler().postDelayed({
+            handler.postDelayed({
                 this.activity?.runOnUiThread {
-                    if (isBuffering) {
-                        PlaybackActivity.toast.setText("重新連接中．．．")
-                        PlaybackActivity.toast.show()
-                        this.playVideo(mediaUrl, isFixRatio)
-                    }
+                     toast.setText("Buffer; 重新連接中．．．")
+                     toast.show()
+                     this.playVideo(mediaUrl, isFixRatio)
                 }
-            }, 10000)
+            }, 6000)
         }
         else
-            isBuffering = false
+            handler.removeCallbacksAndMessages(null)
 
     }
 
@@ -142,23 +144,23 @@ class PlaybackVideoFragment : VideoSupportFragment() {
     }
 
     private fun handleUrl(url: String): String{
-        return if(SDK_VER < 19){
+        return if(SDK_VER < SDK_VERSION){
             url.replace("https://", "http://")
         }else{
             url
         }
     }
 
-    private val defaultRetryNum = 1
+    private val defaultRetryNum = 3
     private var retry = defaultRetryNum
 
     companion object {
         private val SDK_VER = android.os.Build.VERSION.SDK_INT
         private lateinit var mTransportControlGlue: PlaybackTransportControlGlue<NewMediaPlayerAdapter>
         private lateinit var playerAdapter: NewMediaPlayerAdapter
+        private lateinit var handler: Handler
         private var mediaUrl: String = ""
         private var isFixRatio: Boolean = false
-        private var isBuffering: Boolean = false
         private const val SYSTEM_UI_FLAG = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
     }
 }

@@ -6,6 +6,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.leanback.app.BrowseFragment
 import androidx.leanback.widget.*
+import dev.thematrix.tvhk.MovieList.SDK_VERSION
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.json.JSONArray
@@ -86,7 +87,7 @@ class MainFragment : BrowseFragment() {
             val cableNewsMovie = MovieList.list[MovieList.TITLE.indexOf("有線新聞台")]
             cableNewsMovie.videoUrl = webInfoMap["cableNews"]!!
             cableNewsMovie.func = ""
-            cableNewsMovie.exo = android.os.Build.VERSION.SDK_INT >= 19
+            cableNewsMovie.exo = android.os.Build.VERSION.SDK_INT >= SDK_VERSION
         }
 
         for (i in 0..2) {
@@ -98,6 +99,9 @@ class MainFragment : BrowseFragment() {
             val customMovie = MovieList.list[MovieList.TITLE.indexOf("自選1") + i]
             customMovie.videoUrl = webInfoMap[customMovie.func]?:""
         }
+
+        val yahooTVMovie = MovieList.list[MovieList.TITLE.indexOf("Yahoo TV")]
+        yahooTVMovie.videoUrl.replace("{host}", webInfoMap[yahooTVMovie.func]?:"")
 
     }
 

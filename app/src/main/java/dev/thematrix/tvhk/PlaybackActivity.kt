@@ -220,7 +220,7 @@ class PlaybackActivity : FragmentActivity() {
 
         lateinit var url: String
 
-        if(ch.equals("viutv99") || ch.equals("nowtv332") || ch.equals("nowtv331")){
+        if(ch.equals("viutv99") || ch.equals("nowtv332") || ch.equals("nowtv331") || ch.equals("nowtv630")){
             val params = JSONObject()
 
             if(ch.equals("viutv99")){
@@ -237,6 +237,8 @@ class PlaybackActivity : FragmentActivity() {
                     params.put("channelno", "332")
                 }else if(ch.equals("nowtv331")){
                     params.put("channelno", "331")
+                }else if (ch.equals("nowtv630")){
+                    params.put("channelno", "630")
                 }
 
                 params.put("audioCode", "")
@@ -264,6 +266,7 @@ class PlaybackActivity : FragmentActivity() {
 
             requestQueue.add(jsonObjectRequest)
         }else if(ch.equals("nowtv630")){
+            //Deprecated
             url = "https://sports.now.com/VideoCheckOut?pid=webch630_4&service=NOW360&type=channel"
 
             val stringRequest = object: StringRequest(

@@ -5,6 +5,7 @@ object MovieList {
     const val NEWS_CATEGORY_INDEX = 1
     const val SPORTS_INDEX = 31
     const val SPORTS_CATEGORY_INDEX = 4
+    const val SDK_VERSION = 19
 
     val CATEGORY = arrayOf(
         "新聞",
@@ -101,6 +102,7 @@ object MovieList {
         "東森電影",
         "東森洋片",
         "八大綜合",
+        "Yahoo TV",
         "SKIP",
         "國家地理頻道",
         "國家地理野生頻道",
@@ -227,6 +229,7 @@ object MovieList {
         R.drawable.tw_ebcmovie,
         R.drawable.tw_ebcwesternmovie,
         R.drawable.tw_gtv,
+        R.drawable.tw_yahootv,
         0,
         R.drawable.uae_natgeo,
         R.drawable.uae_natgeowild,
@@ -296,7 +299,7 @@ object MovieList {
                 "http://live3.tdm.com.mo:1935/ch4/sport_ch4.live/playlist.m3u8#" +
                 "http://live4.tdm.com.mo:1935/ch4/sport_ch4.live/playlist.m3u8",
         "http://ms003.happytv.com.tw/live/OcScNdWHvBx5P4w3/index.m3u8",
-        if (android.os.Build.VERSION.SDK_INT < 19)
+        if (android.os.Build.VERSION.SDK_INT < SDK_VERSION)
             "http://rmtv24hweblive-lh.akamaihd.net/i/rmtv24hwebes_1@300661/index_3_av-p.m3u8#" +
                     "http://rmtv24hweblive-lh.akamaihd.net/i/rmtv24hwebes_1@300661/index_3_av-b.m3u8#" +
                     "http://rmtv24hweblive-lh.akamaihd.net/i/rmtv24hwebes_1@300661/index_2_av-p.m3u8#" +
@@ -305,7 +308,7 @@ object MovieList {
                     "http://rmtv24hweblive-lh.akamaihd.net/i/rmtv24hwebes_1@300661/index_1_av-b.m3u8"
         else
             "http://rmtv24hweblive-lh.akamaihd.net/i/rmtv24hwebes_1@300661/master.m3u8",
-        if (android.os.Build.VERSION.SDK_INT < 19)
+        if (android.os.Build.VERSION.SDK_INT < SDK_VERSION)
             "http://rmtv24hweblive-lh.akamaihd.net/i/rmtv24hweben_1@300662/index_3_av-p.m3u8#" +
                     "http://rmtv24hweblive-lh.akamaihd.net/i/rmtv24hweben_1@300662/index_3_av-b.m3u8#" +
                     "http://rmtv24hweblive-lh.akamaihd.net/i/rmtv24hweben_1@300662/index_2_av-p.m3u8#" +
@@ -411,6 +414,7 @@ object MovieList {
         "http://104.250.154.42:8080/ZZ_zhongtianyazhou/ZZ_zhongtianyazhou.m3u8#" +
                 "http://192.200.120.82:8080/ZZ_zhongtianyazhou/ZZ_zhongtianyazhou.m3u8#" +
                 "http://192.154.103.75:8080/ZZ_zhongtianyazhou/ZZ_zhongtianyazhou.m3u8",
+        "{host}/hls/1080p/playlist.m3u8#{host}/hls/720p/playlist.m3u8#{host}/hls/540p/playlist.m3u8#{host}/hls/360p/playlist.m3u8",
         "SKIP",
         "http://livecdnh1.tvanywhere.ae:80/hls/nat_geo/index.m3u8",
         "http://livecdnh1.tvanywhere.ae:80/hls/nat_geo_wild/index.m3u8",
@@ -541,6 +545,7 @@ object MovieList {
         "",
         "",
         "",
+        "",
         "SKIP",
         "uae",
         "uae",
@@ -652,7 +657,7 @@ object MovieList {
         movie.cardImageUrl = cardImageUrl
         movie.videoUrl = videoUrl
         movie.func = func
-        movie.exo = if (android.os.Build.VERSION.SDK_INT < 21)
+        movie.exo = if (android.os.Build.VERSION.SDK_INT < SDK_VERSION)
             func.contains("^nowtv|^fantv$|^rthk$|^fox$|^fb$|^wowgua|^in$|^uae$|^tw$|^viutv99$|^gdtve|^exoCustom".toRegex())
         else
             !func.contains("^custom".toRegex())
