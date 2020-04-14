@@ -38,7 +38,6 @@ class MainFragment : BrowseFragment() {
         setupEventListeners()
 
         getWebInfo()
-        addOlympicChannel()
     }
 
     private var getWebInfoRetry = 10
@@ -68,6 +67,7 @@ class MainFragment : BrowseFragment() {
                         this.activity.runOnUiThread {
                             fixChannel()
                             defaultPlay()
+                            addOlympicChannel()
                         }
                     }
                 }
@@ -101,7 +101,7 @@ class MainFragment : BrowseFragment() {
         }
 
         val yahooTVMovie = MovieList.list[MovieList.TITLE.indexOf("Yahoo TV")]
-        yahooTVMovie.videoUrl.replace("{host}", webInfoMap["yahooTV"]?:"")
+        yahooTVMovie.videoUrl = yahooTVMovie.videoUrl.replace("{host}", webInfoMap["yahooTV"]?:"")
 
     }
 
