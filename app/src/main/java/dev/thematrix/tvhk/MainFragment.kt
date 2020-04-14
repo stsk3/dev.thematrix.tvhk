@@ -101,7 +101,7 @@ class MainFragment : BrowseFragment() {
         }
 
         val yahooTVMovie = MovieList.list[MovieList.TITLE.indexOf("Yahoo TV")]
-        yahooTVMovie.videoUrl.replace("{host}", webInfoMap[yahooTVMovie.func]?:"")
+        yahooTVMovie.videoUrl.replace("{host}", webInfoMap["yahooTV"]?:"")
 
     }
 
