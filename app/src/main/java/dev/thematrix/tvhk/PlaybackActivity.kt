@@ -85,25 +85,11 @@ class PlaybackActivity : FragmentActivity() {
         lateinit var direction: String
 
         if(
-            event.keyCode == KeyEvent.KEYCODE_CHANNEL_UP ||
-            event.keyCode == KeyEvent.KEYCODE_DPAD_UP ||
-            event.keyCode == KeyEvent.KEYCODE_MEDIA_PREVIOUS ||
-            event.keyCode == KeyEvent.KEYCODE_MEDIA_REWIND ||
-            event.keyCode == KeyEvent.KEYCODE_MEDIA_SKIP_BACKWARD ||
-            event.keyCode == KeyEvent.KEYCODE_MEDIA_STEP_BACKWARD ||
-            event.keyCode == KeyEvent.KEYCODE_NAVIGATE_PREVIOUS ||
-            event.keyCode == KeyEvent.KEYCODE_SYSTEM_NAVIGATION_LEFT
+            event.keyCode == KeyEvent.KEYCODE_DPAD_UP
         ){
             direction = "PREVIOUS"
         }else if(
-            event.keyCode == KeyEvent.KEYCODE_CHANNEL_DOWN ||
             event.keyCode == KeyEvent.KEYCODE_DPAD_DOWN ||
-            event.keyCode == KeyEvent.KEYCODE_MEDIA_NEXT ||
-            event.keyCode == KeyEvent.KEYCODE_MEDIA_FAST_FORWARD ||
-            event.keyCode == KeyEvent.KEYCODE_MEDIA_SKIP_FORWARD ||
-            event.keyCode == KeyEvent.KEYCODE_MEDIA_STEP_FORWARD ||
-            event.keyCode == KeyEvent.KEYCODE_NAVIGATE_NEXT ||
-            event.keyCode == KeyEvent.KEYCODE_SYSTEM_NAVIGATION_RIGHT ||
             (event.keyCode == KeyEvent.KEYCODE_BACK && event.isLongPress)
         ){
             direction = "NEXT"
@@ -119,6 +105,14 @@ class PlaybackActivity : FragmentActivity() {
             event.keyCode == KeyEvent.KEYCODE_MENU
         ){
             direction = "MENU"
+        }else if(
+            event.keyCode == KeyEvent.KEYCODE_PAGE_UP
+        ){
+            direction = "RW"
+        }else if(
+            event.keyCode == KeyEvent.KEYCODE_PAGE_DOWN
+        ){
+            direction = "FF"
         }else{
             return super.dispatchKeyEvent(event)
         }
@@ -130,6 +124,11 @@ class PlaybackActivity : FragmentActivity() {
             if (direction == "MENU") {
                 if (isCurrentExo)
                     PlaybackVideoExoFragment().trackSelectionDialog(this)
+            } else if (direction == "RW" || direction == "FF") {
+                if (isCurrentExo)
+                    PlaybackVideoExoFragment().seek(direction == "FF")
+                else
+                    PlaybackVideoFragment().seek(direction == "FF")
             } else {
                 val list = MovieList.list
                 var videoId = currentVideoID
@@ -572,6 +571,7 @@ class PlaybackActivity : FragmentActivity() {
     companion object {
         var currentVideoID = -1
         var currentSourceIndex = 0
+        const val seekInterval = 5000
         internal var isCurrentExo = false
         internal lateinit var currentMovie: Movie
         lateinit var toast: Toast

@@ -30,6 +30,7 @@ import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
 import com.google.android.exoplayer2.video.VideoListener
+import dev.thematrix.tvhk.PlaybackActivity.Companion.seekInterval
 import dev.thematrix.tvhk.PlaybackActivity.Companion.toast
 import kotlinx.android.synthetic.main.activity_simple.view.*
 
@@ -233,6 +234,11 @@ class PlaybackVideoExoFragment : Fragment() {
             player.next()
         else
             player.previous()
+    }
+
+    fun seek(isForward: Boolean) {
+        val sign = if (isForward) 1 else -1
+        player.seekTo(player.currentPosition + sign * seekInterval)
     }
 
     override fun onStop() {

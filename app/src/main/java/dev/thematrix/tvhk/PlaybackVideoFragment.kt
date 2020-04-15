@@ -11,6 +11,7 @@ import androidx.leanback.app.VideoSupportFragmentGlueHost
 import androidx.leanback.media.PlaybackTransportControlGlue
 import androidx.leanback.widget.PlaybackControlsRow
 import dev.thematrix.tvhk.MovieList.SDK_VERSION
+import dev.thematrix.tvhk.PlaybackActivity.Companion.seekInterval
 import dev.thematrix.tvhk.PlaybackActivity.Companion.toast
 
 class PlaybackVideoFragment : VideoSupportFragment() {
@@ -51,6 +52,11 @@ class PlaybackVideoFragment : VideoSupportFragment() {
     override fun onDestroy() {
         super.onDestroy()
         playerAdapter.release()
+    }
+
+    fun seek(isForward: Boolean) {
+        val sign = if (isForward) 1 else -1
+        playerAdapter.seekTo(playerAdapter.currentPosition + sign * seekInterval)
     }
 
     override fun onVideoSizeChanged(width: Int, height: Int) {

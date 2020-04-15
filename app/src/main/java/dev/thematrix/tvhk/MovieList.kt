@@ -93,6 +93,7 @@ object MovieList {
         "有線互動新聞台",
         "有線第三頻道",
         "SKIP",
+        "Yahoo TV", //!!
         "中視",
         "動物星球",
         "龍祥時代",
@@ -102,7 +103,6 @@ object MovieList {
         "東森電影",
         "東森洋片",
         "八大綜合",
-        "Yahoo TV",
         "SKIP",
         "國家地理頻道",
         "國家地理野生頻道",
@@ -220,6 +220,7 @@ object MovieList {
         R.drawable.mo_news,
         R.drawable.mo_ch3,
         0,
+        R.drawable.tw_yahootv,
         R.drawable.tw_ctv,
         R.drawable.tw_animalplanet,
         R.drawable.tw_lstime,
@@ -229,7 +230,6 @@ object MovieList {
         R.drawable.tw_ebcmovie,
         R.drawable.tw_ebcwesternmovie,
         R.drawable.tw_gtv,
-        R.drawable.tw_yahootv,
         0,
         R.drawable.uae_natgeo,
         R.drawable.uae_natgeowild,
@@ -387,6 +387,7 @@ object MovieList {
         "http://202.175.127.77/live/show/ch2/index.m3u8",
         "http://202.175.127.77/live/show/ch3/index.m3u8",
         "SKIP",
+        "",
         "http://104.250.154.42:8080/ZZ_zhongshi/ZZ_zhongshi.m3u8#" +
                 "http://192.200.120.82:8080/ZZ_zhongshi/ZZ_zhongshi.m3u8#" +
                 "http://192.154.103.75:8080/ZZ_zhongshi/ZZ_zhongshi.m3u8",
@@ -414,7 +415,6 @@ object MovieList {
         "http://104.250.154.42:8080/ZZ_zhongtianyazhou/ZZ_zhongtianyazhou.m3u8#" +
                 "http://192.200.120.82:8080/ZZ_zhongtianyazhou/ZZ_zhongtianyazhou.m3u8#" +
                 "http://192.154.103.75:8080/ZZ_zhongtianyazhou/ZZ_zhongtianyazhou.m3u8",
-        "{host}/hls/1080p/playlist.m3u8#{host}/hls/720p/playlist.m3u8#{host}/hls/540p/playlist.m3u8#{host}/hls/360p/playlist.m3u8",
         "SKIP",
         "http://livecdnh1.tvanywhere.ae:80/hls/nat_geo/index.m3u8",
         "http://livecdnh1.tvanywhere.ae:80/hls/nat_geo_wild/index.m3u8",
@@ -601,8 +601,7 @@ object MovieList {
         setupMovies()
     }
 
-    fun updateList(isNews: Boolean) {
-        val indexType = if (isNews) NEWS_INDEX else SPORTS_INDEX
+    fun updateList(indexType: Int) {
         count = indexType
 
         val newMovieCount = TITLE.count() - list.count()

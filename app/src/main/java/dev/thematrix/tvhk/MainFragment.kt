@@ -67,7 +67,6 @@ class MainFragment : BrowseFragment() {
                         this.activity.runOnUiThread {
                             fixChannel()
                             defaultPlay()
-                            addOlympicChannel()
                         }
                     }
                 }
@@ -78,6 +77,8 @@ class MainFragment : BrowseFragment() {
                     getWebInfoRetry--
                     getWebInfo()
                 }
+            } finally {
+                this.activity.runOnUiThread { addOlympicChannel() }
             }
         }).start()
     }
@@ -99,10 +100,6 @@ class MainFragment : BrowseFragment() {
             val customMovie = MovieList.list[MovieList.TITLE.indexOf("自選1") + i]
             customMovie.videoUrl = webInfoMap[customMovie.func]?:""
         }
-
-        val yahooTVMovie = MovieList.list[MovieList.TITLE.indexOf("Yahoo TV")]
-        yahooTVMovie.videoUrl = yahooTVMovie.videoUrl.replace("{host}", webInfoMap["yahooTV"]?:"")
-
     }
 
     private fun addOlympicChannel() {
@@ -160,7 +157,7 @@ class MainFragment : BrowseFragment() {
 
                         // Update UI
                         this.activity.runOnUiThread {
-                            MovieList.updateList(false)
+                            MovieList.updateList(MovieList.SPORTS_INDEX)
                             addOlympicChannelRows()
                         }
                     }
@@ -234,7 +231,7 @@ class MainFragment : BrowseFragment() {
 
                         // Update UI
                         this.activity.runOnUiThread {
-                            MovieList.updateList(true)
+                            MovieList.updateList(MovieList.NEWS_INDEX)
                             addOnccRows()
                         }
                     }
@@ -269,23 +266,30 @@ class MainFragment : BrowseFragment() {
             getFbLiveVideo("onccsport", "東網體育", R.drawable.fb_onccsport)
 
 
-            //Add to movie list
-            if (fbTitleList.count() > 0) {
-                fbTitleList.add("SKIP")
-                fbCardImageUrlList.add(0)
-                fbVideoUrlList.add("SKIP")
-                fbFuncList.add("SKIP")
+            try {
+                //Add to movie list
+                if (fbTitleList.count() > 0) {
+                    fbTitleList.add("SKIP")
+                    fbCardImageUrlList.add(0)
+                    fbVideoUrlList.add("SKIP")
+                    fbFuncList.add("SKIP")
 
-                MovieList.TITLE.addAll(MovieList.NEWS_INDEX, fbTitleList)
-                MovieList.CARD_IMAGE_URL.addAll(MovieList.NEWS_INDEX, fbCardImageUrlList)
-                MovieList.VIDEO_URL.addAll(MovieList.NEWS_INDEX, fbVideoUrlList)
-                MovieList.FUNC.addAll(MovieList.NEWS_INDEX, fbFuncList)
+                    MovieList.TITLE.addAll(MovieList.NEWS_INDEX, fbTitleList)
+                    MovieList.CARD_IMAGE_URL.addAll(MovieList.NEWS_INDEX, fbCardImageUrlList)
+                    MovieList.VIDEO_URL.addAll(MovieList.NEWS_INDEX, fbVideoUrlList)
+                    MovieList.FUNC.addAll(MovieList.NEWS_INDEX, fbFuncList)
 
-                // Update UI
-                this.activity.runOnUiThread {
-                    MovieList.updateList(true)
-                    addFbRows()
+                    // Update UI
+                    this.activity.runOnUiThread {
+                        MovieList.updateList(MovieList.NEWS_INDEX)
+                        addFbRows()
+                    }
                 }
+            } catch (e: Exception) {
+                Log.e("addFbLive", e.message)
+                showToast("Error: addFbLive - " + e.message)
+            } finally {
+                this.activity.runOnUiThread { addYahooTWTV() }
             }
         }).start()
     }
@@ -354,6 +358,92 @@ class MainFragment : BrowseFragment() {
         }
         return ""
     }
+
+
+    private fun addYahooTWTV() {
+        Thread(Runnable {
+            val builder = OkHttpClient.Builder()
+            builder.addInterceptor { chain ->
+                val original = chain.request()
+
+                // Request customization: add request headers
+                val requestBuilder = original.newBuilder()
+                    .header("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4115.1 Safari/537.36")
+
+                val request = requestBuilder.build()
+                chain.proceed(request)
+            }
+
+
+            val client = builder.build()
+            val url = URL("https://tw.tv.yahoo.com/tw-live/")
+            val request = Request.Builder()
+                .url(url)
+                .get()
+                .build()
+
+            try {
+                val response = client.newCall(request).execute()
+                val responseBody = response.body()!!.string()
+
+                if (responseBody != "") {
+                    val uuid = Regex("(?<=uuid:)(.*?)(?=;)").find(responseBody)?.value
+                    Log.i("Yahoo UUID", uuid)
+                    val jsonUrl = URL("https://video-api.yql.yahoo.com/v1/video/sapi/streams/$uuid")
+                    val jsonRequest = Request.Builder()
+                        .url(jsonUrl)
+                        .get()
+                        .build()
+                    val jsonResponse = client.newCall(jsonRequest).execute()
+                    val jsonResponseBody = jsonResponse.body()!!.string()
+
+                    if (jsonResponseBody != "") {
+                        val mediaObjArray = JSONObject(jsonResponseBody)
+                            .getJSONObject("query")
+                            .getJSONObject("results")
+                            .getJSONArray("mediaObj")
+
+                        if (mediaObjArray != null && mediaObjArray.length() > 0) {
+                            val mediaObj = mediaObjArray.getJSONObject(0)
+                            val title = mediaObj.getJSONObject("meta").getString("title")
+                            val isLive = mediaObj.getJSONObject("meta").getString("live_state") == "live"
+                            val streamArray = if (isLive) mediaObj.getJSONArray("streamProfiles") else mediaObj.getJSONArray("streams")
+                            val item: JSONObject = streamArray.getJSONObject(0)
+                            val host: String = item.getString("host")
+                            val path: String = item.getString("path")
+
+
+                            //Add to movie list
+                            this.activity.runOnUiThread {
+                                val yahooTVMovie = MovieList.list[MovieList.TITLE.indexOf("Yahoo TV")]
+                                yahooTVMovie.title = title
+                                if (isLive) {
+                                    val linkArray = host.split("(?<=hls/)(.*?)(?=/)".toRegex())
+                                    yahooTVMovie.videoUrl = (
+                                            linkArray[0] + "1080p" + linkArray[1]
+                                                    + "#" + linkArray[0] + "720p" + linkArray[1]
+                                                    + "#" + linkArray[0] + "540p_baseline" + linkArray[1]
+                                                    + "#" + linkArray[0] + "540p" + linkArray[1]
+                                                    + "#" + linkArray[0] + "360p" + linkArray[1]
+                                                    + "#" + linkArray[0] + "360p_low" + linkArray[1]
+                                                    + "#" + linkArray[0] + "180p" + linkArray[1])
+
+                                } else {
+                                    yahooTVMovie.videoUrl = host + path
+                                }
+                            }
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e("addYahooTWTV", e.message)
+                showToast("Error: addYahooTWTV - " + e.message)
+            } finally {
+
+            }
+        }).start()
+    }
+
 
     private fun defaultPlay() {
         var default = 2
