@@ -29,6 +29,8 @@ import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
 import com.google.android.exoplayer2.video.VideoListener
+import dev.thematrix.tvhk.MovieList.OLD_SDK_VERSION
+import dev.thematrix.tvhk.MovieList.SDK_VER
 import dev.thematrix.tvhk.PlaybackActivity.Companion.SYSTEM_UI_FLAG
 import dev.thematrix.tvhk.PlaybackActivity.Companion.seekInterval
 import dev.thematrix.tvhk.PlaybackActivity.Companion.toast
@@ -47,22 +49,26 @@ class PlaybackVideoExoFragment : Fragment() {
         val fixRatio = activity?.intent?.getBooleanExtra("fixRatio", false) as Boolean
         view.setBackgroundColor(Color.BLACK)
         view.systemUiVisibility = SYSTEM_UI_FLAG
-        view.setOnSystemUiVisibilityChangeListener {
-            if (view.systemUiVisibility != SYSTEM_UI_FLAG) {
-                val trackSelectionButton = view.exo_track_selection_button
-                val resizeModeButton = view.exo_resize_button
-                val liveButton = view.exo_live_button
 
-                trackSelectionButton.visibility = VISIBLE
-                resizeModeButton.visibility = VISIBLE
-                liveButton.visibility = VISIBLE
+        //Not show button on TV
+        if (SDK_VER >= OLD_SDK_VERSION) {
+            view.setOnSystemUiVisibilityChangeListener {
+                if (view.systemUiVisibility != SYSTEM_UI_FLAG) {
+                    val trackSelectionButton = view.exo_track_selection_button
+                    val resizeModeButton = view.exo_resize_button
+                    val liveButton = view.exo_live_button
 
-                Handler().postDelayed({
-                    view.systemUiVisibility = SYSTEM_UI_FLAG
-                    trackSelectionButton.visibility = GONE
-                    resizeModeButton.visibility = GONE
-                    liveButton.visibility = GONE
-                }, 3000)
+                    trackSelectionButton.visibility = VISIBLE
+                    resizeModeButton.visibility = VISIBLE
+                    liveButton.visibility = VISIBLE
+
+                    Handler().postDelayed({
+                        view.systemUiVisibility = SYSTEM_UI_FLAG
+                        trackSelectionButton.visibility = GONE
+                        resizeModeButton.visibility = GONE
+                        liveButton.visibility = GONE
+                    }, 3000)
+                }
             }
         }
 
@@ -239,6 +245,7 @@ class PlaybackVideoExoFragment : Fragment() {
     fun seek(isForward: Boolean) {
         val sign = if (isForward) 1 else -1
         player.seekTo(player.currentPosition + sign * seekInterval)
+        view?.player_view?.showController() //Will hide automatically
     }
 
     override fun onStop() {
@@ -284,15 +291,14 @@ class PlaybackVideoExoFragment : Fragment() {
 
 
 
-    companion object {
-        private lateinit var player: SimpleExoPlayer
-        private lateinit var trackSelector: DefaultTrackSelector
-        private lateinit var hlsMediaSourceFactory: HlsMediaSource.Factory
-        private lateinit var dashMediaSourceFactory: DashMediaSource.Factory
-        private lateinit var progressiveMediaSourceFactory: ProgressiveMediaSource.Factory
-        private lateinit var httpDataSourceFactory: DefaultHttpDataSourceFactory
-        private lateinit var mediaUrl: String
-        private var isFixRatio: Boolean = false
-        private var windowIndex: Int = 0
-    }
+    private lateinit var player: SimpleExoPlayer
+    private lateinit var trackSelector: DefaultTrackSelector
+    private lateinit var hlsMediaSourceFactory: HlsMediaSource.Factory
+    private lateinit var dashMediaSourceFactory: DashMediaSource.Factory
+    private lateinit var progressiveMediaSourceFactory: ProgressiveMediaSource.Factory
+    private lateinit var httpDataSourceFactory: DefaultHttpDataSourceFactory
+    private lateinit var mediaUrl: String
+    private var isFixRatio: Boolean = false
+    private var windowIndex: Int = 0
+
 }

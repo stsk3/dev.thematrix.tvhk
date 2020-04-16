@@ -22,7 +22,8 @@ class PlaybackVideoFragment : VideoSupportFragment() {
         val videoUrl = activity?.intent?.getStringExtra("videoUrl") as String
         val fixRatio = activity?.intent?.getBooleanExtra("fixRatio", false) as Boolean
         PlaybackActivity.isCurrentExo = false
-        handler = Handler()
+        retryHandler = Handler()
+        tickleHandler = Handler()
 
         setUpPlayer()
 
@@ -59,6 +60,7 @@ class PlaybackVideoFragment : VideoSupportFragment() {
         val sign = if (isForward) 1 else -1
         isSeeking = true
         playerAdapter.seekTo(playerAdapter.currentPosition + sign * seekInterval)
+        tickle()
     }
 
     override fun onVideoSizeChanged(width: Int, height: Int) {
@@ -82,7 +84,7 @@ class PlaybackVideoFragment : VideoSupportFragment() {
                 Log.d("Output Size: ", p.width.toString() + " " + p.height + " " + p.width / p.height.toDouble())
 
                 this.surfaceView.layoutParams = p
-            } else {
+            } else if (width > 0 && height > 0){
                 super.onVideoSizeChanged(width, height)
             }
         }
@@ -106,20 +108,33 @@ class PlaybackVideoFragment : VideoSupportFragment() {
 
         if (start) {
             if (!isSeeking) {
-                handler.postDelayed({
+                retryHandler.postDelayed({
                     this.activity?.runOnUiThread {
                         toast.setText("Buffer; 重新連接中．．．")
                         toast.show()
                         this.playVideo(mediaUrl, isFixRatio)
                     }
-                }, 6000)
+                },  6000)
             }
         }
         else {
-            handler.removeCallbacksAndMessages(null)
+            retryHandler.removeCallbacksAndMessages(null)
             isSeeking = false
         }
 
+    }
+
+    //Allow auto hide on tickle() all the time
+    override fun tickle() {
+        tickleHandler.removeCallbacksAndMessages(null)
+
+        showControlsOverlay(true)
+
+        tickleHandler.postDelayed({
+            this.activity?.runOnUiThread {
+                hideControlsOverlay(true)
+            }
+        }, 3000)
     }
 
     private fun setUpPlayer(){
@@ -129,9 +144,9 @@ class PlaybackVideoFragment : VideoSupportFragment() {
 
         val glueHost = VideoSupportFragmentGlueHost(this@PlaybackVideoFragment)
         mTransportControlGlue.host = glueHost
-        mTransportControlGlue.isControlsOverlayAutoHideEnabled = false
-        hideControlsOverlay(false)
-        mTransportControlGlue.isSeekEnabled = false
+        mTransportControlGlue.isControlsOverlayAutoHideEnabled = false //Important
+        hideControlsOverlay(true)
+        mTransportControlGlue.isSeekEnabled = true
         progressBarManager.disableProgressBar()
 
     }
@@ -168,11 +183,11 @@ class PlaybackVideoFragment : VideoSupportFragment() {
     private var retry = defaultRetryNum
     private var isSeeking = false
 
-    companion object {
-        private lateinit var mTransportControlGlue: PlaybackTransportControlGlue<NewMediaPlayerAdapter>
-        private lateinit var playerAdapter: NewMediaPlayerAdapter
-        private lateinit var handler: Handler
-        private var mediaUrl: String = ""
-        private var isFixRatio: Boolean = false
-    }
+    private lateinit var mTransportControlGlue: PlaybackTransportControlGlue<NewMediaPlayerAdapter>
+    private lateinit var playerAdapter: NewMediaPlayerAdapter
+    private lateinit var retryHandler: Handler
+    private lateinit var tickleHandler: Handler
+    private var mediaUrl: String = ""
+    private var isFixRatio: Boolean = false
+
 }

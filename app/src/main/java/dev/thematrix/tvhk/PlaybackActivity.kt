@@ -5,6 +5,7 @@ import android.view.KeyEvent
 import android.view.View
 import android.view.WindowManager
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import com.android.volley.*
 import com.android.volley.toolbox.*
@@ -107,11 +108,13 @@ class PlaybackActivity : FragmentActivity() {
         ){
             direction = "MENU"
         }else if(
-            event.keyCode == KeyEvent.KEYCODE_PAGE_UP
+            event.keyCode == KeyEvent.KEYCODE_PAGE_UP ||
+            event.keyCode == KeyEvent.KEYCODE_MEDIA_REWIND
         ){
             direction = "RW"
         }else if(
-            event.keyCode == KeyEvent.KEYCODE_PAGE_DOWN
+            event.keyCode == KeyEvent.KEYCODE_PAGE_DOWN ||
+            event.keyCode == KeyEvent.KEYCODE_MEDIA_FAST_FORWARD
         ){
             direction = "FF"
         }else{
@@ -124,12 +127,12 @@ class PlaybackActivity : FragmentActivity() {
         if(event.action == KeyEvent.ACTION_DOWN && !isDownloadingChannelInfo) {
             if (direction == "MENU") {
                 if (isCurrentExo)
-                    PlaybackVideoExoFragment().trackSelectionDialog(this)
+                    (currentPlayerFragment as PlaybackVideoExoFragment).trackSelectionDialog(this)
             } else if (direction == "RW" || direction == "FF") {
                 if (isCurrentExo)
-                    PlaybackVideoExoFragment().seek(direction == "FF")
+                    (currentPlayerFragment as PlaybackVideoExoFragment).seek(direction == "FF")
                 else
-                    PlaybackVideoFragment().seek(direction == "FF")
+                    (currentPlayerFragment as PlaybackVideoFragment).seek(direction == "FF")
             } else {
                 val list = MovieList.list
                 var videoId = currentVideoID
@@ -183,7 +186,7 @@ class PlaybackActivity : FragmentActivity() {
                         }
 
                         if (isCurrentExo)
-                            PlaybackVideoExoFragment().videoSeek(direction == "RIGHT")
+                            (currentPlayerFragment as PlaybackVideoExoFragment).videoSeek(direction == "RIGHT")
                         else
                             prepareAndChangePlayer(item.exo == isCurrentExo)
 
@@ -203,9 +206,9 @@ class PlaybackActivity : FragmentActivity() {
         val fixRatio = currentMovie.fixRatio
 
         if (isCurrentExo)
-            PlaybackVideoExoFragment().playVideo(videoUrl, fixRatio)
+            (currentPlayerFragment as PlaybackVideoExoFragment).playVideo(videoUrl, fixRatio)
         else
-            PlaybackVideoFragment().playVideo(videoUrl.split("#")[currentSourceIndex], fixRatio)
+            (currentPlayerFragment as PlaybackVideoFragment).playVideo(videoUrl.split("#")[currentSourceIndex], fixRatio)
     }
 
 
@@ -552,12 +555,13 @@ class PlaybackActivity : FragmentActivity() {
     {
         val fixRatio = currentMovie.fixRatio
         val exo = currentMovie.exo
+        currentPlayerFragment = if (exo) PlaybackVideoExoFragment() else PlaybackVideoFragment()
 
         this?.intent?.putExtra("videoUrl", mediaUrl)
         this?.intent?.putExtra("fixRatio", fixRatio)
         supportFragmentManager
             .beginTransaction()
-            .replace(android.R.id.content, if (exo) PlaybackVideoExoFragment() else PlaybackVideoFragment())
+            .replace(android.R.id.content, currentPlayerFragment)
             .commit()
     }
 
@@ -568,6 +572,7 @@ class PlaybackActivity : FragmentActivity() {
     private val defaultRetryGetLinkNum = 2
     private var retryGetLink = defaultRetryGetLinkNum
     private var isDownloadingChannelInfo = false
+    private lateinit var currentPlayerFragment: Fragment
 
     companion object {
         var currentVideoID = -1

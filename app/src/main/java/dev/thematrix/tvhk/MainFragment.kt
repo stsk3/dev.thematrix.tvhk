@@ -68,6 +68,7 @@ class MainFragment : BrowseFragment() {
                         this.activity.runOnUiThread {
                             fixChannel()
                             defaultPlay()
+                            addOlympicChannel()
                         }
                     }
                 }
@@ -77,9 +78,15 @@ class MainFragment : BrowseFragment() {
                 if (getWebInfoRetry > 0) {
                     getWebInfoRetry--
                     getWebInfo()
+                } else {
+                    showToast("Cannot get Web Info!")
+                    this.activity.runOnUiThread {
+                        defaultPlay()
+                        addOlympicChannel()
+                    }
                 }
             } finally {
-                this.activity.runOnUiThread { addOlympicChannel() }
+
             }
         }).start()
     }
