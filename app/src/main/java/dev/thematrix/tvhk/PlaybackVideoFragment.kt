@@ -5,12 +5,13 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
-import android.view.View
 import androidx.leanback.app.VideoSupportFragment
 import androidx.leanback.app.VideoSupportFragmentGlueHost
 import androidx.leanback.media.PlaybackTransportControlGlue
 import androidx.leanback.widget.PlaybackControlsRow
-import dev.thematrix.tvhk.MovieList.SDK_VERSION
+import dev.thematrix.tvhk.MovieList.SDK_VER
+import dev.thematrix.tvhk.MovieList.OLD_SDK_VERSION
+import dev.thematrix.tvhk.PlaybackActivity.Companion.SYSTEM_UI_FLAG
 import dev.thematrix.tvhk.PlaybackActivity.Companion.seekInterval
 import dev.thematrix.tvhk.PlaybackActivity.Companion.toast
 
@@ -56,6 +57,7 @@ class PlaybackVideoFragment : VideoSupportFragment() {
 
     fun seek(isForward: Boolean) {
         val sign = if (isForward) 1 else -1
+        isSeeking = true
         playerAdapter.seekTo(playerAdapter.currentPosition + sign * seekInterval)
     }
 
@@ -103,16 +105,20 @@ class PlaybackVideoFragment : VideoSupportFragment() {
         super.onBufferingStateChanged(start)
 
         if (start) {
-            handler.postDelayed({
-                this.activity?.runOnUiThread {
-                     toast.setText("Buffer; 重新連接中．．．")
-                     toast.show()
-                     this.playVideo(mediaUrl, isFixRatio)
-                }
-            }, 6000)
+            if (!isSeeking) {
+                handler.postDelayed({
+                    this.activity?.runOnUiThread {
+                        toast.setText("Buffer; 重新連接中．．．")
+                        toast.show()
+                        this.playVideo(mediaUrl, isFixRatio)
+                    }
+                }, 6000)
+            }
         }
-        else
+        else {
             handler.removeCallbacksAndMessages(null)
+            isSeeking = false
+        }
 
     }
 
@@ -131,6 +137,7 @@ class PlaybackVideoFragment : VideoSupportFragment() {
     }
 
     fun playVideo(videoUrl: String, fixRatio: Boolean) {
+        isSeeking = false
         if (mediaUrl == videoUrl)
             retry--
         else
@@ -150,7 +157,7 @@ class PlaybackVideoFragment : VideoSupportFragment() {
     }
 
     private fun handleUrl(url: String): String{
-        return if(SDK_VER < SDK_VERSION){
+        return if(SDK_VER < OLD_SDK_VERSION){
             url.replace("https://", "http://")
         }else{
             url
@@ -159,14 +166,13 @@ class PlaybackVideoFragment : VideoSupportFragment() {
 
     private val defaultRetryNum = 3
     private var retry = defaultRetryNum
+    private var isSeeking = false
 
     companion object {
-        private val SDK_VER = android.os.Build.VERSION.SDK_INT
         private lateinit var mTransportControlGlue: PlaybackTransportControlGlue<NewMediaPlayerAdapter>
         private lateinit var playerAdapter: NewMediaPlayerAdapter
         private lateinit var handler: Handler
         private var mediaUrl: String = ""
         private var isFixRatio: Boolean = false
-        private const val SYSTEM_UI_FLAG = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
     }
 }

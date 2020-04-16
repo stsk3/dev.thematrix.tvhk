@@ -12,7 +12,6 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.google.android.exoplayer2.DefaultRenderersFactory
 import com.google.android.exoplayer2.ExoPlaybackException
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
@@ -30,6 +29,7 @@ import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
 import com.google.android.exoplayer2.video.VideoListener
+import dev.thematrix.tvhk.PlaybackActivity.Companion.SYSTEM_UI_FLAG
 import dev.thematrix.tvhk.PlaybackActivity.Companion.seekInterval
 import dev.thematrix.tvhk.PlaybackActivity.Companion.toast
 import kotlinx.android.synthetic.main.activity_simple.view.*
@@ -294,6 +294,5 @@ class PlaybackVideoExoFragment : Fragment() {
         private lateinit var mediaUrl: String
         private var isFixRatio: Boolean = false
         private var windowIndex: Int = 0
-        private const val SYSTEM_UI_FLAG = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
     }
 }

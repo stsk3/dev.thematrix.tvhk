@@ -2,6 +2,7 @@ package dev.thematrix.tvhk
 
 import android.os.Bundle
 import android.view.KeyEvent
+import android.view.View
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.fragment.app.FragmentActivity
@@ -576,5 +577,6 @@ class PlaybackActivity : FragmentActivity() {
         internal lateinit var currentMovie: Movie
         lateinit var toast: Toast
         lateinit var requestQueue: RequestQueue
+        const val SYSTEM_UI_FLAG = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
     }
 }

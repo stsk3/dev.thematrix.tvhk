@@ -1,11 +1,13 @@
 package dev.thematrix.tvhk
 
 object MovieList {
+
+    val SDK_VER = android.os.Build.VERSION.SDK_INT
+    const val OLD_SDK_VERSION = 19
     const val NEWS_INDEX = 7
     const val NEWS_CATEGORY_INDEX = 1
     const val SPORTS_INDEX = 31
     const val SPORTS_CATEGORY_INDEX = 4
-    const val SDK_VERSION = 19
 
     val CATEGORY = arrayOf(
         "新聞",
@@ -299,7 +301,7 @@ object MovieList {
                 "http://live3.tdm.com.mo:1935/ch4/sport_ch4.live/playlist.m3u8#" +
                 "http://live4.tdm.com.mo:1935/ch4/sport_ch4.live/playlist.m3u8",
         "http://ms003.happytv.com.tw/live/OcScNdWHvBx5P4w3/index.m3u8",
-        if (android.os.Build.VERSION.SDK_INT < SDK_VERSION)
+        if (SDK_VER < OLD_SDK_VERSION)
             "http://rmtv24hweblive-lh.akamaihd.net/i/rmtv24hwebes_1@300661/index_3_av-p.m3u8#" +
                     "http://rmtv24hweblive-lh.akamaihd.net/i/rmtv24hwebes_1@300661/index_3_av-b.m3u8#" +
                     "http://rmtv24hweblive-lh.akamaihd.net/i/rmtv24hwebes_1@300661/index_2_av-p.m3u8#" +
@@ -308,7 +310,7 @@ object MovieList {
                     "http://rmtv24hweblive-lh.akamaihd.net/i/rmtv24hwebes_1@300661/index_1_av-b.m3u8"
         else
             "http://rmtv24hweblive-lh.akamaihd.net/i/rmtv24hwebes_1@300661/master.m3u8",
-        if (android.os.Build.VERSION.SDK_INT < SDK_VERSION)
+        if (SDK_VER < OLD_SDK_VERSION)
             "http://rmtv24hweblive-lh.akamaihd.net/i/rmtv24hweben_1@300662/index_3_av-p.m3u8#" +
                     "http://rmtv24hweblive-lh.akamaihd.net/i/rmtv24hweben_1@300662/index_3_av-b.m3u8#" +
                     "http://rmtv24hweblive-lh.akamaihd.net/i/rmtv24hweben_1@300662/index_2_av-p.m3u8#" +
@@ -614,7 +616,7 @@ object MovieList {
             }
         }
 
-        //ADD new
+        //ADD new (only update new channel)
         for (i in 0 until newMovieCount)
         {
             val movie = buildMovieInfo(
@@ -624,6 +626,7 @@ object MovieList {
                 FUNC[count]
             )
             list.add(count - 1, movie)
+            //count++ in buildMovieInfo()
         }
     }
 
@@ -656,7 +659,7 @@ object MovieList {
         movie.cardImageUrl = cardImageUrl
         movie.videoUrl = videoUrl
         movie.func = func
-        movie.exo = if (android.os.Build.VERSION.SDK_INT < SDK_VERSION)
+        movie.exo = if (SDK_VER < OLD_SDK_VERSION)
             func.contains("^nowtv|^fantv$|^rthk$|^fox$|^fb$|^wowgua|^in$|^uae$|^tw$|^viutv99$|^gdtve|^exoCustom".toRegex())
         else
             !func.contains("^custom".toRegex())
