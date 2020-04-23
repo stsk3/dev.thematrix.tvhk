@@ -6,7 +6,7 @@ object MovieList {
     const val OLD_SDK_VERSION = 19
     const val NEWS_INDEX = 7
     const val NEWS_CATEGORY_INDEX = 1
-    const val SPORTS_INDEX = 31
+    const val SPORTS_INDEX = 33
     const val SPORTS_CATEGORY_INDEX = 4
 
     val CATEGORY = arrayOf(
@@ -60,8 +60,10 @@ object MovieList {
         "北京冬奧紀實",
         "遼寧體育",
         "先鋒乒羽",
+        "江蘇體育休閒",
+        "大連文體",
         "SKIP",
-        "FS1", //31
+        "FS1", //33
         "FS2",
         "FS3",
         "FS4",
@@ -187,6 +189,8 @@ object MovieList {
         R.drawable.sport_btv,
         R.drawable.sport_liaoning,
         R.drawable.sport_tabletennisbadminton,
+        R.drawable.sport_jz,
+        R.drawable.sport_dl,
         0,
         R.drawable.foxsports,
         R.drawable.foxsports,
@@ -335,6 +339,8 @@ object MovieList {
         "",
         "",
         "http://play.ggiptv.com:13164/v/hunantv.php?id=329&type=.m3u8",
+        "",
+        "",
         "SKIP",
         "http://foxsportstw-lh.akamaihd.net/i/live01_0@38035/master.m3u8",
         "http://foxsportstw-lh.akamaihd.net/i/live01_0@38037/master.m3u8",
@@ -503,6 +509,8 @@ object MovieList {
         "ggiptv_ty_7_1",
         "ggiptv_ty_8",
         "",
+        "ggiptv_migu_158",
+        "ggiptv_tt_68",
         "SKIP",
         "fox",
         "fox",
