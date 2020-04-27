@@ -68,7 +68,7 @@ class MainFragment : BrowseFragment() {
                         this.activity.runOnUiThread {
                             fixChannel()
                             defaultPlay()
-                            addOlympicChannel()
+                            addYahooTWTV()
                         }
                     }
                 }
@@ -82,7 +82,7 @@ class MainFragment : BrowseFragment() {
                     showToast("Cannot get Web Info!")
                     this.activity.runOnUiThread {
                         defaultPlay()
-                        addOlympicChannel()
+                        addYahooTWTV()
                     }
                 }
             } finally {
@@ -297,7 +297,7 @@ class MainFragment : BrowseFragment() {
                 Log.e("addFbLive", e.message)
                 showToast("Error: addFbLive - " + e.message)
             } finally {
-                this.activity.runOnUiThread { addYahooTWTV() }
+                //this.activity.runOnUiThread {  }
             }
         }).start()
     }
@@ -370,6 +370,12 @@ class MainFragment : BrowseFragment() {
 
     private fun addYahooTWTV() {
         Thread(Runnable {
+            val titleList = mutableListOf<String>()
+            val cardImageUrlList = mutableListOf<Any>()
+            val videoUrlList = mutableListOf<String>()
+            val funcList = mutableListOf<String>()
+
+
             val builder = OkHttpClient.Builder()
             builder.addInterceptor { chain ->
                 val original = chain.request()
@@ -384,7 +390,7 @@ class MainFragment : BrowseFragment() {
 
 
             val client = builder.build()
-            val url = URL("https://tw.tv.yahoo.com/tw-live/")
+            val url = URL("https://tw.mobi.yahoo.com/tv/sports-video/")
             val request = Request.Builder()
                 .url(url)
                 .get()
@@ -395,50 +401,72 @@ class MainFragment : BrowseFragment() {
                 val responseBody = response.body()!!.string()
 
                 if (responseBody != "") {
-                    val uuid = Regex("(?<=uuid:)(.*?)(?=;)").find(responseBody)?.value
-                    Log.i("Yahoo UUID", uuid)
-                    val jsonUrl = URL("https://video-api.yql.yahoo.com/v1/video/sapi/streams/$uuid")
-                    val jsonRequest = Request.Builder()
-                        .url(jsonUrl)
-                        .get()
-                        .build()
-                    val jsonResponse = client.newCall(jsonRequest).execute()
-                    val jsonResponseBody = jsonResponse.body()!!.string()
+                    val uuidList = Regex("(?<=ListVideoItem-)(.*?)(?=\")").findAll(responseBody)
 
-                    if (jsonResponseBody != "") {
-                        val mediaObjArray = JSONObject(jsonResponseBody)
-                            .getJSONObject("query")
-                            .getJSONObject("results")
-                            .getJSONArray("mediaObj")
+                    if (uuidList.count() > 0) {
+                        uuidList.forEachIndexed { index, matchResult ->
+                            if (index < 5) {
+                                val uuid = matchResult.value
 
-                        if (mediaObjArray != null && mediaObjArray.length() > 0) {
-                            val mediaObj = mediaObjArray.getJSONObject(0)
-                            val title = mediaObj.getJSONObject("meta").getString("title")
-                            val isLive = mediaObj.getJSONObject("meta").getString("live_state") == "live"
-                            val streamArray = if (isLive) mediaObj.getJSONArray("streamProfiles") else mediaObj.getJSONArray("streams")
-                            val item: JSONObject = streamArray.getJSONObject(0)
-                            val host: String = item.getString("host")
-                            val path: String = item.getString("path")
+                                Log.i("Yahoo UUID", uuid)
+                                val jsonUrl = URL("https://video-api.yql.yahoo.com/v1/video/sapi/streams/$uuid?region=TW")
+                                val jsonRequest = Request.Builder()
+                                    .url(jsonUrl)
+                                    .get()
+                                    .build()
+                                val jsonResponse = client.newCall(jsonRequest).execute()
+                                val jsonResponseBody = jsonResponse.body()!!.string()
 
+                                if (jsonResponseBody != "") {
+                                    val mediaObjArray = JSONObject(jsonResponseBody)
+                                        .getJSONObject("query")
+                                        .getJSONObject("results")
+                                        .getJSONArray("mediaObj")
 
-                            //Add to movie list
-                            this.activity.runOnUiThread {
-                                val yahooTVMovie = MovieList.list[MovieList.TITLE.indexOf("Yahoo TV")]
-                                yahooTVMovie.title = title
-                                if (isLive) {
-                                    val linkArray = host.split("(?<=hls/)(.*?)(?=/)".toRegex())
-                                    yahooTVMovie.videoUrl = (
-                                            linkArray[0] + "1080p" + linkArray[1]
-                                                    + "#" + linkArray[0] + "720p" + linkArray[1]
-                                                    + "#" + linkArray[0] + "540p_baseline" + linkArray[1]
-                                                    + "#" + linkArray[0] + "540p" + linkArray[1]
-                                                    + "#" + linkArray[0] + "360p" + linkArray[1]
-                                                    + "#" + linkArray[0] + "360p_low" + linkArray[1]
-                                                    + "#" + linkArray[0] + "180p" + linkArray[1])
+                                    if (mediaObjArray != null && mediaObjArray.length() > 0) {
+                                        val mediaObj = mediaObjArray.getJSONObject(0)
+                                        val meta = mediaObj.getJSONObject("meta")
 
-                                } else {
-                                    yahooTVMovie.videoUrl = host + path
+                                        val title = meta.getString("title")
+                                        val thumbnail = if (meta.has("thumbnail")) meta.getString("thumbnail") else null
+                                        val streamArray = mediaObj.getJSONArray("streamProfiles")
+
+                                        val widthLinkMap = mutableMapOf<Int, String>()
+                                        for (i in 0 until streamArray.length()) {
+                                            val item: JSONObject = streamArray.getJSONObject(i)
+                                            val width = item.getInt("width")
+                                            val host: String = item.getString("host")
+                                            val path: String = item.getString("path")
+                                            widthLinkMap[width] = host + path
+                                        }
+                                        val videoList = widthLinkMap.toSortedMap(reverseOrder()).values
+
+                                        //Add to movie list
+                                        titleList.add(title)
+                                        cardImageUrlList.add(thumbnail?:R.drawable.tw_yahootv)
+                                        funcList.add("")
+                                        videoUrlList.add(videoList.joinToString("#"))
+                                    }
                                 }
+                            }
+                        }
+
+                        //Add to movie list
+                        if (titleList.count() > 0) {
+                            titleList.add("SKIP")
+                            cardImageUrlList.add(0)
+                            videoUrlList.add("SKIP")
+                            funcList.add("SKIP")
+
+                            MovieList.TITLE.addAll(MovieList.SPORTS_INDEX, titleList)
+                            MovieList.CARD_IMAGE_URL.addAll(MovieList.SPORTS_INDEX, cardImageUrlList)
+                            MovieList.VIDEO_URL.addAll(MovieList.SPORTS_INDEX, videoUrlList)
+                            MovieList.FUNC.addAll(MovieList.SPORTS_INDEX, funcList)
+
+                            // Update UI
+                            this.activity.runOnUiThread {
+                                MovieList.updateList(MovieList.SPORTS_INDEX)
+                                addYahooTWTVRows()
                             }
                         }
                     }
@@ -447,7 +475,7 @@ class MainFragment : BrowseFragment() {
                 Log.e("addYahooTWTV", e.message)
                 showToast("Error: addYahooTWTV - " + e.message)
             } finally {
-
+                this.activity.runOnUiThread { addOlympicChannel() }
             }
         }).start()
     }
@@ -552,6 +580,24 @@ class MainFragment : BrowseFragment() {
 
         if(listRowAdapter.size() > 0){
             val header = HeaderItem(MovieList.SPORTS_INDEX.toLong(), "奧運")
+            rowsAdapter.add(MovieList.SPORTS_CATEGORY_INDEX, ListRow(header, listRowAdapter))
+        }
+    }
+
+    private fun addYahooTWTVRows() {
+        val rowsAdapter : ArrayObjectAdapter = adapter as ArrayObjectAdapter
+        val cardPresenter = CardPresenter()
+
+        var listRowAdapter = ArrayObjectAdapter(cardPresenter)
+        var i = MovieList.SPORTS_INDEX
+        while (MovieList.list[i].title != "SKIP")
+        {
+            listRowAdapter.add(MovieList.list[i])
+            i++
+        }
+
+        if(listRowAdapter.size() > 0){
+            val header = HeaderItem(MovieList.SPORTS_INDEX.toLong(), "Yahoo台灣")
             rowsAdapter.add(MovieList.SPORTS_CATEGORY_INDEX, ListRow(header, listRowAdapter))
         }
     }

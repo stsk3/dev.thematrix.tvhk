@@ -5,7 +5,7 @@ import java.io.Serializable
 data class Movie(
     var id: Int = 0,
     var title: String = "",
-    var cardImageUrl: Int = 0,
+    var cardImageUrl: Any = 0, //Int or String
     var videoUrl: String = "",
     var func: String = "",
     var exo: Boolean = false,

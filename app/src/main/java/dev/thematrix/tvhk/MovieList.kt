@@ -70,9 +70,9 @@ object MovieList {
         "SKIP",
         "香港開電視",
         "有線綜合娛樂台",
-        "有線電影台",
-        "有線18台",
-        "有線HD603台",
+        //"有線電影台",
+        //"有線18台",
+        //"有線HD603台",
         "SKIP",
         "ViuTV",
         "SKIP",
@@ -97,7 +97,6 @@ object MovieList {
         "有線互動新聞台",
         "有線第三頻道",
         "SKIP",
-        "Yahoo TV", //!!
         "中視",
         "動物星球",
         "龍祥時代",
@@ -158,7 +157,7 @@ object MovieList {
         "SKIP"
     )
 
-    val CARD_IMAGE_URL = mutableListOf(
+    val CARD_IMAGE_URL = mutableListOf<Any>(
         R.drawable.cablefinance,
         R.drawable.cablelivenews,
         R.drawable.cablenews,
@@ -199,9 +198,9 @@ object MovieList {
         0,
         R.drawable.opentv,
         R.drawable.cableentertainment,
-        R.drawable.cable_movie,
-        R.drawable.cable_18,
-        R.drawable.cable_hd603,
+        //R.drawable.cable_movie,
+        //R.drawable.cable_18,
+        //R.drawable.cable_hd603,
         0,
         R.drawable.viutv,
         0,
@@ -226,7 +225,6 @@ object MovieList {
         R.drawable.mo_news,
         R.drawable.mo_ch3,
         0,
-        R.drawable.tw_yahootv,
         R.drawable.tw_ctv,
         R.drawable.tw_animalplanet,
         R.drawable.tw_lstime,
@@ -349,9 +347,9 @@ object MovieList {
         "SKIP",
         "http://media.fantv.hk/m3u8/archive/channel2.m3u8",
         "",
-        "",
-        "",
-        "",
+        //"",
+        //"",
+        //"",
         "SKIP",
         "",
         "SKIP",
@@ -395,7 +393,6 @@ object MovieList {
         "http://202.175.127.77/live/show/ch2/index.m3u8",
         "http://202.175.127.77/live/show/ch3/index.m3u8",
         "SKIP",
-        "",
         "http://104.250.154.42:8080/ZZ_zhongshi/ZZ_zhongshi.m3u8#" +
                 "http://192.200.120.82:8080/ZZ_zhongshi/ZZ_zhongshi.m3u8#" +
                 "http://192.154.103.75:8080/ZZ_zhongshi/ZZ_zhongshi.m3u8",
@@ -519,9 +516,9 @@ object MovieList {
         "SKIP",
         "fantv",
         "wowgua_ch301",
-        "ggiptv_gt_30",
-        "ggiptv_gt_32",
-        "ggiptv_gt_33",
+        //"ggiptv_gt_30",
+        //"ggiptv_gt_32",
+        //"ggiptv_gt_33",
         "SKIP",
         "viutv99",
         "SKIP",
@@ -546,7 +543,6 @@ object MovieList {
         "mocable",
         "mocable",
         "SKIP",
-        "",
         "",
         "",
         "",
@@ -657,7 +653,7 @@ object MovieList {
 
     private fun buildMovieInfo(
         title: String,
-        cardImageUrl: Int,
+        cardImageUrl: Any, //Int or String
         videoUrl: String,
         func: String
     ): Movie {
