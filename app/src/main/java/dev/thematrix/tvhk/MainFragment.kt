@@ -425,27 +425,31 @@ class MainFragment : BrowseFragment() {
 
                                     if (mediaObjArray != null && mediaObjArray.length() > 0) {
                                         val mediaObj = mediaObjArray.getJSONObject(0)
-                                        val meta = mediaObj.getJSONObject("meta")
+                                        val statusCode = mediaObj.getJSONObject("status").getString("code")
 
-                                        val title = meta.getString("title")
-                                        val thumbnail = if (meta.has("thumbnail")) meta.getString("thumbnail") else null
-                                        val streamArray = mediaObj.getJSONArray("streamProfiles")
+                                        if (statusCode == "100") {
+                                            val meta = mediaObj.getJSONObject("meta")
+                                            val title = meta.getString("title")
+                                            val thumbnail =
+                                                if (meta.has("thumbnail")) meta.getString("thumbnail") else null
+                                            val streamArray = mediaObj.getJSONArray("streamProfiles")
 
-                                        val widthLinkMap = mutableMapOf<Int, String>()
-                                        for (i in 0 until streamArray.length()) {
-                                            val item: JSONObject = streamArray.getJSONObject(i)
-                                            val width = item.getInt("width")
-                                            val host: String = item.getString("host")
-                                            val path: String = item.getString("path")
-                                            widthLinkMap[width] = host + path
+                                            val widthLinkMap = mutableMapOf<Int, String>()
+                                            for (i in 0 until streamArray.length()) {
+                                                val item: JSONObject = streamArray.getJSONObject(i)
+                                                val width = item.getInt("width")
+                                                val host: String = item.getString("host")
+                                                val path: String = item.getString("path")
+                                                widthLinkMap[width] = host + path
+                                            }
+                                            val videoList = widthLinkMap.toSortedMap(reverseOrder()).values
+
+                                            //Add to movie list
+                                            titleList.add(title)
+                                            cardImageUrlList.add(thumbnail ?: R.drawable.tw_yahootv)
+                                            funcList.add("")
+                                            videoUrlList.add(videoList.joinToString("#"))
                                         }
-                                        val videoList = widthLinkMap.toSortedMap(reverseOrder()).values
-
-                                        //Add to movie list
-                                        titleList.add(title)
-                                        cardImageUrlList.add(thumbnail?:R.drawable.tw_yahootv)
-                                        funcList.add("")
-                                        videoUrlList.add(videoList.joinToString("#"))
                                     }
                                 }
                             }
