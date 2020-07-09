@@ -27,6 +27,7 @@ import com.google.android.exoplayer2.ui.AspectRatioFrameLayout
 import com.google.android.exoplayer2.ui.TrackSelectionDialogBuilder
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
 import com.google.android.exoplayer2.video.VideoListener
 import dev.thematrix.tvhk.MovieList.OLD_SDK_VERSION
@@ -105,7 +106,8 @@ class PlaybackVideoExoFragment : Fragment() {
         playerView.hideController()
 
 
-        httpDataSourceFactory = DefaultHttpDataSourceFactory("exoplayer")
+        httpDataSourceFactory = DefaultHttpDataSourceFactory("exoplayer", null, DefaultHttpDataSource.DEFAULT_CONNECT_TIMEOUT_MILLIS,
+            DefaultHttpDataSource.DEFAULT_READ_TIMEOUT_MILLIS, true)
         val dataSourceFactory = DefaultDataSourceFactory(activity, httpDataSourceFactory)
         hlsMediaSourceFactory = HlsMediaSource.Factory(dataSourceFactory)
         dashMediaSourceFactory = DashMediaSource.Factory(dataSourceFactory)

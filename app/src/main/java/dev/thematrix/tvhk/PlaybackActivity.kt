@@ -313,67 +313,6 @@ class PlaybackActivity : FragmentActivity() {
             }
             requestQueue.add(stringRequest)
 
-        //}else if(ch.equals("cabletv109") || ch.equals("cabletv110")){
-        }else if(ch.equals("cabletv110")){
-            url = "https://mobileapp.i-cable.com/iCableMobile/API/api.php"
-
-            val stringRequest = object: StringRequest(
-                Method.POST,
-                url,
-                Response.Listener { response ->
-                    val mediaUrl = JSONObject(JSONObject(response).get("result").toString()).get("stream").toString()
-
-                    this.play(mediaUrl, play)
-                },
-                Response.ErrorListener{ error ->
-                    showPlaybackErrorMessage(title, play)
-                }
-            ){
-                override fun getRetryPolicy(): RetryPolicy {
-                    return getCustomerRetryPolicy()
-                }
-
-                override fun getHeaders(): MutableMap<String, String> {
-                    val params =  mutableMapOf<String, String>()
-
-                    params.put("User-Agent", "Dalvik/2.1.0 (Linux; U; Android 6.0.1; AndroidTV Build/35.0.A.1.282)")
-
-                    return params
-                }
-
-                override fun getParams(): MutableMap<String, String> {
-                    val params =  mutableMapOf<String, String>()
-
-                    if(ch.equals("cabletv109")){
-                        params.put("channel_no", "_9")
-                        params.put("vlink", "_9")
-                    }else if(ch.equals("cabletv110")){
-                        params.put("channel_no", "_10")
-                        params.put("vlink", "_10")
-                    }
-
-                    params.put("device", "aos_mobile")
-                    params.put("method", "streamingGenerator2")
-                    params.put("quality", "h")
-                    params.put("uuid", "")
-                    params.put("is_premium", "0")
-                    params.put("network", "wifi")
-                    params.put("platform", "1")
-                    params.put("deviceToken", "")
-                    params.put("appVersion", "6.3.4")
-                    params.put("market", "G")
-                    params.put("lang", "zh_TW")
-                    params.put("version", "6.3.4")
-                    params.put("osVersion", "23")
-                    params.put("channel_id", "106")
-                    params.put("deviceModel", "AndroidTV")
-                    params.put("type", "live")
-
-                    return params
-                }
-            }
-
-            requestQueue.add(stringRequest)
         } else if(ch.startsWith("wowgua")){
 
             var url = ""
@@ -413,35 +352,6 @@ class PlaybackActivity : FragmentActivity() {
                 override fun getHeaders(): MutableMap<String, String> {
                     val params =  mutableMapOf<String, String>()
                     params.put("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3977.4 Safari/537.36")
-
-                    return params
-                }
-            }
-            requestQueue.add(stringRequest)
-
-        } else if(ch.startsWith("gdtv")){
-
-            val url = "http://www.gdtv.cn/m2o/channel/channel_info.php?id=" + ch.split("_")[1]
-            val stringRequest = object: StringRequest(
-                Method.GET,
-                url,
-                Response.Listener { response ->
-                    var mediaUrl: String = JSONArray(response).getJSONObject(0).get("m3u8").toString()
-
-                    this.play(mediaUrl, play)
-                },
-                Response.ErrorListener{ error ->
-                    showPlaybackErrorMessage(title, play)
-                }
-            ){
-                override fun getRetryPolicy(): RetryPolicy {
-                    return getCustomerRetryPolicy()
-                }
-
-                override fun getHeaders(): MutableMap<String, String> {
-                    val params =  mutableMapOf<String, String>()
-                    params.put("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4043.2 Safari/537.36")
-                    params.put("Cookie", "WEB=20111112; UM_distinctid=${webInfoMap["UM_distinctid"]}")
 
                     return params
                 }

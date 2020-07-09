@@ -62,13 +62,17 @@ class MainFragment : BrowseFragment() {
                             val result = it.value
                             val line = result.split("=")
                             webInfoMap[line[0]] = line[1]
+
+                            //Temp
+                            if (line.size > 2)
+                                webInfoMap[line[0]] += "=" + line[2]
                         }
 
                         //Other Operations
                         this.activity.runOnUiThread {
                             fixChannel()
                             defaultPlay()
-                            addYahooTWTV()
+                            addGdtv()
                         }
                     }
                 }
@@ -82,7 +86,7 @@ class MainFragment : BrowseFragment() {
                     showToast("Cannot get Web Info!")
                     this.activity.runOnUiThread {
                         defaultPlay()
-                        addYahooTWTV()
+                        addGdtv()
                     }
                 }
             } finally {
@@ -92,17 +96,27 @@ class MainFragment : BrowseFragment() {
     }
 
     private fun fixChannel() {
-        if (webInfoMap.containsKey("cableNewsDown") && !webInfoMap["cableNewsDown"]!!.toBoolean()) {
-            val cableNewsMovie = MovieList.list[MovieList.TITLE.indexOf("有線新聞台")]
-            cableNewsMovie.videoUrl = webInfoMap["cableNews"]!!
-            cableNewsMovie.func = ""
-            cableNewsMovie.exo = SDK_VER >= OLD_SDK_VERSION
-        }
-
         for (i in 0..2) {
             val chinaSportMovie = MovieList.list[MovieList.TITLE.indexOf("五星體育") + i]
             chinaSportMovie.videoUrl = "http://${webInfoMap["chinaSportLink1"]}/live/program/live/${chinaSportMovie.func.split("_")[1]}/2300000/mnf.m3u8#http://${webInfoMap["chinaSportLink2"]}/live/program/live/${chinaSportMovie.func.split("_")[1]}/2300000/mnf.m3u8"
         }
+
+
+        val utvLink1 = webInfoMap["utvLink1"]
+        val utvLink2 = webInfoMap["utvLink2"]
+        for (title in arrayOf("有線財經資訊台", "有線新聞台", "有線綜合娛樂台", "C+", "賽馬頻道")) {
+            val currentMovie = MovieList.list[MovieList.TITLE.indexOf(title)]
+            currentMovie.videoUrl =
+                if (SDK_VER >= OLD_SDK_VERSION)
+                    "http://$utvLink1/livehls/${currentMovie.func}/index.m3u8" +
+                            "#http://$utvLink2/livehls/${currentMovie.func}/index.m3u8"
+                else
+                    "http://$utvLink1/livehls/${currentMovie.func}/02.m3u8" +
+                            "#http://$utvLink2/livehls/${currentMovie.func}/02.m3u8" +
+                            "#http://$utvLink1/livehls/${currentMovie.func}/01.m3u8" +
+                            "#http://$utvLink2/livehls/${currentMovie.func}/01.m3u8"
+        }
+
 
         for (i in 0..3) {
             val customMovie = MovieList.list[MovieList.TITLE.indexOf("自選1") + i]
@@ -485,6 +499,84 @@ class MainFragment : BrowseFragment() {
     }
 
 
+    private fun addGdtv() {
+        Thread(Runnable {
+            val titleList = mutableListOf<String>()
+            val cardImageUrlList = mutableListOf<Any>()
+            val videoUrlList = mutableListOf<String>()
+            val funcList = mutableListOf<String>()
+
+            //Get live link
+            val client = OkHttpClient()
+            val url = URL("https://gdtv-api.gdtv.cn:7443/api/tv/v1/tvChannel")
+            val request = Request.Builder()
+                .url(url)
+                .addHeader("x-itouchtv-ca-key", webInfoMap["gdtvKey"]!!)
+                .addHeader("x-itouchtv-ca-signature", webInfoMap["gdtvSignature"]!!)
+                .addHeader("x-itouchtv-ca-timestamp", webInfoMap["gdtvTimestamp"]!!)
+                .addHeader("x-itouchtv-client", "WEB_PC")
+                .addHeader("Content-Type", "application/json")
+                .get()
+                .build()
+
+            try {
+                val response = client.newCall(request).execute()
+                val responseBody = response.body()!!.string()
+
+                if (responseBody != "") {
+                    val resultArray = JSONArray(responseBody)
+                    for (i in 0..(resultArray.length() - 1)) {
+                        val item: JSONObject = resultArray.getJSONObject(i)
+                        val pk: Int = item.getInt("pk")
+
+                        //Only TV
+                        if (pk !in 85..92) {
+                            val name: String = item.getString("name")
+                            val avatarUrl: String = item.getString("avatarUrl")
+                            val playUrlJson: String = item.getString("playUrl")
+                            val playUrl: String = JSONObject(playUrlJson).getString("hd")
+
+
+                            titleList.add(name)
+                            cardImageUrlList.add(avatarUrl)
+                            videoUrlList.add(playUrl)
+
+                            funcList.add(if (pk in arrayOf(48,51,46,66,67,13,68,74)) "gdtv_fix" else "gdtv")
+                        }
+
+                    }
+
+
+                    //Add to movie list
+                    val index = MovieList.TITLE.indexOf("綜合頻道")
+                    if (titleList.count() > 0) {
+                        titleList.add("SKIP")
+                        cardImageUrlList.add(0)
+                        videoUrlList.add("SKIP")
+                        funcList.add("SKIP")
+
+                        MovieList.TITLE.addAll(index, titleList)
+                        MovieList.CARD_IMAGE_URL.addAll(index, cardImageUrlList)
+                        MovieList.VIDEO_URL.addAll(index, videoUrlList)
+                        MovieList.FUNC.addAll(index, funcList)
+
+                        // Update UI
+                        this.activity.runOnUiThread {
+                            MovieList.updateList(index)
+                            addGdtvRows(index)
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e("addGdtv", e.message)
+                showToast("Error: addGdtv - " + e.message)
+            } finally {
+                this.activity.runOnUiThread { addYahooTWTV() }
+            }
+        }).start()
+    }
+
+
     private fun defaultPlay() {
         var default = 2
         if (webInfoMap.containsKey("defaultChannel"))
@@ -603,6 +695,25 @@ class MainFragment : BrowseFragment() {
         if(listRowAdapter.size() > 0){
             val header = HeaderItem(MovieList.SPORTS_INDEX.toLong(), "Yahoo台灣")
             rowsAdapter.add(MovieList.SPORTS_CATEGORY_INDEX, ListRow(header, listRowAdapter))
+        }
+    }
+
+
+    private fun addGdtvRows(index: Int) {
+        val rowsAdapter : ArrayObjectAdapter = adapter as ArrayObjectAdapter
+        val cardPresenter = CardPresenter()
+
+        var listRowAdapter = ArrayObjectAdapter(cardPresenter)
+        var i = index
+        while (MovieList.list[i].title != "SKIP")
+        {
+            listRowAdapter.add(MovieList.list[i])
+            i++
+        }
+
+        if(listRowAdapter.size() > 0){
+            val header = HeaderItem(index.toLong(), "廣東電視")
+            rowsAdapter.add(MovieList.CATEGORY.indexOf("廣州電視"), ListRow(header, listRowAdapter))
         }
     }
 
