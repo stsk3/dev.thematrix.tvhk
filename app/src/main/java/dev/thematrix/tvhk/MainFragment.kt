@@ -108,13 +108,18 @@ class MainFragment : BrowseFragment() {
             val currentMovie = MovieList.list[MovieList.TITLE.indexOf(title)]
             currentMovie.videoUrl =
                 if (SDK_VER >= OLD_SDK_VERSION)
-                    "http://$utvLink1/livehls/${currentMovie.func}/index.m3u8" +
-                            "#http://$utvLink2/livehls/${currentMovie.func}/index.m3u8"
+                    "$utvLink1/livehls/${currentMovie.func}/index.m3u8" +
+                            "#$utvLink2/livehls/${currentMovie.func}/index.m3u8"
                 else
-                    "http://$utvLink1/livehls/${currentMovie.func}/02.m3u8" +
-                            "#http://$utvLink2/livehls/${currentMovie.func}/02.m3u8" +
-                            "#http://$utvLink1/livehls/${currentMovie.func}/01.m3u8" +
-                            "#http://$utvLink2/livehls/${currentMovie.func}/01.m3u8"
+                    "$utvLink1/livehls/${currentMovie.func}/02.m3u8" +
+                            "#$utvLink2/livehls/${currentMovie.func}/02.m3u8" +
+                            "#$utvLink1/livehls/${currentMovie.func}/01.m3u8" +
+                            "#$utvLink2/livehls/${currentMovie.func}/01.m3u8"
+
+            if (webInfoMap["utvExo"] == "true") {
+                currentMovie.func = "utvExo"
+                currentMovie.exo = true
+            }
         }
 
 
@@ -532,7 +537,7 @@ class MainFragment : BrowseFragment() {
                         //Only TV
                         if (pk !in 85..92) {
                             val name: String = item.getString("name")
-                            val avatarUrl: String = item.getString("avatarUrl")
+                            val avatarUrl = R.drawable.gdtv //item.getString("avatarUrl")
                             val playUrlJson: String = item.getString("playUrl")
                             val playUrl: String = JSONObject(playUrlJson).getString("hd")
 
@@ -541,7 +546,7 @@ class MainFragment : BrowseFragment() {
                             cardImageUrlList.add(avatarUrl)
                             videoUrlList.add(playUrl)
 
-                            funcList.add(if (pk in arrayOf(48,51,46,66,67,13,68,74)) "gdtv_fix" else "gdtv")
+                            funcList.add(if (pk in arrayOf(46, 74)) "gdtv_fix" else "gdtv")
                         }
 
                     }
