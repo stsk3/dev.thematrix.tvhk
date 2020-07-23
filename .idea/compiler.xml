@@ -2,7 +2,7 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel>
-      <module name="dev.thematrix.tvhk.app" target="11" />
+      <module name="dev.thematrix.tvhk.app" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>
