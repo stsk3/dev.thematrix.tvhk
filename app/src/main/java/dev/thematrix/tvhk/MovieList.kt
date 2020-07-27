@@ -6,7 +6,7 @@ object MovieList {
     const val OLD_SDK_VERSION = 19
     const val NEWS_INDEX = 7
     const val NEWS_CATEGORY_INDEX = 1
-    const val SPORTS_INDEX = 33
+    const val SPORTS_INDEX = 32
     const val SPORTS_CATEGORY_INDEX = 4
 
     val CATEGORY = arrayOf(
@@ -27,7 +27,6 @@ object MovieList {
 
     val TITLE = mutableListOf(
         "有線財經資訊台", //!!
-        "有線直播台",
         "有線新聞台", //!!
         "now新聞台",
         "now直播台",
@@ -57,7 +56,7 @@ object MovieList {
         "江蘇體育休閒",
         "大連文體",
         "SKIP",
-        "FS1", //33
+        "FS1", //32
         "FS2",
         "FS3",
         "FS4",
@@ -88,9 +87,6 @@ object MovieList {
         "少兒頻道",
         "法治頻道",
         "SKIP",
-        "C+", //!!
-        "賽馬頻道", //!!
-        "SKIP",
         "自選1", //!!
         "自選2",
         "自選Exo1",
@@ -100,7 +96,6 @@ object MovieList {
 
     val CARD_IMAGE_URL = mutableListOf<Any>(
         R.drawable.cablefinance,
-        R.drawable.cablelivenews,
         R.drawable.cablenews,
         R.drawable.nowtv332,
         R.drawable.nowtv331,
@@ -161,9 +156,6 @@ object MovieList {
         R.drawable.gz_shaoer,
         R.drawable.gz_jingji,
         0,
-        R.drawable.utv,
-        R.drawable.utv,
-        0,
         R.drawable.custom,
         R.drawable.custom,
         R.drawable.custom,
@@ -172,7 +164,6 @@ object MovieList {
     )
 
     val VIDEO_URL = mutableListOf(
-        "",
         "",
         "",
         "",
@@ -276,18 +267,14 @@ object MovieList {
         "SKIP",
         "",
         "",
-        "SKIP",
-        "",
-        "",
         "",
         "",
         "SKIP"
     )
 
     val FUNC = mutableListOf(
-        "MOB-NGW", //"wowgua_ch108",
-        "wowgua_ch110",
-        "MOB-SCC", //"wowgua_ch109",
+        "livetv_6_MOB-NGW", //"wowgua_ch108",
+        "livetv_5_MOB-SCC", //"wowgua_ch109",
         "nowtv332",
         "nowtv331",
         "rthk",
@@ -305,7 +292,7 @@ object MovieList {
         "SKIP",
         "",
         "",
-        "ggiptv_ty_6_5",
+        "ggiptv_ty_6_4", //Line5
         "gztv_5c7f70b7e4b01c17db18fbd9",
         "chinaSport_ssty",
         "chinaSport_jbtyhd",
@@ -322,7 +309,7 @@ object MovieList {
         "fox",
         "SKIP",
         "fantv",
-        "MOB-CN", //"wowgua_ch301",
+        "livetv_7_MOB-CN", //"wowgua_ch301",
         "SKIP",
         //"viutv99",
         //"SKIP",
@@ -346,9 +333,6 @@ object MovieList {
         "gztv_5d6f31d3e4b03f60f96e2544",
         "gztv_5c7f711de4b01c17db18fbdf",
         "gztv_5c7f7097e4b01c17db18fbd7",
-        "SKIP",
-        "MOB-U1-NO", //"wowgua_utv_c_plus",
-        "MOB-HR", //"wowgua_utv_racing",
         "SKIP",
         "custom1",
         "custom2",
@@ -421,7 +405,7 @@ object MovieList {
             func.contains("^nowtv|^fantv$|^rthk$|^fox$|^fb$|^wowgua|^exoCustom|^ggiptv|^utvExo$".toRegex())
         else
             !func.contains("^custom".toRegex())
-        movie.fixRatio = func.contains("^nowtv630$|^gdtv_fix$".toRegex()) || videoUrl.contains("".toRegex()) || title in "遼寧體育"
+        movie.fixRatio = func.contains("^nowtv630$|^gdtv_(46|74)$".toRegex()) || videoUrl.contains("".toRegex()) || title in "遼寧體育"
 
         return movie
     }

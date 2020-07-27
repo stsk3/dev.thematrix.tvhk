@@ -14,6 +14,9 @@ import org.json.JSONArray
 import org.json.JSONObject
 import java.lang.Exception
 import java.net.URL
+import javax.crypto.Mac
+import javax.crypto.spec.SecretKeySpec
+import android.util.Base64
 
 
 class MainFragment : BrowseFragment() {
@@ -27,6 +30,29 @@ class MainFragment : BrowseFragment() {
 
     companion object {
         val webInfoMap = mutableMapOf<String, String>()
+
+        
+        fun signGdtv(requestUrl: String, timestamp: String): String {
+            val method = "GET";
+            val secret = "dfkcY1c3sfuw0Cii9DWjOUO3iQy2hqlDxyvDXd1oVMxwYAJSgeB6phO8eW1dfuwX";
+            val contentMD5 = "";
+            Log.i("GDTVencode", "requestUrl: ${requestUrl}, method: ${method}, timestamp: ${timestamp}, secret: ${secret}")
+
+            val sha256HMAC = Mac.getInstance("HmacSHA256")
+            val secretKey = SecretKeySpec(secret.toByteArray(), "HmacSHA256")
+            sha256HMAC.init(secretKey)
+        
+            val stringToSigned = "${method}\n${requestUrl}\n${timestamp}\n${contentMD5}";
+            Log.i("GDTVencode", "stringToSigned: ${stringToSigned}")
+
+            val signedByteArray = sha256HMAC.doFinal(stringToSigned.toByteArray())
+            Log.i("GDTVencode", "signedByteArray: ${signedByteArray}")
+
+            val signedBase64 = Base64.encodeToString(signedByteArray, Base64.NO_WRAP)
+            Log.i("GDTVencode", "signedBase64: ${signedBase64}")
+
+            return signedBase64;
+        }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -102,23 +128,27 @@ class MainFragment : BrowseFragment() {
         }
 
 
-        val utvLink1 = webInfoMap["utvLink1"]
-        val utvLink2 = webInfoMap["utvLink2"]
-        for (title in arrayOf("有線財經資訊台", "有線新聞台", "有線綜合娛樂台", "C+", "賽馬頻道")) {
-            val currentMovie = MovieList.list[MovieList.TITLE.indexOf(title)]
-            currentMovie.videoUrl =
-                if (SDK_VER >= OLD_SDK_VERSION)
-                    "$utvLink1/livehls/${currentMovie.func}/index.m3u8" +
-                            "#$utvLink2/livehls/${currentMovie.func}/index.m3u8"
-                else
-                    "$utvLink1/livehls/${currentMovie.func}/02.m3u8" +
-                            "#$utvLink2/livehls/${currentMovie.func}/02.m3u8" +
-                            "#$utvLink1/livehls/${currentMovie.func}/01.m3u8" +
-                            "#$utvLink2/livehls/${currentMovie.func}/01.m3u8"
 
-            if (webInfoMap["utvExo"] == "true") {
-                currentMovie.func = "utvExo"
-                currentMovie.exo = true
+        if (webInfoMap.contains("isUtvCustomLink") && webInfoMap["isUtvCustomLink"] == "true") {
+            val utvLink1 = webInfoMap["utvLink1"]
+            val utvLink2 = webInfoMap["utvLink2"]
+            for (title in arrayOf("有線財經資訊台", "有線新聞台", "有線綜合娛樂台")) {
+                val currentMovie = MovieList.list[MovieList.TITLE.indexOf(title)]
+                val channelCode = currentMovie.func.split('_')[2]
+                currentMovie.videoUrl =
+                    if (SDK_VER >= OLD_SDK_VERSION)
+                        "$utvLink1/livehls/${channelCode}/index.m3u8" +
+                                "#$utvLink2/livehls/${channelCode}/index.m3u8"
+                    else
+                        "$utvLink1/livehls/${channelCode}/02.m3u8" +
+                                "#$utvLink2/livehls/${channelCode}/02.m3u8" +
+                                "#$utvLink1/livehls/${channelCode}/01.m3u8" +
+                                "#$utvLink2/livehls/${channelCode}/01.m3u8"
+
+                if (webInfoMap["utvExo"] == "true") {
+                    currentMovie.func = "utvExo"
+                    currentMovie.exo = true
+                }
             }
         }
 
@@ -513,12 +543,13 @@ class MainFragment : BrowseFragment() {
 
             //Get live link
             val client = OkHttpClient()
-            val url = URL("https://gdtv-api.gdtv.cn:7443/api/tv/v1/tvChannel")
+            val url = URL("https://gdtv-api.gdtv.cn:7443/api/tv/v1/tvChannel") 
+            val timestamp = System.currentTimeMillis().toString()
             val request = Request.Builder()
                 .url(url)
                 .addHeader("x-itouchtv-ca-key", webInfoMap["gdtvKey"]!!)
-                .addHeader("x-itouchtv-ca-signature", webInfoMap["gdtvSignature"]!!)
-                .addHeader("x-itouchtv-ca-timestamp", webInfoMap["gdtvTimestamp"]!!)
+                .addHeader("x-itouchtv-ca-signature", signGdtv(url.toString(), timestamp))
+                .addHeader("x-itouchtv-ca-timestamp", timestamp)
                 .addHeader("x-itouchtv-client", "WEB_PC")
                 .addHeader("Content-Type", "application/json")
                 .get()
@@ -539,14 +570,14 @@ class MainFragment : BrowseFragment() {
                             val name: String = item.getString("name")
                             val avatarUrl = R.drawable.gdtv //item.getString("avatarUrl")
                             val playUrlJson: String = item.getString("playUrl")
-                            val playUrl: String = JSONObject(playUrlJson).getString("hd")
+                            val playUrl: String = "" // Get later, cuz this link is fake. JSONObject(playUrlJson).getString("hd")
 
 
                             titleList.add(name)
                             cardImageUrlList.add(avatarUrl)
                             videoUrlList.add(playUrl)
 
-                            funcList.add(if (pk in arrayOf(46, 74)) "gdtv_fix" else "gdtv")
+                            funcList.add("gdtv_" + pk)
                         }
 
                     }
@@ -742,6 +773,8 @@ class MainFragment : BrowseFragment() {
             }
         }
     }
+
+
 
     private fun showToast(msg: String) {
         this.activity.runOnUiThread {

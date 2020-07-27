@@ -1,21 +1,20 @@
 {
     "version": "0.2.0",
-    "configurations": [        
-        
+    "configurations": [      
+                
         {
             // configuration type, request  and name. "launch" is used to deploy the app
             // to your device and start a debugging session.
             "type": "android",
             "request": "launch",
-            "name": "App Build & Launch",
-            "preLaunchTask": "run gradle",
+            "name": "App Launch",
 
             // Location of the App source files. This value must point to the root of
             // your App source tree (containing AndroidManifest.xml).
             "appSrcRoot": "${workspaceFolder}/app/src/main",
 
             // Fully qualified path to the built APK (Android Application Package).
-            "apkFile": "${workspaceFolder}/app/build/outputs/apk/app-debug.apk",
+            "apkFile": "${workspaceFolder}/app/build/outputs/apk/debug/app-debug.apk",
 
             // `host:port` configuration for connecting to the ADB (Android Debug Bridge) server instance.
             // Default: localhost:5037

@@ -358,6 +358,63 @@ class PlaybackActivity : FragmentActivity() {
             }
             requestQueue.add(stringRequest)
 
+        } else if(ch.startsWith("livetv")){
+
+            var url = "http://livetv.dnsfor.me/API.php?channel=" + ch.split("_")[1]
+            
+
+            val stringRequest = object: StringRequest(
+                Method.GET,
+                url,
+                Response.Listener { response ->
+                    var mediaUrl: String = JSONObject(response).getString("asset")
+
+                    this.play(mediaUrl, play)
+                },
+                Response.ErrorListener{ error ->
+                    showPlaybackErrorMessage(title, play)
+                }
+            ){
+                override fun getRetryPolicy(): RetryPolicy {
+                    return getCustomerRetryPolicy()
+                }
+            }
+            requestQueue.add(stringRequest)
+
+        } else if(ch.startsWith("gdtv")) {
+            val url = "https://gdtv-api.gdtv.cn:7443/api/tv/v1/tvChannel/" + ch.substring(5)
+            val stringRequest = object: StringRequest(
+                Method.GET,
+                url,
+                Response.Listener { response ->
+                    var mediaUrlJson: String = JSONObject(response).getString("playUrl")
+                    val mediaUrl: String = JSONObject(mediaUrlJson).getString("hd")
+
+                    this.play(mediaUrl, play)
+                },
+                Response.ErrorListener{ error ->
+                    showPlaybackErrorMessage(title, play)
+                }
+            ){
+                override fun getRetryPolicy(): RetryPolicy {
+                    return getCustomerRetryPolicy()
+                }
+                
+                override fun getHeaders(): MutableMap<String, String> {
+                    val timestamp = System.currentTimeMillis().toString()
+
+                    val params =  mutableMapOf<String, String>()
+                    params.put("x-itouchtv-ca-key", webInfoMap["gdtvKey"]!!)
+                    params.put("x-itouchtv-ca-signature", MainFragment.Companion.signGdtv(url.toString(), timestamp))
+                    params.put("x-itouchtv-ca-timestamp", timestamp)
+                    params.put("x-itouchtv-client", "WEB_PC")
+                    params.put("Content-Type", "application/json")
+
+                    return params
+                }
+            }
+            requestQueue.add(stringRequest)
+
         } else if(ch.startsWith("gztv")) {
 
             val url = "https://channel.gztv.com/channelf/viewapi/player/channelVideo?id=" + ch.substring(5)
