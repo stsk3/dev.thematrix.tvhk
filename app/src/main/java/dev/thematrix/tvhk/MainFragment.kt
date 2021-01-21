@@ -122,12 +122,8 @@ class MainFragment : BrowseFragment() {
     }
 
     private fun fixChannel() {
-        for (i in 0..2) {
-            val chinaSportMovie = MovieList.list[MovieList.TITLE.indexOf("五星體育") + i]
-            chinaSportMovie.videoUrl = "http://${webInfoMap["chinaSportLink1"]}/live/program/live/${chinaSportMovie.func.split("_")[1]}/2300000/mnf.m3u8#http://${webInfoMap["chinaSportLink2"]}/live/program/live/${chinaSportMovie.func.split("_")[1]}/2300000/mnf.m3u8"
-        }
-
-
+        this.fixChinaSportsMovie("CCTV5", 5);
+        this.fixChinaSportsMovie("CCTV新聞", 1);
 
         if (webInfoMap.contains("isUtvCustomLink") && webInfoMap["isUtvCustomLink"] == "true") {
             val utvLink1 = webInfoMap["utvLink1"]
@@ -159,6 +155,29 @@ class MainFragment : BrowseFragment() {
         }
     }
 
+
+    private fun fixChinaSportsMovie(name: String, size: Int) {
+        val chinaSportLink1 = webInfoMap["chinaSportLink1"]
+        val chinaSportLink2 = webInfoMap["chinaSportLink2"]
+        for (i in 0..size) {
+            val chinaSportMovie = MovieList.list[MovieList.TITLE.indexOf(name) + i]
+            val func = chinaSportMovie.func.split("_")[1]
+            val isHD = !func.endsWith("cctvxw")
+
+            chinaSportMovie.videoUrl = chinaSportMovie.videoUrl +
+                    "http://${chinaSportLink1}/live/program/live/${func}/1300000/mnf.m3u8" +
+                    "#http://${chinaSportLink2}/live/program/live/${func}/1300000/mnf.m3u8"
+
+            if (isHD) {
+                chinaSportMovie.videoUrl = chinaSportMovie.videoUrl +
+                        "#http://${chinaSportLink1}/live/program/live/${func}/2300000/mnf.m3u8" +
+                        "#http://${chinaSportLink2}/live/program/live/${func}/2300000/mnf.m3u8" +
+                        "#http://${chinaSportLink1}/live/program/live/${func}/4000000/mnf.m3u8" +
+                        "#http://${chinaSportLink2}/live/program/live/${func}/4000000/mnf.m3u8"
+            }
+        }
+    }
+
     private fun addOlympicChannel() {
         Thread(Runnable {
             val titleList = mutableListOf<String>()
@@ -168,7 +187,7 @@ class MainFragment : BrowseFragment() {
 
             //Get live link
             val client = OkHttpClient()
-            val url = URL("https://www.olympicchannel.com/en/api/v1/d3vp/epg/live")
+            val url = URL("https://www.olympicchannel.com/en/api/v1/d3vp/epgchannels/linear/live-channels")
             val request = Request.Builder()
                 .url(url)
                 .get()
@@ -311,7 +330,7 @@ class MainFragment : BrowseFragment() {
             getFbLiveVideo("hk01wemedia", "HK01", R.drawable.fb_hk01wemedia)
             getFbLiveVideo("truthmediahk", "TMHK", R.drawable.fb_tmhk_org)
             getFbLiveVideo("onccnews", "東網", R.drawable.fb_onccnews)
-            getFbLiveVideo("icablenews", "有線新聞 i-Cable News", R.drawable.fb_icablenews)
+            getFbLiveVideo("icable.news", "有線新聞 i-Cable News", R.drawable.fb_icablenews)
             getFbLiveVideo("now.comNews", "Now News - 新聞", R.drawable.fb_now_comnews)
             getFbLiveVideo("RTHKVNEWS", "香港電台視像新聞 RTHK VNEWS", R.drawable.fb_rthkvnews)
             getFbLiveVideo("atvhongkong", "ATV亞視數碼媒體", R.drawable.fb_hkatv)
@@ -528,7 +547,7 @@ class MainFragment : BrowseFragment() {
                 Log.e("addYahooTWTV", e.message)
                 showToast("Error: addYahooTWTV - " + e.message)
             } finally {
-                this.activity.runOnUiThread { addOlympicChannel() }
+                this.activity.runOnUiThread { addOnccLive() }
             }
         }).start()
     }
@@ -569,13 +588,13 @@ class MainFragment : BrowseFragment() {
                         if (pk !in 85..92) {
                             val name: String = item.getString("name")
                             val avatarUrl = R.drawable.gdtv //item.getString("avatarUrl")
-                            val playUrlJson: String = item.getString("playUrl")
-                            val playUrl: String = "" // Get later, cuz this link is fake. JSONObject(playUrlJson).getString("hd")
+                            val playUrlJson: String = JSONObject(item.getString("playUrl")).getString("hd")
+                            //val playUrl: String = "" // Get later, cuz this link is fake. JSONObject(playUrlJson).getString("hd")
 
 
                             titleList.add(name)
                             cardImageUrlList.add(avatarUrl)
-                            videoUrlList.add(playUrl)
+                            videoUrlList.add(playUrlJson)
 
                             funcList.add("gdtv_" + pk)
                         }

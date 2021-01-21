@@ -6,22 +6,18 @@ object MovieList {
     const val OLD_SDK_VERSION = 19
     const val NEWS_INDEX = 7
     const val NEWS_CATEGORY_INDEX = 1
-    const val SPORTS_INDEX = 32
-    const val SPORTS_CATEGORY_INDEX = 4
+    const val SPORTS_INDEX = 18
+    const val SPORTS_CATEGORY_INDEX = 2
 
     val CATEGORY = arrayOf(
         "新聞",
-        "HK01", //1
-        "體育",
-        "其他體育",
-        "FOX體育", //4
-        "有線電視",
-        //"ViuTV",
+        "體育", //1
+        "有線電視", //2
         "RTHK",
+        "亞洲電視",
         "其他新聞",
         "澳門",
         "廣州電視", //!!
-        "UTV",
         "自選"
     )
 
@@ -31,48 +27,35 @@ object MovieList {
         "now新聞台",
         "now直播台",
         "港台電視32",
-        "SKIP",
-        "HK01", //7
-        "HK01",
         "HK01",
         "SKIP",
-        "now630",
+        "now630", //7
         "澳門體育",
-        "博斯魅力",
-        "皇馬台(西班牙)",
-        "皇馬台(英文)",
-        "NBATV",
-        "SKIP",
-        "CCTV5",
+        "CCTV5", //!!
         "CCTV5+",
-        "廣東體育",
-        "廣州競賽",
-        "五星體育", //!!
-        "勁爆體育",
+        "魅力足球",
         "新視覺HD",
-        "北京冬奧紀實",
-        "遼寧體育",
+        "五星體育",
+        "勁爆體育",
         "先鋒乒羽",
-        "江蘇體育休閒",
-        "大連文體",
+        "廣州競賽頻道",
         "SKIP",
-        "FS1", //32
-        "FS2",
-        "FS3",
-        "FS4",
-        "SKIP",
-        "香港開電視",
+        "香港開電視", //18
         "有線綜合娛樂台", //!!
         "SKIP",
-        //"ViuTV",
-        //"SKIP",
         "港台電視31",
         "SKIP",
+        "香港追擊搜",
+        "鳳凰衛視香港台",
+        "鳳凰衛視資訊台",
+        "香港衛視",
+        "亞旅衛視",
+        "寰宇頻道",
+        "SKIP",
         "民視新聞",
-        "三立新聞",
         "澳門資訊",
         "廣州新聞頻道",
-        "CCTV新聞",
+        "CCTV新聞", //!!
         "CCTV1",
         "SKIP",
         "澳視澳門",
@@ -82,9 +65,7 @@ object MovieList {
         "SKIP",
         "綜合頻道", //!!
         "影視頻道",
-        "生活頻道",
-        "購物頻道",
-        "少兒頻道",
+        "南國都市(4K)",
         "法治頻道",
         "SKIP",
         "自選1", //!!
@@ -100,45 +81,32 @@ object MovieList {
         R.drawable.nowtv332,
         R.drawable.nowtv331,
         R.drawable.rthktv32,
-        0,
-        R.drawable.fb_hk01wemedia,
-        R.drawable.fb_hk01wemedia,
         R.drawable.fb_hk01wemedia,
         0,
         R.drawable.nowtv630,
         R.drawable.tdmsport,
-        R.drawable.sportcast,
-        R.drawable.rmtv,
-        R.drawable.rmtv,
-        R.drawable.nbatv,
-        0,
         R.drawable.cctv5,
         R.drawable.cctv5plus,
-        R.drawable.gdtv_sports,
-        R.drawable.gz_jingsai,
+        R.drawable.sport_yule,
+        R.drawable.sport_newying,
         R.drawable.sport_5star,
         R.drawable.sport_gingbao,
-        R.drawable.sport_newying,
-        R.drawable.sport_btv,
-        R.drawable.sport_liaoning,
         R.drawable.sport_tabletennisbadminton,
-        R.drawable.sport_jz,
-        R.drawable.sport_dl,
-        0,
-        R.drawable.foxsports,
-        R.drawable.foxsports,
-        R.drawable.foxsports,
-        R.drawable.foxsports,
+        R.drawable.gz_jingsai,
         0,
         R.drawable.opentv,
         R.drawable.cableentertainment,
         0,
-        //R.drawable.viutv,
-        //0,
         R.drawable.rthktv31,
         0,
+        R.drawable.atv,
+        R.drawable.atv_phk,
+        R.drawable.atv_pinfo,
+        R.drawable.atv_ws,
+        R.drawable.atv_tws,
+        R.drawable.atv,
+        0,
         R.drawable.tw_ftvn,
-        R.drawable.tw_setn,
         R.drawable.tdminfo,
         R.drawable.gz_xinwen,
         R.drawable.cctv13,
@@ -151,9 +119,7 @@ object MovieList {
         0,
         R.drawable.gz_zhonghe,
         R.drawable.gz_yingshi,
-        R.drawable.gz_shenghuo,
-        R.drawable.gz_gouwu,
-        R.drawable.gz_shaoer,
+        R.drawable.gz_nanguodushi,
         R.drawable.gz_jingji,
         0,
         R.drawable.custom,
@@ -169,77 +135,46 @@ object MovieList {
         "",
         "",
         "https://www.rthk.hk/feeds/dtt/rthktv32_https.m3u8",
-        "SKIP",
-        "http://live.cdn.hk01.com/origin/smil:01news.smil/playlist.m3u8",
-        "http://live2.cdn.hk01.com/origin/smil:Sudden01.smil/playlist.m3u8",
-        "http://live.cdn.hk01.com/origin/smil:EventBox001.smil/playlist.m3u8",
+        "http://live.cdn.hk01.com/origin/smil:01news.smil/playlist.m3u8#" +
+                "http://live2.cdn.hk01.com/origin/smil:Sudden01.smil/playlist.m3u8#" +
+                "http://live.cdn.hk01.com/origin/smil:EventBox001.smil/playlist.m3u8",
         "SKIP",
         "",
         "http://live1.tdm.com.mo:1935/ch4/sport_ch4.live/playlist.m3u8#" +
                 "http://live2.tdm.com.mo:1935/ch4/sport_ch4.live/playlist.m3u8#" +
                 "http://live3.tdm.com.mo:1935/ch4/sport_ch4.live/playlist.m3u8#" +
                 "http://live4.tdm.com.mo:1935/ch4/sport_ch4.live/playlist.m3u8",
-        "http://ms003.happytv.com.tw/live/OcScNdWHvBx5P4w3/index.m3u8",
-        if (SDK_VER < OLD_SDK_VERSION)
-            "http://rmtv24hweblive-lh.akamaihd.net/i/rmtv24hwebes_1@300661/index_3_av-p.m3u8#" +
-                    "http://rmtv24hweblive-lh.akamaihd.net/i/rmtv24hwebes_1@300661/index_3_av-b.m3u8#" +
-                    "http://rmtv24hweblive-lh.akamaihd.net/i/rmtv24hwebes_1@300661/index_2_av-p.m3u8#" +
-                    "http://rmtv24hweblive-lh.akamaihd.net/i/rmtv24hwebes_1@300661/index_2_av-b.m3u8#" +
-                    "http://rmtv24hweblive-lh.akamaihd.net/i/rmtv24hwebes_1@300661/index_1_av-p.m3u8#" +
-                    "http://rmtv24hweblive-lh.akamaihd.net/i/rmtv24hwebes_1@300661/index_1_av-b.m3u8"
-        else
-            "http://rmtv24hweblive-lh.akamaihd.net/i/rmtv24hwebes_1@300661/master.m3u8",
-        if (SDK_VER < OLD_SDK_VERSION)
-            "http://rmtv24hweblive-lh.akamaihd.net/i/rmtv24hweben_1@300662/index_3_av-p.m3u8#" +
-                    "http://rmtv24hweblive-lh.akamaihd.net/i/rmtv24hweben_1@300662/index_3_av-b.m3u8#" +
-                    "http://rmtv24hweblive-lh.akamaihd.net/i/rmtv24hweben_1@300662/index_2_av-p.m3u8#" +
-                    "http://rmtv24hweblive-lh.akamaihd.net/i/rmtv24hweben_1@300662/index_2_av-b.m3u8#" +
-                    "http://rmtv24hweblive-lh.akamaihd.net/i/rmtv24hweben_1@300662/index_1_av-p.m3u8#" +
-                    "http://rmtv24hweblive-lh.akamaihd.net/i/rmtv24hweben_1@300662/index_1_av-b.m3u8"
-        else
-            "http://rmtv24hweblive-lh.akamaihd.net/i/rmtv24hweben_1@300662/master.m3u8",
-        "",
-        "SKIP",
-        "http://111.40.205.87/PLTV/88888888/224/3221225591/index.m3u8#" +
-                "http://ottrrs.hl.chinamobile.com/PLTV/88888888/224/3221225591/index.m3u8",
-        "http://111.40.205.87/PLTV/88888888/224/3221225689/index.m3u8#" +
-                "http://ottrrs.hl.chinamobile.com/PLTV/88888888/224/3221225603/index.m3u8",
-        "",
-        "",
-        "",
+        "http://ottrrs.hl.chinamobile.com/PLTV/88888888/224/3221225591/index.m3u8#",
+        "http://ottrrs.hl.chinamobile.com/PLTV/88888888/224/3221225603/index.m3u8#",
         "",
         "",
         "",
         "",
         "http://play.ggiptv.com:13164/v/hunantv.php?id=329&type=.m3u8",
         "",
-        "",
-        "SKIP",
-        "http://foxsportstw-lh.akamaihd.net/i/live01_0@38035/master.m3u8",
-        "http://foxsportstw-lh.akamaihd.net/i/live01_0@38037/master.m3u8",
-        "http://foxsportstw-lh.akamaihd.net/i/live01_0@455127/master.m3u8",
-        "http://foxsportstw-lh.akamaihd.net/i/live01_0@570534/master.m3u8",
         "SKIP",
         "http://media.fantv.hk/m3u8/archive/channel2.m3u8",
         "",
         "SKIP",
-        //"",
-        //"SKIP",
         "https://www.rthk.hk/feeds/dtt/rthktv31_https.m3u8",
+        "SKIP",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
         "SKIP",
         "http://210.61.56.23/hls/ftvtv/index.m3u8#" +
                 "http://6.mms.vlog.xuite.net/hls/ftvtv/index.m3u8#" +
                 "http://1.mms.vlog.xuite.net/hls/ftvtv/index.m3u8",
-        "http://60.199.188.65/HLS/WG_ETTV-N/index.m3u8",
         "http://live1.tdm.com.mo:1935/ch5/info_ch5.live/playlist.m3u8#" +
                 "http://live2.tdm.com.mo:1935/ch5/info_ch5.live/playlist.m3u8#" +
                 "http://live3.tdm.com.mo:1935/ch5/info_ch5.live/playlist.m3u8#" +
                 "http://live4.tdm.com.mo:1935/ch5/info_ch5.live/playlist.m3u8",
         "",
-        "http://111.40.205.87/PLTV/88888888/224/3221225599/index.m3u8#" +
-                "http://ottrrs.hl.chinamobile.com/PLTV/88888888/224/3221225599/index.m3u8",
-        "http://111.40.205.87/PLTV/88888888/224/3221225710/index.m3u8#" +
-                "http://ottrrs.hl.chinamobile.com/PLTV/88888888/224/3221225587/index.m3u8",
+        "http://ottrrs.hl.chinamobile.com/PLTV/88888888/224/3221225599/index.m3u8#",
+        "http://ottrrs.hl.chinamobile.com/PLTV/88888888/224/3221225587/index.m3u8#",
         "SKIP",
         "http://live1.tdm.com.mo:1935/ch1/ch1.live/playlist.m3u8#" +
                 "http://live2.tdm.com.mo:1935/ch1/ch1.live/playlist.m3u8#" +
@@ -262,8 +197,6 @@ object MovieList {
         "",
         "",
         "",
-        "",
-        "",
         "SKIP",
         "",
         "",
@@ -278,61 +211,46 @@ object MovieList {
         "nowtv332",
         "nowtv331",
         "rthk",
-        "SKIP",
-        "",
-        "",
         "",
         "SKIP",
         "nowtv630",
         "",
-        "",
-        "rmtv",
-        "rmtv",
-        "wowgua_nbatv",
-        "SKIP",
-        "",
-        "",
-        "ggiptv_ty_6_4", //Line5
-        "gztv_5c7f70b7e4b01c17db18fbd9",
+        "chinaSport_cctv5hd",
+        "chinaSport_cctv5phd",
+        "chinaSport_mlyyhd",
+        "chinaSport_xsjhd",
         "chinaSport_ssty",
         "chinaSport_jbtyhd",
-        "chinaSport_xsjhd",
-        "ggiptv_ty_7",
-        "ggiptv_ty_8",
+        "gztv_jingsai",
         "",
-        "ggiptv_migu_158",
-        "ggiptv_tt_68",
-        "SKIP",
-        "fox",
-        "fox",
-        "fox",
-        "fox",
         "SKIP",
         "fantv",
         "livetv_7_MOB-CN", //"wowgua_ch301",
         "SKIP",
-        //"viutv99",
-        //"SKIP",
         "rthk",
+        "SKIP",
+        "livetv_14",
+        "livetv_16",
+        "livetv_21",
+        "livetv_15",
+        "livetv_24",
+        "livetv_23",
         "SKIP",
         "tw",
         "",
-        "",
-        "gztv_5c7f6f73e4b01c17db18fbd3",
-        "cctv13",
-        "",
+        "gztv_xinwen",
+        "chinaSport_cctvxw",
+        "chinaSport_cctv1hd",
         "SKIP",
         "",
         "",
         "",
         "",
         "SKIP",
-        "gztv_5c7f7072e4b01c17db18fbd5",
-        "gztv_5c7f70dce4b01c17db18fbdb",
-        "gztv_5c7f70fee4b01c17db18fbdd",
-        "gztv_5d6f31d3e4b03f60f96e2544",
-        "gztv_5c7f711de4b01c17db18fbdf",
-        "gztv_5c7f7097e4b01c17db18fbd7",
+        "gztv_zhonghe",
+        "gztv_yingshi",
+        "gztv_shenghuo",
+        "gztv_fazhi",
         "SKIP",
         "custom1",
         "custom2",
@@ -405,7 +323,7 @@ object MovieList {
             func.contains("^nowtv|^fantv$|^rthk$|^fox$|^fb$|^wowgua|^exoCustom|^ggiptv|^utvExo$".toRegex())
         else
             !func.contains("^custom".toRegex())
-        movie.fixRatio = func.contains("^nowtv630$|^gdtv_(46|74)$".toRegex()) || videoUrl.contains("".toRegex()) || title in "遼寧體育"
+        movie.fixRatio = func.contains("^nowtv630$|^gdtv_(46|74)$".toRegex()) || videoUrl.contains("".toRegex()) || title in "CCTV新聞"
 
         return movie
     }

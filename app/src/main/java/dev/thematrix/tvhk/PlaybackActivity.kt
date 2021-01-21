@@ -381,7 +381,7 @@ class PlaybackActivity : FragmentActivity() {
             }
             requestQueue.add(stringRequest)
 
-        } else if(ch.startsWith("gdtv")) {
+        } else if(ch.startsWith("gdtvxxx")) {
             val url = "https://gdtv-api.gdtv.cn:7443/api/tv/v1/tvChannel/" + ch.substring(5)
             val stringRequest = object: StringRequest(
                 Method.GET,
@@ -417,12 +417,12 @@ class PlaybackActivity : FragmentActivity() {
 
         } else if(ch.startsWith("gztv")) {
 
-            val url = "https://channel.gztv.com/channelf/viewapi/player/channelVideo?id=" + ch.substring(5)
+            val url = "https://www.gztv.com/gztv/api/tv/" + ch.substring(5)
             val stringRequest = object: StringRequest(
                 Method.GET,
                 url,
                 Response.Listener { response ->
-                    val result = Regex("standardUrl='.*'").find(response)
+                    val result = Regex("data='.*'").find(response)
                     if (result != null)
                     {
                         var url = Regex("https.*?'").find(result.value)?.value ?: ""
@@ -430,7 +430,6 @@ class PlaybackActivity : FragmentActivity() {
 
                         this.play(url, play)
                     }
-
                 },
                 Response.ErrorListener{ error ->
                     showPlaybackErrorMessage(title, play)
