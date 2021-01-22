@@ -43,5 +43,16 @@
             android:layout_toEndOf="@id/exo_resize_button"
             android:layout_marginStart="10dp"/>
 
+    <TextView
+            android:id="@+id/source_num_text"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:textSize="35sp"
+            android:visibility="gone"
+            android:textAlignment="center"
+            android:textColor="#377c3c"
+            android:layout_toEndOf="@id/exo_live_button"
+            android:layout_marginStart="10dp"/>
+
 
 </RelativeLayout>

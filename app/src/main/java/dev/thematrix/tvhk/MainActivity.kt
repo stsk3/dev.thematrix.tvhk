@@ -58,7 +58,8 @@ class MainActivity : Activity() {
                 setDefaultSSLSocketFactory(sslContext.socketFactory)
                 setDefaultHostnameVerifier(ignoreHostnameVerifier)
 
-                Toast.makeText(this, "強制使用 TLSv1.2", Toast.LENGTH_SHORT).show()
+                Log.i("setUpSSL", "強制使用 TLSv1.2")
+                //Toast.makeText(this, "強制使用 TLSv1.2", Toast.LENGTH_SHORT).show()
             } catch (e: KeyManagementException) {
                 Toast.makeText(this, "強制使用 TLSv1.2 失敗", Toast.LENGTH_SHORT).show()
             }

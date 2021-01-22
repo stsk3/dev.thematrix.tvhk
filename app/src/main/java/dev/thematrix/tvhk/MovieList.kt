@@ -31,6 +31,7 @@ object MovieList {
         "SKIP",
         "now630", //7
         "澳門體育",
+        "廣州競賽頻道",
         "CCTV5", //!!
         "CCTV5+",
         "魅力足球",
@@ -38,7 +39,6 @@ object MovieList {
         "五星體育",
         "勁爆體育",
         "先鋒乒羽",
-        "廣州競賽頻道",
         "SKIP",
         "香港開電視", //18
         "有線綜合娛樂台", //!!
@@ -50,7 +50,6 @@ object MovieList {
         "鳳凰衛視資訊台",
         "香港衛視",
         "亞旅衛視",
-        "寰宇頻道",
         "SKIP",
         "民視新聞",
         "澳門資訊",
@@ -85,6 +84,7 @@ object MovieList {
         0,
         R.drawable.nowtv630,
         R.drawable.tdmsport,
+        R.drawable.gz_jingsai,
         R.drawable.cctv5,
         R.drawable.cctv5plus,
         R.drawable.sport_yule,
@@ -92,7 +92,6 @@ object MovieList {
         R.drawable.sport_5star,
         R.drawable.sport_gingbao,
         R.drawable.sport_tabletennisbadminton,
-        R.drawable.gz_jingsai,
         0,
         R.drawable.opentv,
         R.drawable.cableentertainment,
@@ -104,7 +103,6 @@ object MovieList {
         R.drawable.atv_pinfo,
         R.drawable.atv_ws,
         R.drawable.atv_tws,
-        R.drawable.atv,
         0,
         R.drawable.tw_ftvn,
         R.drawable.tdminfo,
@@ -144,6 +142,7 @@ object MovieList {
                 "http://live2.tdm.com.mo:1935/ch4/sport_ch4.live/playlist.m3u8#" +
                 "http://live3.tdm.com.mo:1935/ch4/sport_ch4.live/playlist.m3u8#" +
                 "http://live4.tdm.com.mo:1935/ch4/sport_ch4.live/playlist.m3u8",
+        "",
         "http://ottrrs.hl.chinamobile.com/PLTV/88888888/224/3221225591/index.m3u8#",
         "http://ottrrs.hl.chinamobile.com/PLTV/88888888/224/3221225603/index.m3u8#",
         "",
@@ -151,14 +150,12 @@ object MovieList {
         "",
         "",
         "http://play.ggiptv.com:13164/v/hunantv.php?id=329&type=.m3u8",
-        "",
         "SKIP",
         "http://media.fantv.hk/m3u8/archive/channel2.m3u8",
         "",
         "SKIP",
         "https://www.rthk.hk/feeds/dtt/rthktv31_https.m3u8",
         "SKIP",
-        "",
         "",
         "",
         "",
@@ -215,13 +212,13 @@ object MovieList {
         "SKIP",
         "nowtv630",
         "",
+        "gztv_jingsai",
         "chinaSport_cctv5hd",
         "chinaSport_cctv5phd",
         "chinaSport_mlyyhd",
         "chinaSport_xsjhd",
         "chinaSport_ssty",
         "chinaSport_jbtyhd",
-        "gztv_jingsai",
         "",
         "SKIP",
         "fantv",
@@ -234,7 +231,6 @@ object MovieList {
         "livetv_21",
         "livetv_15",
         "livetv_24",
-        "livetv_23",
         "SKIP",
         "tw",
         "",
@@ -320,7 +316,7 @@ object MovieList {
         movie.videoUrl = videoUrl
         movie.func = func
         movie.exo = if (SDK_VER < OLD_SDK_VERSION)
-            func.contains("^nowtv|^fantv$|^rthk$|^fox$|^fb$|^wowgua|^exoCustom|^ggiptv|^utvExo$".toRegex())
+            func.contains("^nowtv|^fantv$|^rthk$|^fox$|^fb$|^wowgua|^exoCustom|^ggiptv|^utvExo$|^tw$|^livetv_14$|^gdtv_43$".toRegex())
         else
             !func.contains("^custom".toRegex())
         movie.fixRatio = func.contains("^nowtv630$|^gdtv_(46|74)$".toRegex()) || videoUrl.contains("".toRegex()) || title in "CCTV新聞"

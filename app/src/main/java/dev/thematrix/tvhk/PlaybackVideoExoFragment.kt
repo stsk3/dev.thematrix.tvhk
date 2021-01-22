@@ -58,16 +58,19 @@ class PlaybackVideoExoFragment : Fragment() {
                     val trackSelectionButton = view.exo_track_selection_button
                     val resizeModeButton = view.exo_resize_button
                     val liveButton = view.exo_live_button
+                    val sourceNumText = view.source_num_text
 
                     trackSelectionButton.visibility = VISIBLE
                     resizeModeButton.visibility = VISIBLE
                     liveButton.visibility = VISIBLE
+                    sourceNumText.visibility = VISIBLE
 
                     Handler().postDelayed({
                         view.systemUiVisibility = SYSTEM_UI_FLAG
                         trackSelectionButton.visibility = GONE
                         resizeModeButton.visibility = GONE
                         liveButton.visibility = GONE
+                        sourceNumText.visibility = GONE
                     }, 3000)
                 }
             }
@@ -120,7 +123,9 @@ class PlaybackVideoExoFragment : Fragment() {
 
                     if (windowIndex != eventTime.windowIndex) {
                         windowIndex = eventTime.windowIndex
-                        toast.setText("已轉到Source $windowIndex")
+                        val sourceDisplayNum = windowIndex + 1
+                        PlaybackActivity.sourceNumText?.text = sourceDisplayNum.toString()
+                        toast.setText("已轉到Source $sourceDisplayNum/$sourceCount")
                         toast.show()
                     }
                 }
@@ -223,6 +228,9 @@ class PlaybackVideoExoFragment : Fragment() {
         liveButton.setOnClickListener {
             player.seekToDefaultPosition()
         }
+        // Source number
+        val sourceNumText = view.source_num_text
+        PlaybackActivity.sourceNumText = sourceNumText
     }
 
     fun trackSelectionDialog(context: Context) {
@@ -272,6 +280,7 @@ class PlaybackVideoExoFragment : Fragment() {
         mediaUrl = videoUrl
         isFixRatio = fixRatio
         windowIndex = window
+        sourceCount = videoUrl.split("#").size
 
         videoUrl.split("#").forEach {
             val videoUri = Uri.parse(it)
@@ -302,5 +311,6 @@ class PlaybackVideoExoFragment : Fragment() {
     private lateinit var mediaUrl: String
     private var isFixRatio: Boolean = false
     private var windowIndex: Int = 0
+    private var sourceCount: Int = 0
 
 }

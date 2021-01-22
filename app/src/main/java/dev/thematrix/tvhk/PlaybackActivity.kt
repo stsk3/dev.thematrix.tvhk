@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.KeyEvent
 import android.view.View
 import android.view.WindowManager
+import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
@@ -76,7 +77,10 @@ class PlaybackActivity : FragmentActivity() {
             else -> changePlayer(videoUrl)
         }
 
-        val sourceText = if (videoUrl.split("#").size > 1) ", Source $currentSourceIndex" else ""
+        val sourceCount = currentMovie.videoUrl.split("#").size
+        val sourceDisplayNum = currentSourceIndex + 1
+        sourceNumText?.text = sourceDisplayNum.toString()
+        val sourceText = if (videoUrl.split("#").size > 1) ", Source $sourceDisplayNum/$sourceCount" else ""
 
         toast.setText("正在轉台到 $title$sourceText")
         toast.show()
@@ -422,12 +426,10 @@ class PlaybackActivity : FragmentActivity() {
                 Method.GET,
                 url,
                 Response.Listener { response ->
-                    val result = Regex("data='.*'").find(response)
+                    val result = JSONObject(response)
                     if (result != null)
                     {
-                        var url = Regex("https.*?'").find(result.value)?.value ?: ""
-                        url = url.substring(0, url.length - 1)
-
+                        var url = result.getString("data")
                         this.play(url, play)
                     }
                 },
@@ -549,5 +551,6 @@ class PlaybackActivity : FragmentActivity() {
         lateinit var toast: Toast
         lateinit var requestQueue: RequestQueue
         const val SYSTEM_UI_FLAG = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+        var sourceNumText: TextView? = null
     }
 }
