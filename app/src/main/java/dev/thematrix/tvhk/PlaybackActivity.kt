@@ -79,7 +79,6 @@ class PlaybackActivity : FragmentActivity() {
 
         val sourceCount = currentMovie.videoUrl.split("#").size
         val sourceDisplayNum = currentSourceIndex + 1
-        sourceNumText?.text = sourceDisplayNum.toString()
         val sourceText = if (videoUrl.split("#").size > 1) ", Source $sourceDisplayNum/$sourceCount" else ""
 
         toast.setText("正在轉台到 $title$sourceText")
@@ -551,6 +550,5 @@ class PlaybackActivity : FragmentActivity() {
         lateinit var toast: Toast
         lateinit var requestQueue: RequestQueue
         const val SYSTEM_UI_FLAG = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-        var sourceNumText: TextView? = null
     }
 }

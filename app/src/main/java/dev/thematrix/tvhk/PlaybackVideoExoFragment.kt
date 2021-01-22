@@ -64,6 +64,8 @@ class PlaybackVideoExoFragment : Fragment() {
                     resizeModeButton.visibility = VISIBLE
                     liveButton.visibility = VISIBLE
                     sourceNumText.visibility = VISIBLE
+                    val sourceDisplayNum = windowIndex + 1
+                    sourceNumText.text = sourceDisplayNum.toString()
 
                     Handler().postDelayed({
                         view.systemUiVisibility = SYSTEM_UI_FLAG
@@ -124,7 +126,7 @@ class PlaybackVideoExoFragment : Fragment() {
                     if (windowIndex != eventTime.windowIndex) {
                         windowIndex = eventTime.windowIndex
                         val sourceDisplayNum = windowIndex + 1
-                        PlaybackActivity.sourceNumText?.text = sourceDisplayNum.toString()
+                        view.source_num_text.text = sourceDisplayNum.toString()
                         toast.setText("已轉到Source $sourceDisplayNum/$sourceCount")
                         toast.show()
                     }
@@ -228,9 +230,6 @@ class PlaybackVideoExoFragment : Fragment() {
         liveButton.setOnClickListener {
             player.seekToDefaultPosition()
         }
-        // Source number
-        val sourceNumText = view.source_num_text
-        PlaybackActivity.sourceNumText = sourceNumText
     }
 
     fun trackSelectionDialog(context: Context) {
