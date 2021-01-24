@@ -144,7 +144,7 @@ class PlaybackVideoExoFragment : Fragment() {
                             toast.setText("STATE_IDLE")
                             toast.show()
                             if (mediaUrl != "")
-                                playVideo(mediaUrl, isFixRatio)
+                                playVideo(mediaUrl, isFixRatio, player.currentWindowIndex)
                         }
                         Player.STATE_BUFFERING -> {}
                         Player.STATE_READY -> {}
@@ -152,7 +152,7 @@ class PlaybackVideoExoFragment : Fragment() {
                             toast.setText("STATE_ENDED")
                             toast.show()
                             if (mediaUrl != "")
-                                playVideo(mediaUrl, isFixRatio)
+                                playVideo(mediaUrl, isFixRatio, player.currentWindowIndex)
                         }
                     }
                 }

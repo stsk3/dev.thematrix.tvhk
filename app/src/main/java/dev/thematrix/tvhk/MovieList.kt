@@ -6,7 +6,7 @@ object MovieList {
     const val OLD_SDK_VERSION = 19
     const val NEWS_INDEX = 7
     const val NEWS_CATEGORY_INDEX = 1
-    const val SPORTS_INDEX = 18
+    const val SPORTS_INDEX = 17
     const val SPORTS_CATEGORY_INDEX = 2
 
     val CATEGORY = arrayOf(
@@ -31,7 +31,6 @@ object MovieList {
         "SKIP",
         "now630", //7
         "澳門體育",
-        "廣州競賽頻道",
         "CCTV5", //!!
         "CCTV5+",
         "魅力足球",
@@ -40,7 +39,7 @@ object MovieList {
         "勁爆體育",
         "先鋒乒羽",
         "SKIP",
-        "香港開電視", //18
+        "香港開電視", //17
         "有線綜合娛樂台", //!!
         "SKIP",
         "港台電視31",
@@ -53,7 +52,6 @@ object MovieList {
         "SKIP",
         "民視新聞",
         "澳門資訊",
-        "廣州新聞頻道",
         "CCTV新聞", //!!
         "CCTV1",
         "SKIP",
@@ -63,6 +61,8 @@ object MovieList {
         "澳視葡文",
         "SKIP",
         "綜合頻道", //!!
+        "競賽頻道",
+        "新聞頻道",
         "影視頻道",
         "南國都市(4K)",
         "法治頻道",
@@ -84,7 +84,6 @@ object MovieList {
         0,
         R.drawable.nowtv630,
         R.drawable.tdmsport,
-        R.drawable.gz_jingsai,
         R.drawable.cctv5,
         R.drawable.cctv5plus,
         R.drawable.sport_yule,
@@ -106,7 +105,6 @@ object MovieList {
         0,
         R.drawable.tw_ftvn,
         R.drawable.tdminfo,
-        R.drawable.gz_xinwen,
         R.drawable.cctv13,
         R.drawable.cctv1,
         0,
@@ -116,6 +114,8 @@ object MovieList {
         R.drawable.tdmportugal,
         0,
         R.drawable.gz_zhonghe,
+        R.drawable.gz_jingsai,
+        R.drawable.gz_xinwen,
         R.drawable.gz_yingshi,
         R.drawable.gz_nanguodushi,
         R.drawable.gz_jingji,
@@ -142,7 +142,6 @@ object MovieList {
                 "http://live2.tdm.com.mo:1935/ch4/sport_ch4.live/playlist.m3u8#" +
                 "http://live3.tdm.com.mo:1935/ch4/sport_ch4.live/playlist.m3u8#" +
                 "http://live4.tdm.com.mo:1935/ch4/sport_ch4.live/playlist.m3u8",
-        "",
         "http://ottrrs.hl.chinamobile.com/PLTV/88888888/224/3221225591/index.m3u8#",
         "http://ottrrs.hl.chinamobile.com/PLTV/88888888/224/3221225603/index.m3u8#",
         "",
@@ -169,7 +168,6 @@ object MovieList {
                 "http://live2.tdm.com.mo:1935/ch5/info_ch5.live/playlist.m3u8#" +
                 "http://live3.tdm.com.mo:1935/ch5/info_ch5.live/playlist.m3u8#" +
                 "http://live4.tdm.com.mo:1935/ch5/info_ch5.live/playlist.m3u8",
-        "",
         "http://ottrrs.hl.chinamobile.com/PLTV/88888888/224/3221225599/index.m3u8#",
         "http://ottrrs.hl.chinamobile.com/PLTV/88888888/224/3221225587/index.m3u8#",
         "SKIP",
@@ -194,6 +192,8 @@ object MovieList {
         "",
         "",
         "",
+        "",
+        "",
         "SKIP",
         "",
         "",
@@ -212,7 +212,6 @@ object MovieList {
         "SKIP",
         "nowtv630",
         "",
-        "gztv_jingsai",
         "chinaSport_cctv5hd",
         "chinaSport_cctv5phd",
         "chinaSport_mlyyhd",
@@ -234,7 +233,6 @@ object MovieList {
         "SKIP",
         "tw",
         "",
-        "gztv_xinwen",
         "chinaSport_cctvxw",
         "chinaSport_cctv1hd",
         "SKIP",
@@ -244,6 +242,8 @@ object MovieList {
         "",
         "SKIP",
         "gztv_zhonghe",
+        "gztv_jingsai",
+        "gztv_xinwen",
         "gztv_yingshi",
         "gztv_shenghuo",
         "gztv_fazhi",

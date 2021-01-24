@@ -2,6 +2,7 @@ package dev.thematrix.tvhk
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.Html
 import android.util.Log
 import android.widget.Toast
 import androidx.leanback.app.BrowseFragment
@@ -333,12 +334,13 @@ class MainFragment : BrowseFragment() {
             getFbLiveVideo("icable.news", "有線新聞 i-Cable News", R.drawable.fb_icablenews)
             getFbLiveVideo("now.comNews", "Now News - 新聞", R.drawable.fb_now_comnews)
             getFbLiveVideo("RTHKVNEWS", "香港電台視像新聞 RTHK VNEWS", R.drawable.fb_rthkvnews)
-            getFbLiveVideo("atvhongkong", "ATV亞視數碼媒體", R.drawable.fb_hkatv)
-            getFbLiveVideo("cuspcusp", "中大學生報", R.drawable.fb_cuhk)
+            //getFbLiveVideo("atvhongkong", "ATV亞視數碼媒體", R.drawable.fb_hkatv)
+            //getFbLiveVideo("cuspcusp", "中大學生報", R.drawable.fb_cuhk)
             getFbLiveVideo("socrec", "SocREC 社會記錄頻道", R.drawable.fb_socrec)
             getFbLiveVideo("fans.hkgolden", "HKGolden", R.drawable.fb_fans_hkgolden)
             getFbLiveVideo("CupidProducer", "丘品創作", R.drawable.fb_cupidproducer)
             getFbLiveVideo("cvrhk", "全民記者", R.drawable.fb_cvrhk)
+            getFbLiveVideo("WhatsNewsMedia", "和你報WhatsNews", R.drawable.fb_whatsnews)
             getFbLiveVideo("onccsport", "東網體育", R.drawable.fb_onccsport)
 
 
@@ -376,6 +378,8 @@ class MainFragment : BrowseFragment() {
         val url = URL("https://m.facebook.com/$page/video_grid/")
         val request = Request.Builder()
             .url(url)
+            .addHeader("sec-fetch-mode", "navigate")
+            .addHeader("user-agent", "Mozilla/5.0 (Linux; Android 8.0; Pixel 2 Build/OPD3.170816.012) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.141 Mobile Safari/537.36")
             .get()
             .build()
 
@@ -385,14 +389,16 @@ class MainFragment : BrowseFragment() {
 
 
             //Get Link
-            val resultList = Regex("\\?src&amp;.*?id=\\d*").findAll(responseBody)
+            val resultList = Regex("(?<=data-store=\")(.*?)(?=\")").findAll(responseBody)
             if (resultList.count() > 0) {
                 resultList.forEach {
-                    val result = it.value
-                    val id = Regex("\\d*$").find(result)?.value ?: ""
-                    val liveLink = getFbLiveLink("https://www.facebook.com/$page/videos/$id/")
+                    val result = JSONObject(Html.fromHtml(it.value).toString())
+                    val isLive = result.getString("src") == ""
 
-                    if (liveLink != "") {
+                    if (isLive) {
+                        val videoID = result.getString("videoID")
+                        val liveLink = getFbLiveLink("https://www.facebook.com/$page/videos/$videoID/")
+
                         fbTitleList.add(pageName)
                         fbCardImageUrlList.add(image)
                         fbVideoUrlList.add(liveLink)
@@ -409,10 +415,11 @@ class MainFragment : BrowseFragment() {
     private fun getFbLiveLink(videoUrl: String): String {
         //HTTP request
         val client = OkHttpClient()
-        val url = URL("https://www.facebook.com/plugins/video.php?href=$videoUrl")
+        val url = URL("https://m.facebook.com/plugins/video.php?href=$videoUrl")
         val request = Request.Builder()
             .url(url)
-            .addHeader("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3902.4 Safari/537.36")
+            .addHeader("sec-fetch-mode", "navigate")
+            .addHeader("user-agent", "Mozilla/5.0 (Linux; Android 8.0; Pixel 2 Build/OPD3.170816.012) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.141 Mobile Safari/537.36")
             .get()
             .build()
 
@@ -421,12 +428,15 @@ class MainFragment : BrowseFragment() {
             val responseBody = response.body()!!.string()
 
             //Get Link
-            val isLive = Regex("\"is_live_stream\":true").find(responseBody)?.value ?: ""
-            if (isLive != "") {
-                val hdSrc = Regex("\"hd_src\":\".*?\"").find(responseBody)?.value ?: ""
-                var hdResult = Regex("https.*[^`\"]").find(hdSrc)?.value ?: ""
-                hdResult = hdResult.replace("\\", "")
-                return hdResult
+            val resultString = Regex("(?<=data-store=\")(.*?)(?=\")").find(responseBody)
+            if (resultString != null) {
+                val result = JSONObject(Html.fromHtml(resultString.value).toString())
+                val isLive = result.getBoolean("playbackIsLiveStreaming")
+                if (isLive) {
+                    var src = result.getString("src")
+                    src = src.replace("\\", "")
+                    return src
+                }
             }
         } catch (e: Exception) {
             Log.e("getFbLiveLink", e.message)
